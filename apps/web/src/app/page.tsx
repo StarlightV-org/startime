@@ -13,7 +13,7 @@ export default async function Home() {
 		<main>
 			<div className="whitespace-pre-wrap">{JSON.stringify(session, null, 2)}</div>
 
-			<Link href="/auth/sign-in">
+			<Link href="/auth/signin">
 				<Button>Sign in</Button>
 			</Link>
 		</main>

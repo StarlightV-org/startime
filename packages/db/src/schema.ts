@@ -1,87 +1,248 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, jsonb, pgTableCreator, text, timestamp } from "drizzle-orm/pg-core";
+import * as t from "drizzle-orm/pg-core";
+import ShortUniqueId from "short-unique-id";
+
+function generateShortId(totalLength = 16): string {
+	const length = totalLength % 2 === 0 ? totalLength / 2 : Math.ceil(totalLength / 2);
+	const { randomUUID: uuidNumber } = new ShortUniqueId({
+		length,
+		dictionary: "number",
+	});
+	const { randomUUID: uuidLetter } = new ShortUniqueId({
+		length,
+		dictionary: "alpha_upper",
+	});
+	return `${uuidLetter()}${uuidNumber()}`;
+}
 
 /** Shared Startime tables. The prefix prevents collisions with legacy data. */
-export const createTable = pgTableCreator((name) => `startime_${name}`);
+export const createTable = t.pgTableCreator((name) => `startime_${name}`);
 
-export const user = createTable("user", {
-	id: text("id").primaryKey(),
-	name: text("name").notNull(),
-	email: text("email").notNull().unique(),
-	emailVerified: boolean("email_verified").notNull().default(false),
-	image: text("image"),
-	role: text("role").notNull().default("member"),
-	profile: jsonb("profile").notNull().default({}),
-	createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+// MARK: USER
+export const users = createTable("users", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	name: t.text("name").notNull(),
+	email: t.text("email").notNull().unique(),
+	emailVerified: t.boolean("email_verified").notNull().default(false),
+	image: t.text("image"),
+	role: t.text("role").notNull().default("member"),
+	profile: t.jsonb("profile").notNull().default({}),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+	organizationId: t.text("organization_id").references(() => organizations.id),
 });
 
-export const account = createTable("account", {
-	id: text("id").primaryKey(),
-	accountId: text("account_id").notNull(),
-	providerId: text("provider_id").notNull(),
-	userId: text("user_id")
+export const userRelations = relations(users, ({ many, one }) => ({
+	accounts: many(accounts),
+	sessions: many(sessions),
+	passkeys: many(passkeys),
+	invitations: many(invitations),
+	organization: one(organizations, {
+		fields: [users.organizationId],
+		references: [organizations.id],
+	}),
+}));
+
+export const accounts = createTable("accounts", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	accountId: t.text("account_id").notNull(),
+	providerId: t.text("provider_id").notNull(),
+	userId: t
+		.text("user_id")
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
-	accessToken: text("access_token"),
-	refreshToken: text("refresh_token"),
-	idToken: text("id_token"),
-	accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
-	refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
-	scope: text("scope"),
-	password: text("password"),
-	createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	accessToken: t.text("access_token"),
+	refreshToken: t.text("refresh_token"),
+	idToken: t.text("id_token"),
+	accessTokenExpiresAt: t.timestamp("access_token_expires_at", { withTimezone: true }),
+	refreshTokenExpiresAt: t.timestamp("refresh_token_expires_at", { withTimezone: true }),
+	scope: t.text("scope"),
+	password: t.text("password"),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull(),
 });
 
-export const session = createTable("session", {
-	id: text("id").primaryKey(),
-	expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-	token: text("token").notNull().unique(),
-	createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
-	updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
-	ipAddress: text("ip_address"),
-	userAgent: text("user_agent"),
-	userId: text("user_id")
+export const accountRelations = relations(accounts, ({ one }) => ({
+	user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+
+export const sessions = createTable("sessions", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	expiresAt: t.timestamp("expires_at", { withTimezone: true }).notNull(),
+	token: t.text("token").notNull().unique(),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull(),
+	ipAddress: t.text("ip_address"),
+	userAgent: t.text("user_agent"),
+	userId: t
+		.text("user_id")
 		.notNull()
-		.references(() => user.id, { onDelete: "cascade" }),
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
 });
 
-export const verification = createTable("verification", {
-	id: text("id").primaryKey(),
-	identifier: text("identifier").notNull(),
-	value: text("value").notNull(),
-	expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true }),
-	updatedAt: timestamp("updated_at", { withTimezone: true }),
+export const sessionRelations = relations(sessions, ({ one }) => ({
+	user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const verifications = createTable("verifications", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	identifier: t.text("identifier").notNull(),
+	value: t.text("value").notNull(),
+	expiresAt: t.timestamp("expires_at", { withTimezone: true }).notNull(),
+	createdAt: t.timestamp("created_at", { withTimezone: true }),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }),
 });
 
-/** Retained for the existing tRPC starter route. */
-export const posts = createTable(
-	"post",
+export const passkeys = createTable(
+	"passkeys",
 	{
-		id: text("id").primaryKey(),
-		name: text("name"),
-		createdById: text("created_by_id")
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId()),
+		name: t.text("name"),
+		publicKey: t.text("public_key").notNull(),
+		userId: t
+			.text("user_id")
 			.notNull()
-			.references(() => user.id, { onDelete: "cascade" }),
-		createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-		updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+			.references(() => users.id, { onDelete: "cascade" }),
+		credentialID: t.text("credential_id").notNull(),
+		counter: t.integer("counter").notNull(),
+		deviceType: t.text("device_type").notNull(),
+		backedUp: t.boolean("backed_up").notNull(),
+		transports: t.text("transports"),
+		createdAt: t.timestamp("created_at"),
+		aaguid: t.text("aaguid"),
 	},
-	(table) => [index("post_created_by_idx").on(table.createdById)],
+	(table) => [
+		t.index("passkey_userId_idx").on(table.userId),
+		t.index("passkey_credentialID_idx").on(table.credentialID),
+	],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
-	accounts: many(account),
-	sessions: many(session),
-	posts: many(posts),
+export const passkeyRelations = relations(passkeys, ({ one }) => ({
+	user: one(users, {
+		fields: [passkeys.userId],
+		references: [users.id],
+	}),
 }));
-export const accountRelations = relations(account, ({ one }) => ({
-	user: one(user, { fields: [account.userId], references: [user.id] }),
+
+// MARK: ORGANIZATION
+
+export const organizations = createTable("organizations", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId(8)),
+	name: t.text("name").notNull(),
+	slug: t.text("slug").notNull().unique(),
+	logo: t.text("logo"),
+	createdAt: t.timestamp("created_at").notNull(),
+	metadata: t.text("metadata"),
+});
+
+export type DbOrganization = typeof organizations.$inferSelect;
+
+export const organizationRelations = relations(organizations, ({ many }) => ({
+	members: many(members),
+	invitations: many(invitations),
 }));
-export const sessionRelations = relations(session, ({ one }) => ({
-	user: one(user, { fields: [session.userId], references: [user.id] }),
+
+export const members = createTable(
+	"members",
+	{
+		id: t.text("id").primaryKey(),
+		organizationId: t
+			.text("organization_id")
+			.notNull()
+			.references(() => organizations.id, { onDelete: "cascade" }),
+		userId: t
+			.text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		role: t.text("role").default("member").notNull(),
+		createdAt: t.timestamp("created_at").notNull(),
+	},
+	(table) => [
+		t.index("member_organizationId_idx").on(table.organizationId),
+		t.index("member_userId_idx").on(table.userId),
+	],
+);
+
+export const memberRelations = relations(members, ({ one }) => ({
+	organization: one(organizations, {
+		fields: [members.organizationId],
+		references: [organizations.id],
+	}),
+	user: one(users, {
+		fields: [members.userId],
+		references: [users.id],
+	}),
 }));
-export const postRelations = relations(posts, ({ one }) => ({
-	author: one(user, { fields: [posts.createdById], references: [user.id] }),
+
+export const invitations = createTable(
+	"invitations",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId()),
+		organizationId: t
+			.text("organization_id")
+			.notNull()
+			.references(() => organizations.id, { onDelete: "cascade" }),
+		email: t.text("email").notNull(),
+		role: t.text("role"),
+		status: t.text("status").default("pending").notNull(),
+		expiresAt: t.timestamp("expires_at").notNull(),
+		createdAt: t.timestamp("created_at").defaultNow().notNull(),
+		inviterId: t
+			.text("inviter_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+	},
+	(table) => [
+		t.index("invitation_organizationId_idx").on(table.organizationId),
+		t.index("invitation_email_idx").on(table.email),
+	],
+);
+
+export type DbInvitation = typeof invitations.$inferSelect;
+
+export const invitationRelations = relations(invitations, ({ one }) => ({
+	organization: one(organizations, {
+		fields: [invitations.organizationId],
+		references: [organizations.id],
+	}),
+	user: one(users, {
+		fields: [invitations.inviterId],
+		references: [users.id],
+	}),
 }));
+
+// MARK: EVENTS
+export const eventLogs = createTable("event_logs", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	eventTime: t.timestamp("event_time", { withTimezone: true }).notNull(),
+	language: t.text("language").notNull(),
+	project: t.text("project").notNull(),
+	fileHash: t.text("file_hash"),
+	editor: t.text("editor").notNull(),
+	platform: t.text("platform").notNull(),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
+});

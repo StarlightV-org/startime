@@ -54,8 +54,6 @@
 }
 
 :root {
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0.008 326);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0.008 326);
 	--popover: oklch(1 0 0);
@@ -86,6 +84,8 @@
 	--sidebar-accent-foreground: oklch(0.212 0.019 322.12);
 	--sidebar-border: oklch(0.922 0.005 325.62);
 	--sidebar-ring: oklch(0.711 0.019 323.02);
+	--background: oklch(1 0 0);
+	--foreground: oklch(0.145 0.008 326);
 }
 
 .dark {
@@ -135,6 +135,6 @@
 
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {
-		cursor: pointer;
+		cursor: pointer !important;
 	}
 }
