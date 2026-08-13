@@ -35,6 +35,7 @@
 		"date-fns": "^4.4.0",
 		"drizzle-orm": "^0.45.2",
 		"next": "^16.3.0",
+		"nuqs": "^2.9.5",
 		"postgres": "^3.4.9",
 		"superjson": "^2.2.6",
 		"zod": "^4.4.3"

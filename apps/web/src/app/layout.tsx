@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Nunito, Nunito_Sans } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { cn } from "~/lib/utils";
 import { HydrateClient } from "~/trpc/server";
@@ -38,16 +39,18 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			</head>
 			<body>
 				<SessionProvider initialSession={session}>
-					<TRPCReactProvider>
-						<HydrateClient>
-							<ConfirmModalProvider>
-								<TooltipProvider>
-									<Toaster />
-									{children}
-								</TooltipProvider>
-							</ConfirmModalProvider>
-						</HydrateClient>
-					</TRPCReactProvider>
+					<NuqsAdapter>
+						<TRPCReactProvider>
+							<HydrateClient>
+								<ConfirmModalProvider>
+									<TooltipProvider>
+										<Toaster />
+										{children}
+									</TooltipProvider>
+								</ConfirmModalProvider>
+							</HydrateClient>
+						</TRPCReactProvider>
+					</NuqsAdapter>
 				</SessionProvider>
 			</body>
 		</html>
