@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/web",
+    },
+    // {
+    //   "path": "./packages/env",
+    // },
+    {
+      "path": "./packages/print",
+    },
+  ],
+}

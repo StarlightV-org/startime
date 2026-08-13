@@ -1,0 +1,20 @@
+{
+	"name": "@startime/env",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"dependencies": {
+		"@startime/print": "workspace:*"
+	},
+	"exports": {
+		".": {
+			"types": "./src/env.ts",
+			"default": "./src/env.ts"
+		},
+		"./env": "./src/env.ts"
+	},
+	"scripts": {
+		"build": "tsc",
+		"check": "biome check ."
+	}
+}

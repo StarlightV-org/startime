@@ -1,0 +1,62 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.8/schema.json",
+	"assist": { "actions": { "source": { "organizeImports": "off" } } },
+	"formatter": {
+		"enabled": false
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off",
+				"noTsIgnore": "off",
+				"noNonNullAssertedOptionalChain": "off",
+				"useIterableCallbackReturn": "off",
+				"noConsole": "error"
+			},
+			"style": {
+				"noNonNullAssertion": "off",
+				"useImportType": "info",
+				"noParameterAssign": "off",
+				"useTemplate": "error"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off",
+				"useMediaCaption": "off",
+				"noSvgWithoutTitle": "off",
+				"useSemanticElements": "off",
+				"useFocusableInteractive": "off",
+				"useValidAnchor": "off",
+				"noLabelWithoutControl": "off",
+				"useAriaPropsSupportedByRole": "off"
+			},
+			"correctness": {
+				"noUnusedImports": "off",
+				"useExhaustiveDependencies": "off",
+				"noUnusedFunctionParameters": "off",
+				"noUnusedVariables": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off"
+			}
+		},
+		"includes": [
+			"**",
+			"!**/node_modules/**/*",
+			"!**/biome.json",
+			"!**/build/**/*",
+			"!**/.next/**/*",
+			"!**/drizzle/**/*",
+			"!**/*dockerignore*",
+			"!**/*.css",
+			"!**/*.log"
+		]
+	}
+}
