@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { z } from "zod";
 
 import {
@@ -5,7 +6,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { posts } from "~/server/db/schema";
+import { posts } from "@startime/db/schema";
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
@@ -20,6 +21,7 @@ export const postRouter = createTRPCRouter({
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(posts).values({
+        id: randomUUID(),
         name: input.name,
         createdById: ctx.session.user.id,
       });

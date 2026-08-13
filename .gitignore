@@ -5,7 +5,6 @@ dist/
 .env.*
 !.env.example
 coverage/
-codetime-web_old/
 old/
 
 *.csv

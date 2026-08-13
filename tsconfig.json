@@ -1,14 +1,17 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./apps/web",
-    },
-    // {
-    //   "path": "./packages/env",
-    // },
-    {
-      "path": "./packages/print",
-    },
-  ],
+	"files": [],
+	"references": [
+		{
+			"path": "./apps/web",
+		},
+		{
+			"path": "./packages/db",
+		},
+		{
+			"path": "./packages/env",
+		},
+		{
+			"path": "./packages/print",
+		},
+	],
 }

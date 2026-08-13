@@ -1,9 +1,12 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
-import { Geist } from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Nunito } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { cn } from "~/lib/utils";
+
+const nunito = Nunito({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -20,7 +23,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={cn(geist.variable, "font-sans", nunito.variable)}>
       <body>
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>

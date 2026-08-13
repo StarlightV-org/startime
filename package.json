@@ -21,8 +21,10 @@
 	},
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.6.27",
+		"@startime/db": "workspace:*",
 		"@startime/env": "workspace:*",
 		"@startime/print": "workspace:*",
+		"@t3-oss/env-core": "^0.13.11",
 		"@tanstack/react-query": "^5.101.4",
 		"@trpc/client": "^11.18.0",
 		"@trpc/react-query": "^11.18.0",
