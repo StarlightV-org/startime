@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { passkey } from "@better-auth/passkey";
 
 import { ENV } from "@startime/env";
 import { db } from "~/server/db";
@@ -17,8 +18,16 @@ export const auth = betterAuth({
 			clientId: ENV.BETTER_AUTH_GITHUB_CLIENT_ID,
 			clientSecret: ENV.BETTER_AUTH_GITHUB_CLIENT_SECRET,
 			redirectURI: "https://localhost:3000/api/auth/callback/github",
+			prompt: "consent",
 		},
 	},
+	plugins: [
+		passkey({
+			advanced: {
+				webAuthnChallengeCookie: "startime_webauthn_challenge",
+			},
+		}),
+	],
 });
 
 export type Session = typeof auth.$Infer.Session;

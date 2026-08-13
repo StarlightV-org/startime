@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+import { SignInForm } from "~/components/auth/sign-in-form";
+import { Card } from "~/components/ui/card";
+
 export const metadata: Metadata = {
 	title: "Sign in | Startime",
 	description: "Sign in to your Startime workspace.",
@@ -7,22 +10,13 @@ export const metadata: Metadata = {
 
 export default function AuthPage() {
 	return (
-		<main className="auth-shell">
-			<section className="auth-intro" aria-label="Startime introduction">
-				<a className="brand" href="/">
-					startime<span>.</span>
-				</a>
-				<div className="auth-intro-copy">
-					<p className="eyebrow">TIME, MADE CLEAR</p>
-					<h1>Make room for what matters.</h1>
-					<p>Startime brings your time, focus, and progress into one calm place.</p>
-				</div>
-				<div className="auth-quote">
-					<span>“</span>
-					<p>Small, consistent steps make the biggest difference.</p>
-				</div>
-			</section>
-			<section className="auth-panel"></section>
+		<main className="flex min-h-svh items-center justify-center bg-background px-4 py-12">
+			<div className="w-full max-w-sm space-y-6">
+				<div className="text-center text-lg font-semibold">Startime</div>
+				<Card>
+					<SignInForm />
+				</Card>
+			</div>
 		</main>
 	);
 }
