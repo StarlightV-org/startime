@@ -1,8 +1,10 @@
+import { eq } from "drizzle-orm";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import type { UploadedFileData } from "uploadthing/types";
 import { getAuth } from "~/server/better-auth";
 import { db, files, eventImports, type FileLocation } from "@startime/db";
+import { signInternalRequest } from "@startime/service-auth";
 
 import { UTApi } from "uploadthing/server";
 import { ENV } from "@startime/env";
@@ -22,6 +24,7 @@ export const ourFileRouter = {
 			maxFileSize: "64MB",
 			maxFileCount: 1,
 			acl: "private",
+			contentDisposition: "attachment",
 		},
 	})
 		// Set permissions and file types for this FileRoute
@@ -65,12 +68,40 @@ export const ourFileRouter = {
 					message: `File was uploaded successfully.`,
 					userId: metadata.userId,
 					fileId: newFile?.id,
+					fileName: newFile?.fileName ?? "Name not available",
 				})
 				.returning();
 
-			Print.Debug("newImport", newImport);
+			const eventImport = newImport[0];
+			if (!eventImport || !newFile) throw new UploadThingError("Unable to create the import record");
 
-			return { success: true, fileId: newFile?.id };
+			try {
+				await db
+					.update(eventImports)
+					.set({ status: "pending", message: "Import queued" })
+					.where(eq(eventImports.id, eventImport.id));
+				const path = "/v1/imports";
+				const body = JSON.stringify({
+					importId: eventImport.id,
+					fileKey: newFile.fileKey,
+					format: "codetime/csv",
+				});
+				const response = await fetch(new URL(path, ENV.IMPORTER_URL), {
+					method: "POST",
+					headers: {
+						"content-type": "application/json",
+						...signInternalRequest(ENV.INTERNAL_SERVICE_SECRET, "POST", path, body),
+					},
+					body,
+				});
+				if (!response.ok) throw new Error(`Importer request failed with ${response.status}`);
+			} catch (error) {
+				const message = error instanceof Error ? error.message : "Unable to queue import";
+				Print.Error("Unable to queue import", { importId: eventImport.id, error });
+				await db.update(eventImports).set({ status: "failed", message }).where(eq(eventImports.id, eventImport.id));
+			}
+
+			return { success: true, fileId: newFile.id };
 			// !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
 		}),
 } satisfies FileRouter;

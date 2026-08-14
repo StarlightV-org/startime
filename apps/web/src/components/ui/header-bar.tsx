@@ -14,10 +14,6 @@ export function HeaderBar() {
 	const router = useRouter();
 	const { org } = useSession();
 
-	useEffect(() => {
-		router.refresh();
-	}, [pathname]);
-
 	return (
 		<header className="sticky top-0 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">
 			<div className="flex items-center justify-between">
@@ -25,20 +21,25 @@ export function HeaderBar() {
 				<AccountButton />
 			</div>
 			<Tabs value={pathname}>
-				<TabsList className="h-10! space-x-2">
-					<TabsTrigger value="/dash">
+				<TabsList
+					className="h-10! space-x-2"
+					onClick={() => {
+						router.refresh();
+					}}
+				>
+					<TabsTrigger value="/dash" asChild>
 						<Link href="/dash" className="text-sm">
 							Overview
 						</Link>
 					</TabsTrigger>
 					{!!org?.id && (
-						<TabsTrigger value="/dash/org">
+						<TabsTrigger value="/dash/org" asChild>
 							<Link href="/dash/org" className="text-sm">
 								Your Organization
 							</Link>
 						</TabsTrigger>
 					)}
-					<TabsTrigger value="/dash/settings">
+					<TabsTrigger value="/dash/settings" asChild>
 						<Link href="/dash/settings" className="text-sm">
 							Settings
 						</Link>

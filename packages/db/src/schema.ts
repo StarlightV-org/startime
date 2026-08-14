@@ -37,7 +37,8 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	accounts: many(accounts),
 	sessions: many(sessions),
 	passkeys: many(passkeys),
-	invitations: many(invitations),
+	invitations: many(invitations, { relationName: "invitationRecipient" }),
+	sentInvitations: many(invitations, { relationName: "invitationInviter" }),
 	organization: one(organizations, {
 		fields: [users.organizationId],
 		references: [organizations.id],
@@ -232,10 +233,12 @@ export const invitationRelations = relations(invitations, ({ one }) => ({
 		references: [organizations.id],
 	}),
 	inviter: one(users, {
+		relationName: "invitationInviter",
 		fields: [invitations.inviterId],
 		references: [users.id],
 	}),
 	user: one(users, {
+		relationName: "invitationRecipient",
 		fields: [invitations.email],
 		references: [users.email],
 	}),
@@ -257,7 +260,6 @@ export const eventLogs = createTable("event_logs", {
 	fileHash: t.text("file_hash"),
 	editor: t.text("editor").notNull(),
 	platform: t.text("platform").notNull(),
-	gitBranch: t.text("git_branch"),
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
 });
 
@@ -275,7 +277,10 @@ export const eventImports = createTable("event_imports", {
 		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
 	status: t.text("status", { enum: eventImportStates }).notNull(),
 	fileId: t.text("file_id").references(() => files.id, { onDelete: "set null", onUpdate: "cascade" }),
+	fileName: t.text("file_name").notNull(),
 	message: t.text("message"),
+	totalRows: t.integer("total_rows").notNull().default(0),
+	processedRows: t.integer("processed_rows").notNull().default(0),
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: t.timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
 });

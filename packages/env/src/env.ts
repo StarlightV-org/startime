@@ -17,6 +17,11 @@ export const ENV = createEnv({
 		UPLOADTHING_TOKEN: z.string(),
 		UPLOADTHING_APPID: z.string(),
 
+		// INTERNAL SERVICES
+		IMPORTER_URL: z.url(),
+		IMPORTER_PORT: z.coerce.number().int().positive().default(3001),
+		INTERNAL_SERVICE_SECRET: z.string().min(32),
+
 		// MISC
 		FILE_HASH_KEY: z.string(),
 	},
@@ -51,6 +56,12 @@ export const ENV = createEnv({
 		// UPLOADTHING
 		UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
 		UPLOADTHING_APPID: process.env.UPLOADTHING_APPID,
+
+		// INTERNAL SERVICES
+		IMPORTER_URL: process.env.IMPORTER_URL,
+		INTERNAL_SERVICE_SECRET: process.env.INTERNAL_SERVICE_SECRET,
+
+		IMPORTER_PORT: process.env.IMPORTER_PORT,
 
 		// MISC
 		FILE_HASH_KEY: process.env.FILE_HASH_KEY,

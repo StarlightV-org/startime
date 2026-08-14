@@ -1,0 +1,12 @@
+{
+	"name": "@startime/importer",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bun --env-file ../../.env --watch src/index.ts",
+		"start": "bun --env-file ../../.env src/index.ts",
+		"check": "biome check .",
+		"ts": "tsc --noEmit"
+	}
+}

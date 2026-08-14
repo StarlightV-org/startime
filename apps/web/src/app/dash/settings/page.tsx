@@ -6,8 +6,6 @@ import { api } from "~/trpc/server";
 export default async function SettingsPage() {
 	const { data: imports } = await tryCatch(api.self.listImports());
 
-	Print.Debug("[IMPORTS]", imports);
-
 	return (
 		<div>
 			<h1 className="p-4 text-2xl">Settings</h1>

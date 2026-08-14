@@ -31,7 +31,7 @@ export default function DataManagement({ imports: initialImports }: { imports: A
 
 	const { data: imports, refetch } = api.self.listImports.useQuery(undefined, {
 		initialData: initialImports,
-		refetchInterval: hasPendingImports ? 2500 : false,
+		refetchInterval: hasPendingImports ? 1000 : false,
 	});
 
 	const form = useForm({
@@ -262,7 +262,7 @@ function ImportRow({ imp }: { imp: ImportItem }) {
 		<div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border px-2 py-1">
 			<div>
 				<p className="text-sm font-medium">
-					{imp.importFile?.fileName ?? "File already deleted"}{" "}
+					{imp.importFile?.fileName ?? imp.fileName ?? "No file name available"}
 					<span className="text-xs text-muted-foreground">
 						{imp.importFile?.size && `${(imp.importFile.size / 1024 / 1024).toFixed(2)} MB`}
 					</span>

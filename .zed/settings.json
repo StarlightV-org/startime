@@ -2,9 +2,9 @@
 	"language_servers": [
 		"!eslint",
 		"!typescript-language-server",
+		"!codetime",
 		// "!vtsls",
 		// "!tsgo",
-		// "!codetime",
 		// "biome",
 		// "discord_presence",
 		"...",
