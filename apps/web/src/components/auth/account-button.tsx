@@ -26,12 +26,14 @@ export default function AccountButton() {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className="mt-2 mr-5 flex items-center">
-				<span className="text-sm">{user.name}</span>
-				<Avatar>
-					<AvatarImage src={user.image!} alt={`User Avatar - ${user.name}`} />
-					<AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
-				</Avatar>
+			<DropdownMenuTrigger asChild>
+				<div className="mr-5 flex cursor-pointer items-center gap-2 rounded-md px-1 py-2 hover:bg-white/10">
+					<span className="text-sm">{user.name}</span>
+					<Avatar size="sm">
+						<AvatarImage src={user.image!} alt={`User Avatar - ${user.name}`} />
+						<AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+					</Avatar>
+				</div>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" sideOffset={10}>
 				<DropdownMenuGroup>

@@ -10,7 +10,7 @@ const timeRangeLabels: Record<TimeRange, string> = {
 	past7: "Last 7 days",
 	past30: "Last 30 days",
 	past90: "Last 90 days",
-	past365: "Last year",
+	past365: "Last 365 days",
 	thisDay: "Today",
 	thisWeek: "This week",
 	thisMonth: "This month",
@@ -24,6 +24,7 @@ export default function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 
 	const handleChange = (value: TimeRange) => {
 		setValue(value);
+		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		document.cookie = `startime_timeRange=${value}; path=/`;
 		router.refresh();
 	};
@@ -33,14 +34,15 @@ export default function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 			<SelectTrigger>
 				<SelectValue fallback={timeRangeLabels[value]} />
 			</SelectTrigger>
-			<SelectContent>
-				<SelectItem value="allTime">All Time</SelectItem>
+			<SelectContent position={"popper"}>
 				<SelectGroup>
 					<SelectLabel>Relative</SelectLabel>
+					<SelectItem value="allTime">All Time</SelectItem>
 					<SelectItem value="past1">Last 24 hours</SelectItem>
 					<SelectItem value="past7">Last 7 days</SelectItem>
 					<SelectItem value="past30">Last 30 days</SelectItem>
 					<SelectItem value="past90">Last 90 days</SelectItem>
+					<SelectItem value="past365">Last 365 days</SelectItem>
 				</SelectGroup>
 				<SelectGroup>
 					<SelectLabel>Absolute</SelectLabel>

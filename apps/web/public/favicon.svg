@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 32 448 448" role="img" aria-label="Pink clock logo">
+  <circle cx="256" cy="256" r="208" fill="#ff004e"/>
+  <circle cx="256" cy="256" r="160" fill="#ffffff"/>
+
+  <g stroke="#ff004e" stroke-width="18" stroke-linecap="round">
+    <path d="M256 78v26"/>
+    <path d="M434 256h-26"/>
+    <path d="M256 434v-26"/>
+    <path d="M78 256h26"/>
+  </g>
+
+  <rect x="239" y="128" width="34" height="138" rx="15" fill="#ff004e" transform="rotate(60 256 256)"/>
+  <rect x="239" y="248" width="34" height="105" rx="15" fill="#ff004e" transform="rotate(-30 256 256)"/>
+</svg>

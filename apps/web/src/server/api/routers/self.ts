@@ -1,9 +1,26 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-import { eventImports } from "@startime/db";
+import { eventImports, users } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
+import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
+import z from "zod";
+
+const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "Select a valid IANA time zone.");
+const startOfWeekSchema = z.enum(["monday", "sunday"]);
 
 export const selfRouter = createTRPCRouter({
+	updateSettings: protectedProcedure
+		.input(z.object({ timeZone: timeZoneSchema, startOfWeek: startOfWeekSchema }))
+		.mutation(async ({ ctx, input }) => {
+			const timeZone = normalizeTimeZone(input.timeZone);
+			const [user] = await ctx.db.select({ startOfWeek: users.startOfWeek }).from(users).where(eq(users.id, ctx.user.id));
+			const startOfWeek =
+				user?.startOfWeek?.startsWith("manual-") && user.startOfWeek ? user.startOfWeek : input.startOfWeek;
+
+			await ctx.db.update(users).set({ timeZone, startOfWeek }).where(eq(users.id, ctx.user.id));
+
+			return { timeZone, startOfWeek };
+		}),
 	listImports: protectedProcedure.query(async ({ ctx }) => {
 		const imports = await ctx.db.query.eventImports.findMany({
 			where: (imports, { eq, and }) => and(eq(imports.userId, ctx.user.id)),

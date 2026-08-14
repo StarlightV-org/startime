@@ -13,13 +13,20 @@ export async function getAuth(): Promise<SessionType> {
 		return { session: null, user: null } as unknown as SessionType;
 	}
 
-	const [org, invitation] = await Promise.allSettled([getUserOrg(data.user.id), getInvitation(data.user.email)]);
+	const [org, invitation, userData] = await Promise.allSettled([
+		getUserOrg(data.user.id),
+		getInvitation(data.user.email),
+		db.query.users.findFirst({ where: (users, { eq }) => eq(users.id, data.user.id) }),
+	]);
+
+	const user = userData.status === "fulfilled" ? userData.value : undefined;
 
 	return {
 		...data,
 		org: org.status === "fulfilled" ? org.value : undefined,
 		invitations: invitation.status === "fulfilled" ? invitation.value : [],
 		user: {
+			...(user ?? {}),
 			...data.user,
 			role: org.status === "fulfilled" ? (org.value.membership?.role ?? "member") : "member",
 		},
@@ -32,6 +39,8 @@ declare module "better-auth" {
 		invitations: Awaited<ReturnType<typeof getInvitation>> | [];
 		user: {
 			role: "member" | "admin" | "owner";
+			timeZone?: string | null;
+			startOfWeek?: "monday" | "sunday" | "manual-monday" | "manual-sunday" | null;
 		};
 	};
 

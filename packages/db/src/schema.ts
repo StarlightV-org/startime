@@ -34,7 +34,7 @@ export const users = createTable("users", {
 
 	timeZone: t.text("time_zone"),
 	language: t.text("language", { enum: ["en", "de"] }),
-	startOfWeek: t.text("start_of_week", { enum: ["monday", "sunday"] }),
+	startOfWeek: t.text("start_of_week", { enum: ["monday", "sunday", "manual-monday", "manual-sunday"] }),
 });
 
 export const userRelations = relations(users, ({ many, one }) => ({
@@ -249,23 +249,27 @@ export const invitationRelations = relations(invitations, ({ one }) => ({
 }));
 
 // MARK: EVENTS
-export const eventLogs = createTable("event_logs", {
-	id: t
-		.text("id")
-		.primaryKey()
-		.$defaultFn(() => generateShortId()),
-	userId: t
-		.text("user_id")
-		.notNull()
-		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
-	eventTime: t.timestamp("event_time", { withTimezone: true }).notNull(),
-	language: t.text("language").notNull(),
-	project: t.text("project").notNull(),
-	fileHash: t.text("file_hash"),
-	editor: t.text("editor").notNull(),
-	platform: t.text("platform").notNull(),
-	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
-});
+export const eventLogs = createTable(
+	"event_logs",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId()),
+		userId: t
+			.text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		eventTime: t.timestamp("event_time", { withTimezone: true }).notNull(),
+		language: t.text("language").notNull(),
+		project: t.text("project").notNull(),
+		fileHash: t.text("file_hash"),
+		editor: t.text("editor").notNull(),
+		platform: t.text("platform").notNull(),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
+	},
+	(table) => [t.index("event_logs_user_id_event_time_idx").on(table.userId, table.eventTime)],
+);
 
 const eventImportStates = ["uploaded", "pending", "completed", "failed"] as const;
 export type EventImportState = (typeof eventImportStates)[number];

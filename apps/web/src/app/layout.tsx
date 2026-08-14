@@ -13,6 +13,7 @@ import { getAuth } from "~/server/better-auth";
 import { SessionProvider } from "~/provider/session-provider";
 import { ConfirmModalProvider } from "~/components/ui/confirm-modal";
 import { Toaster } from "~/components/ui/sonner";
+import { TimeZoneSync } from "~/components/time-zone-sync";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -22,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	return {
 		title: "Startime",
 		description: "Startime tracks your time spend coding.",
-		icons: [{ rel: "icon", url: "/favicon.ico" }],
+		icons: [{ rel: "icon", url: "/favicon.svg" }],
 	};
 }
 
@@ -49,6 +50,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 							<HydrateClient>
 								<ConfirmModalProvider>
 									<TooltipProvider>
+										<TimeZoneSync />
 										<Toaster />
 										{children}
 									</TooltipProvider>

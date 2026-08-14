@@ -1,100 +1,100 @@
-import { sql } from "drizzle-orm";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { TZDate } from "@date-fns/tz";
 import { eventLogs } from "@startime/db";
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, eq, gte, lt, sql } from "drizzle-orm";
 import {
-	startOfDay,
-	endOfDay,
-	subHours,
-	subDays,
-	startOfWeek,
-	endOfWeek,
-	endOfMonth,
-	endOfYear,
-	startOfMonth,
-	startOfYear,
-} from "date-fns/fp";
+	getTimeRange,
+	normalizeTimeZone,
+	timeRangeValues,
+	toDayString,
+	toTimeString,
+	type TimeRange,
+} from "~/lib/time-range";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import z from "zod";
 
-export type TimeRange =
-	// The Past 24 hours
-	| "past1"
-	// The Past 7 days
-	| "past7"
-	// The Past 30 days
-	| "past30"
-	// The Past 90 days
-	| "past90"
-	// The Past 365 days
-	| "past365"
-	// This day
-	| "thisDay"
-	// This week
-	| "thisWeek"
-	// This month
-	| "thisMonth"
-	// This year
-	| "thisYear"
-	// All time
-	| "allTime";
+export { getTimeRange, type TimeRange } from "~/lib/time-range";
 
-export function getTimeRange(timeRange: TimeRange): [Date, Date] | [null, null] {
-	switch (timeRange) {
-		case "past1":
-			return [subDays(1, new Date()), new Date()];
-		case "past7":
-			return [subDays(7, new Date()), new Date()];
-		case "past30":
-			return [subDays(30, new Date()), new Date()];
-		case "past90":
-			return [subDays(90, new Date()), new Date()];
-		case "past365":
-			return [subDays(365, new Date()), new Date()];
-		case "thisDay":
-			return [startOfDay(new Date()), endOfDay(new Date())];
-		case "thisWeek":
-			return [startOfWeek(new Date()), endOfWeek(new Date())];
-		case "thisMonth":
-			return [startOfMonth(new Date()), endOfMonth(new Date())];
-		case "thisYear":
-			return [startOfYear(new Date()), endOfYear(new Date())];
-		case "allTime":
-			return [null, null];
+const timeRangeSchema = z.enum(timeRangeValues);
+
+const millisecondsPerDay = 86_400_000;
+
+function toDayNumber(day: string): number {
+	return Math.floor(new Date(day).getTime() / millisecondsPerDay);
+}
+
+function getStreaks(activeDays: string[], today: string) {
+	const days = [...new Set(activeDays.map(toDayNumber))].sort((a, b) => a - b);
+	const activeDaySet = new Set(days);
+
+	let currentStreak = 0;
+	for (let day = toDayNumber(today); activeDaySet.has(day); day--) {
+		currentStreak++;
 	}
+
+	let allTimeStreak = 0;
+	let streak = 0;
+	let previousDay: number | undefined;
+
+	for (const day of days) {
+		streak = previousDay === day - 1 ? streak + 1 : 1;
+		allTimeStreak = Math.max(allTimeStreak, streak);
+		previousDay = day;
+	}
+
+	return { currentStreak, allTimeStreak };
+}
+
+function getLocalDate(timeZone: string): string {
+	const now = TZDate.tz(timeZone);
+
+	return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join(
+		"-",
+	);
 }
 
 export const overviewRouter = createTRPCRouter({
-	getTime: protectedProcedure.input(z.string() as z.ZodType<TimeRange>).query(async ({ ctx, input }) => {
-		const [start, end] = getTimeRange(input);
+	getActivity: protectedProcedure.input(timeRangeSchema).query(async ({ ctx, input }) => {
+		const [start, end] = getTimeRange(input, ctx.user.timeZone, undefined, ctx.user.startOfWeek);
+		const [startToday, endToday] = getTimeRange("thisDay", ctx.user.timeZone, undefined, ctx.user.startOfWeek);
 
-		const activeMinutes = ctx.db.$with("active_minutes").as(
+		if (!startToday || !endToday) {
+			throw new Error("Unable to determine the current day range");
+		}
+
+		const timeZone = normalizeTimeZone(ctx.user.timeZone);
+		const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
+		const rangeFilter = and(
+			eq(eventLogs.userId, ctx.user.id),
+			start ? gte(eventLogs.eventTime, start) : undefined,
+			end ? lt(eventLogs.eventTime, end) : undefined,
+		);
+		const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
+
+		const [activityResult, activeDays] = await Promise.all([
 			ctx.db
-				.selectDistinct({
-					minute: sql<Date>`date_trunc('minute', ${eventLogs.eventTime})`.as("minute"),
+				.select({
+					activeMinutes: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
+					activeMinutesToday: sql<number>`
+						count(distinct date_trunc('minute', ${eventLogs.eventTime}))
+						filter (where ${todayFilter})
+					`.mapWith(Number),
 				})
 				.from(eventLogs)
-				.where(
-					and(
-						eq(eventLogs.userId, ctx.user.id),
-						start ? gte(eventLogs.eventTime, start) : undefined,
-						end ? lt(eventLogs.eventTime, end) : undefined,
-					),
-				),
+				.where(rangeFilter),
+			ctx.db.selectDistinct({ day: activeDay }).from(eventLogs).where(eq(eventLogs.userId, ctx.user.id)),
+		]);
+
+		const activity = activityResult[0];
+		const { currentStreak, allTimeStreak } = getStreaks(
+			activeDays.map(({ day }) => day),
+			getLocalDate(timeZone),
 		);
 
-		const [result] = await ctx.db
-			.with(activeMinutes)
-			.select({
-				activeSeconds: sql<number>`count(*) * 60`.mapWith(Number),
-				activeMinutes: sql<number>`count(*)`.mapWith(Number),
-			})
-			.from(activeMinutes);
-
-		if (!result) return null;
-
-		const fullHours = Math.floor(result.activeMinutes / 60);
-		const remainingMinutes = result.activeMinutes - fullHours * 60;
-
-		return { fullHours, remainingMinutes };
+		return {
+			timeTotal: toTimeString(activity?.activeMinutes ?? 0),
+			timeToday: toTimeString(activity?.activeMinutesToday ?? 0),
+			currentStreak: toDayString(currentStreak),
+			allTimeStreak: toDayString(allTimeStreak),
+		};
 	}),
 });

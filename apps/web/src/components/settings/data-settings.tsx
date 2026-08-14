@@ -5,27 +5,25 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { useState } from "react";
 import { Separator } from "../ui/separator";
-import { generateClientDropzoneAccept } from "uploadthing/client";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { useForm, useSelector } from "@tanstack/react-form";
 import z from "zod";
 import { Input } from "../ui/input";
 import { useDisclosure } from "@mantine/hooks";
-import { XIcon } from "lucide-react";
+import { TrashIcon, XIcon } from "lucide-react";
 import { uploadthingToast, useUploadThing } from "../uploadthing";
-import { useRouter } from "next/navigation";
 import type { API } from "~/trpc/server";
 import { formatDate } from "date-fns";
 import { api } from "~/trpc/react";
 import { useEffect } from "react";
 import type { EventImportState } from "@startime/db";
 import { Spinner } from "../ui/spinner";
+import Link from "next/link";
 
 type ImportItem = NonNullable<NonNullable<API["self"]["listImports"]>["pendingImports"]>[number];
 
 export default function DataManagement({ imports: initialImports }: { imports: API["self"]["listImports"] }) {
 	const [opened, { toggle }] = useDisclosure();
-	const router = useRouter();
 
 	const [hasPendingImports, setHasPendingImports] = useState(initialImports?.pendingImports?.length > 0);
 
@@ -135,6 +133,19 @@ export default function DataManagement({ imports: initialImports }: { imports: A
 									</div>
 								)}
 								<DialogTitle>Import CSV</DialogTitle>
+								<p>
+									Currently we support the CSV format form:
+									{/*<br /> - StarTime (this app)*/}
+									<br /> -{" "}
+									<Link
+										className="cursor-pointer text-sidebar-primary hover:underline"
+										href="https://codetime.dev"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										codetime.dev
+									</Link>
+								</p>
 								<form.Subscribe
 									selector={(state) => [state.values.file]}
 									children={([file]) =>
@@ -261,10 +272,17 @@ function ImportRow({ imp }: { imp: ImportItem }) {
 	return (
 		<div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border px-2 py-1">
 			<div>
-				<p className="text-sm font-medium">
+				<p className="flex flex-row items-center gap-x-1 text-sm font-medium">
 					{imp.importFile?.fileName ?? imp.fileName ?? "No file name available"}
+
 					<span className="text-xs text-muted-foreground">
 						{imp.importFile?.size && `${(imp.importFile.size / 1024 / 1024).toFixed(2)} MB`}
+					</span>
+					<span
+						title={`The file was deleted after the import${imp.status === "completed" ? " was completed" : " failed"}`}
+						className="cursor-help text-xs text-muted-foreground"
+					>
+						(deleted)
 					</span>
 				</p>
 			</div>

@@ -8,6 +8,8 @@ import type { API } from "~/trpc/server";
 import type { SessionType } from "better-auth";
 import { useSession } from "~/provider/session-provider";
 import { useEffect } from "react";
+import { Avatar, AvatarImage } from "./avatar";
+import { Separator } from "./separator";
 
 export function HeaderBar() {
 	const pathname = usePathname();
@@ -16,11 +18,17 @@ export function HeaderBar() {
 
 	return (
 		<header className="sticky top-0 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">
-			<div className="flex items-center justify-between">
-				<h1 className="text-3xl text-white">Startime</h1>
+			<div className="flex items-center justify-between px-6 pt-4">
+				<div className="flex items-center gap-2">
+					<Avatar size="lg">
+						<AvatarImage src="/favicon.svg" />
+					</Avatar>
+					<h1 className="text-3xl text-white">Star Time</h1>
+				</div>
 				<AccountButton />
 			</div>
-			<Tabs value={pathname}>
+			<Separator className="my-1" />
+			<Tabs value={pathname} className="px-6 pb-1">
 				<TabsList
 					className="h-10! space-x-2"
 					onClick={() => {
