@@ -1,3 +1,4 @@
+import { refresh } from "next/cache";
 import { AccountSettings, DataSettings, OrgSettings } from "~/components/settings";
 
 export default function SettingsPage() {

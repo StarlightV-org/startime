@@ -37,7 +37,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<head>
 				<meta name="darkreader-lock" />
 			</head>
-			<body>
+			<body className="@container/body">
 				<SessionProvider initialSession={session}>
 					<NuqsAdapter>
 						<TRPCReactProvider>

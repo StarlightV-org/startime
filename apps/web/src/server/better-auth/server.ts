@@ -13,30 +13,49 @@ export async function getAuth(): Promise<SessionType> {
 		return { session: null, user: null } as unknown as SessionType;
 	}
 
-	const [org, invitation] = await Promise.allSettled([getUserOrg(data.user), getInvitation(data.user)]);
+	const [org, invitation] = await Promise.allSettled([getUserOrg(data.user.id), getInvitation(data.user.email)]);
 
 	return {
 		...data,
 		org: org.status === "fulfilled" ? org.value : undefined,
-		invitations: invitation.status === "fulfilled" ? invitation.value : undefined,
+		invitations: invitation.status === "fulfilled" ? invitation.value : [],
+		user: {
+			...data.user,
+			role: org.status === "fulfilled" ? (org.value.membership?.role ?? "member") : "member",
+		},
 	};
 }
 
 declare module "better-auth" {
 	export type SessionType = typeof auth.$Infer.Session & {
 		org: Awaited<ReturnType<typeof getUserOrg>> | undefined;
-		invitations: Awaited<ReturnType<typeof getInvitation>> | undefined;
+		invitations: Awaited<ReturnType<typeof getInvitation>> | [];
+		user: {
+			role: "member" | "admin" | "owner";
+		};
 	};
+
+	export type OrgType = NonNullable<SessionType["org"]>;
 }
 
-export async function getUserOrg(user: SessionType["user"]) {
+export async function getUserOrg(userId: string) {
 	const data = await db.query.users.findFirst({
-		where: (users, { eq }) => eq(users.id, user.id),
+		where: (users, { eq }) => eq(users.id, userId),
 		columns: {},
 		with: {
+			memberships: true,
 			organization: {
 				with: {
-					invitations: true,
+					invitations: {
+						where: (invitations, { eq }) => eq(invitations.status, "pending"),
+						with: {
+							user: {
+								columns: {
+									email: false,
+								},
+							},
+						},
+					},
 					members: {
 						with: {
 							user: {
@@ -50,25 +69,25 @@ export async function getUserOrg(user: SessionType["user"]) {
 			},
 		},
 	});
-	return data?.organization;
+
+	return {
+		...data?.organization,
+		membership: data?.memberships ? data?.memberships[0] : undefined,
+		members: data?.organization?.members ?? [],
+	};
 }
 
-export async function getInvitation(user: SessionType["user"]) {
-	const data = await db.query.users.findFirst({
-		where: (users, { eq }) => eq(users.id, user.id),
-		columns: {},
+export async function getInvitation(userEmail: string) {
+	const data = await db.query.invitations.findMany({
+		where: (invitations, { eq, and }) => and(eq(invitations.email, userEmail), eq(invitations.status, "pending")),
 		with: {
-			invitations: {
-				with: {
-					user: {
-						columns: {
-							email: false,
-						},
-					},
-					organization: true,
+			user: {
+				columns: {
+					email: false,
 				},
 			},
+			organization: true,
 		},
 	});
-	return data?.invitations;
+	return data;
 }

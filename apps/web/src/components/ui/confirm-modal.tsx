@@ -169,8 +169,8 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 								<div className="min-w-44 shrink-0 text-left text-sm text-muted-foreground">
 									{remainingSeconds != null && remainingSeconds > 0 && (
 										<span>
-											Noch {remainingSeconds} {remainingSeconds === 1 ? "Sekunde" : "Sekunden"}{" "}
-											{state.requiredValue != null ? "bis zur Eingabe" : "bis zur Bestätigung"}
+											Wait {remainingSeconds} {remainingSeconds === 1 ? "second" : "seconds"}{" "}
+											{/*{state.requiredValue != null ? "bis zur Eingabe" : "bis zur Bestätigung"}*/}
 										</span>
 									)}
 								</div>

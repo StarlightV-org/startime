@@ -14,6 +14,10 @@ import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "~/provider/session-provider";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { formatDate, formatDistanceToNowStrict } from "date-fns";
+import { useConfirmModal } from "../ui/confirm-modal";
+import { tryCatch } from "~/lib/utils";
 
 export const normalizeSlug = (value: string) =>
 	value
@@ -30,6 +34,8 @@ export default function DataManagement() {
 
 	const [opened, { toggle }] = useDisclosure();
 	const router = useRouter();
+
+	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
 
 	const { mutate } = api.org.create.useMutation({
 		onSuccess: () => {
@@ -57,6 +63,8 @@ export default function DataManagement() {
 			),
 		logo: z.string().min(5, "Logo must be at least 5 characters.").or(z.literal("")),
 	});
+
+	const confirmModal = useConfirmModal();
 
 	const form = useForm({
 		defaultValues: {
@@ -99,13 +107,54 @@ export default function DataManagement() {
 				</Button>*/}
 
 				{!!invitations?.length && (
-					<CardDescription>
-						{invitations.length} invitations
-						<span className="text-sm text-muted-foreground">TODO: ADD Accept Invitation</span>
+					<CardDescription className="space-y-2 px-4">
+						<span className="text-sm text-muted-foreground">Pending invitations: {invitations.length}</span>
+
+						{invitations.map((invitation) => (
+							<div className="flex justify-between" key={invitation.id}>
+								<div className="flex items-center space-x-2">
+									<Avatar size="sm">
+										<AvatarImage src={invitation.organization.logo!} alt={invitation.user.name} />
+										<AvatarFallback>{invitation.organization.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+									</Avatar>
+									<span className="text-md">{invitation.organization.name}</span>
+									<span className="text-md">
+										{"Created: "}
+										{formatDate(invitation.organization.createdAt, "dd.MM.yyyy")}
+										{" - "}
+										{formatDistanceToNowStrict(invitation.organization.createdAt, {
+											addSuffix: true,
+										})}
+									</span>
+								</div>
+								<Button
+									onClick={async () => {
+										const result = await confirmModal({
+											content: "Are you sure you want to accept this invitation?",
+											title: `Accept invitation to ${invitation.organization.name}`,
+											confirmLabel: "Accept",
+										});
+										if (result) {
+											toast.loading("Accepting invitation...", { id: "accept-invitation", description: undefined });
+											const { data, error } = await tryCatch(acceptInvite({ invitationId: invitation.id }));
+											if (data) {
+												toast.success("Invitation accepted.", { id: "accept-invitation" });
+												router.refresh();
+											}
+											if (error) {
+												toast.error("Failed to accept invitation.", { id: "accept-invitation", description: error.message });
+											}
+										}
+									}}
+								>
+									Accept
+								</Button>
+							</div>
+						))}
 					</CardDescription>
 				)}
 
-				<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>
+				{/*<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>*/}
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
 						<DialogTrigger asChild>

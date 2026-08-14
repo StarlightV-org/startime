@@ -26,13 +26,15 @@ import { getAuth } from "../better-auth";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-	const { session, user } = await getAuth();
+	const { session, user, invitations, org } = await getAuth();
 
 	return {
 		...opts,
 		db,
 		session,
 		user,
+		invitations,
+		org,
 		headers: opts.headers,
 	};
 };

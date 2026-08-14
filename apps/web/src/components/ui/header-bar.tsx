@@ -2,15 +2,21 @@
 
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import AccountButton from "../auth/account-button";
 import type { API } from "~/trpc/server";
 import type { SessionType } from "better-auth";
 import { useSession } from "~/provider/session-provider";
+import { useEffect } from "react";
 
 export function HeaderBar() {
 	const pathname = usePathname();
+	const router = useRouter();
 	const { org } = useSession();
+
+	useEffect(() => {
+		router.refresh();
+	}, [pathname]);
 
 	return (
 		<header className="sticky top-0 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">

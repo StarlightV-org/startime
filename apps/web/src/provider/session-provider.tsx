@@ -21,3 +21,21 @@ export function SessionProvider({ children, initialSession }: { children: ReactN
 
 	return <SessionContext.Provider value={initialSession}>{children}</SessionContext.Provider>;
 }
+
+const roleLevel = {
+	member: 0,
+	admin: 1,
+	owner: 2,
+} as const;
+
+type Role = keyof typeof roleLevel;
+
+export function useRole() {
+	const { user } = useSession();
+
+	return (role: Role) => {
+		if (!user || !(user.role in roleLevel)) return false;
+
+		return roleLevel[user.role as Role] >= roleLevel[role];
+	};
+}

@@ -3,7 +3,7 @@ import { api } from "~/trpc/server";
 
 export default async function DashLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="mx-auto min-h-screen max-w-1/2">
+		<div className="mx-auto min-h-screen max-w-240 px-5">
 			<HeaderBar />
 			{children}
 		</div>

@@ -28,8 +28,6 @@ export const users = createTable("users", {
 	email: t.text("email").notNull().unique(),
 	emailVerified: t.boolean("email_verified").notNull().default(false),
 	image: t.text("image"),
-	role: t.text("role").notNull().default("member"),
-	profile: t.jsonb("profile").notNull().default({}),
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 	organizationId: t.text("organization_id").references(() => organizations.id),
@@ -44,6 +42,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		fields: [users.organizationId],
 		references: [organizations.id],
 	}),
+	memberships: many(members),
 }));
 
 export const accounts = createTable("accounts", {
@@ -163,7 +162,10 @@ export const organizationRelations = relations(organizations, ({ many }) => ({
 export const members = createTable(
 	"members",
 	{
-		id: t.text("id").primaryKey(),
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId(8)),
 		organizationId: t
 			.text("organization_id")
 			.notNull()
@@ -172,7 +174,7 @@ export const members = createTable(
 			.text("user_id")
 			.notNull()
 			.references(() => users.id, { onDelete: "cascade" }),
-		role: t.text("role").default("member").notNull(),
+		role: t.text("role").default("member").notNull().$type<"owner" | "admin" | "member">(),
 		createdAt: t.timestamp("created_at").notNull(),
 	},
 	(table) => [
@@ -202,16 +204,19 @@ export const invitations = createTable(
 		organizationId: t
 			.text("organization_id")
 			.notNull()
-			.references(() => organizations.id, { onDelete: "cascade" }),
-		email: t.text("email").notNull(),
+			.references(() => organizations.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		email: t
+			.text("email")
+			.notNull()
+			.references(() => users.email, { onDelete: "cascade", onUpdate: "cascade" }),
 		role: t.text("role"),
-		status: t.text("status").default("pending").notNull(),
+		status: t.text("status").default("pending").notNull().$type<"pending" | "accepted" | "declined">(),
 		expiresAt: t.timestamp("expires_at").notNull(),
 		createdAt: t.timestamp("created_at").defaultNow().notNull(),
 		inviterId: t
 			.text("inviter_id")
 			.notNull()
-			.references(() => users.id, { onDelete: "cascade" }),
+			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
 	},
 	(table) => [
 		t.index("invitation_organizationId_idx").on(table.organizationId),
@@ -226,9 +231,13 @@ export const invitationRelations = relations(invitations, ({ one }) => ({
 		fields: [invitations.organizationId],
 		references: [organizations.id],
 	}),
-	user: one(users, {
+	inviter: one(users, {
 		fields: [invitations.inviterId],
 		references: [users.id],
+	}),
+	user: one(users, {
+		fields: [invitations.email],
+		references: [users.email],
 	}),
 }));
 
