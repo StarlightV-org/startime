@@ -54,14 +54,15 @@ function getLocalDate(timeZone: string): string {
 
 export const overviewRouter = createTRPCRouter({
 	getActivity: protectedProcedure.input(timeRangeSchema).query(async ({ ctx, input }) => {
-		const [start, end] = getTimeRange(input, ctx.user.timeZone, undefined, ctx.user.startOfWeek);
-		const [startToday, endToday] = getTimeRange("thisDay", ctx.user.timeZone, undefined, ctx.user.startOfWeek);
+		const regional = ctx.user.accountConfig.regional;
+		const [start, end] = getTimeRange(input, regional.timeZone, undefined, regional.startOfWeek);
+		const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
 
 		if (!startToday || !endToday) {
 			throw new Error("Unable to determine the current day range");
 		}
 
-		const timeZone = normalizeTimeZone(ctx.user.timeZone);
+		const timeZone = normalizeTimeZone(regional.timeZone);
 		const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
 		const rangeFilter = and(
 			eq(eventLogs.userId, ctx.user.id),

@@ -20,7 +20,7 @@ export function SignInForm() {
 
 		const result = await authClient.signIn.social({
 			provider: "github",
-			callbackURL: "/",
+			callbackURL: "/dash",
 		});
 
 		if (result.error) {

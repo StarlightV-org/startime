@@ -16,7 +16,8 @@ export default async function DashPage() {
 	Print.Debug("timeRange", timeRange);
 	const { data, error } = await tryCatch(api.overview.getActivity(timeRange));
 	Print.Debug("data", data, "error", error);
-	const [start, end] = getTimeRange(timeRange, auth.user.timeZone, undefined, auth.user.startOfWeek);
+	const regional = auth.user.accountConfig.regional;
+	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 	return (
 		<div>
 			<h1 className="p-4 text-2xl">Overview</h1>

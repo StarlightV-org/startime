@@ -12,6 +12,7 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuLabel,
 } from "../ui/dropdown-menu";
+import { authClient } from "~/server/better-auth/client";
 
 export default function AccountButton() {
 	const { user, session } = useSession();
@@ -39,7 +40,13 @@ export default function AccountButton() {
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>Account</DropdownMenuLabel>
 					<DropdownMenuItem>Settings</DropdownMenuItem>
-					<DropdownMenuItem className="text-destructive hover:bg-destructive/15! hover:text-destructive">
+					<DropdownMenuItem
+						onClick={() => {
+							void authClient.signOut();
+							window.location.href = "/";
+						}}
+						className="text-destructive hover:bg-destructive/15! hover:text-destructive"
+					>
 						Logout
 					</DropdownMenuItem>
 				</DropdownMenuGroup>

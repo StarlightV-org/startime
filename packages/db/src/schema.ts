@@ -32,9 +32,8 @@ export const users = createTable("users", {
 	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 	organizationId: t.text("organization_id").references(() => organizations.id),
 
-	timeZone: t.text("time_zone"),
-	language: t.text("language", { enum: ["en", "de"] }),
-	startOfWeek: t.text("start_of_week", { enum: ["monday", "sunday", "manual-monday", "manual-sunday"] }),
+	/** User-owned settings, parsed and defaulted by the web application's account config schema. */
+	accountConfig: t.jsonb("account_config").$type<unknown>().notNull().default({}),
 });
 
 export const userRelations = relations(users, ({ many, one }) => ({

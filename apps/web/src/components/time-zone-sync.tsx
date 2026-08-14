@@ -10,8 +10,8 @@ export function TimeZoneSync() {
 	const { user, session } = useSession();
 	const router = useRouter();
 	const synchronizedUserId = useRef<string | null>(null);
-	const { mutate } = api.self.updateSettings.useMutation({
-		onSuccess: () => router.refresh(),
+	const { mutate } = api.self.syncSettings.useMutation({
+		onSuccess: () => window.setTimeout(() => router.refresh(), 1000),
 	});
 
 	useEffect(() => {
@@ -20,18 +20,13 @@ export function TimeZoneSync() {
 		}
 
 		const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		const locale = new Intl.Locale(navigator.language) as Intl.Locale & {
-			getWeekInfo?: () => { firstDay: number };
-		};
-		const startOfWeek = locale.getWeekInfo?.().firstDay === 7 ? "sunday" : "monday";
-		const hasManualStartOfWeek = user.startOfWeek?.startsWith("manual-");
 		if (!timeZone) return;
 
 		synchronizedUserId.current = user.id;
-		if (user.timeZone !== timeZone || (!hasManualStartOfWeek && user.startOfWeek !== startOfWeek)) {
-			mutate({ timeZone, startOfWeek });
+		if (user.accountConfig.regional.timeZone !== timeZone) {
+			mutate({ timeZone });
 		}
-	}, [mutate, session?.id, user?.id, user?.startOfWeek, user?.timeZone]);
+	}, [mutate, session?.id, user?.accountConfig.regional.timeZone, user?.id]);
 
 	return null;
 }

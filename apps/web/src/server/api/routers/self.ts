@@ -2,25 +2,51 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 import { eventImports, users } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
+import {
+	checkAccountConfig,
+	normalizeAccountConfig,
+	setAccountConfigValue,
+	setAccountConfigValueSchema,
+} from "~/lib/account-config";
 import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
 import z from "zod";
 
 const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "Select a valid IANA time zone.");
-const startOfWeekSchema = z.enum(["monday", "sunday"]);
 
 export const selfRouter = createTRPCRouter({
-	updateSettings: protectedProcedure
-		.input(z.object({ timeZone: timeZoneSchema, startOfWeek: startOfWeekSchema }))
-		.mutation(async ({ ctx, input }) => {
-			const timeZone = normalizeTimeZone(input.timeZone);
-			const [user] = await ctx.db.select({ startOfWeek: users.startOfWeek }).from(users).where(eq(users.id, ctx.user.id));
-			const startOfWeek =
-				user?.startOfWeek?.startsWith("manual-") && user.startOfWeek ? user.startOfWeek : input.startOfWeek;
+	/** Updates one account preference after validating the path/value pair. */
+	setConfigValue: protectedProcedure.input(setAccountConfigValueSchema).mutation(async ({ ctx, input }) => {
+		const currentConfig = await ctx.db.query.users.findFirst({
+			where: (users, { eq }) => eq(users.id, ctx.user.id),
+			columns: { accountConfig: true },
+		});
+		if (!currentConfig) {
+			throw new Error("Config not found");
+		}
 
-			await ctx.db.update(users).set({ timeZone, startOfWeek }).where(eq(users.id, ctx.user.id));
+		const updatedConfig = normalizeAccountConfig(
+			setAccountConfigValue(checkAccountConfig(currentConfig.accountConfig), input.path, input.value),
+		);
+		await ctx.db.update(users).set({ accountConfig: updatedConfig }).where(eq(users.id, ctx.user.id));
 
-			return { timeZone, startOfWeek };
-		}),
+		return { success: true };
+	}),
+	/** Synchronizes the browser's IANA time zone without replacing account choices. */
+	syncSettings: protectedProcedure.input(z.object({ timeZone: timeZoneSchema })).mutation(async ({ ctx, input }) => {
+		const user = await ctx.db.query.users.findFirst({
+			where: (users, { eq }) => eq(users.id, ctx.user.id),
+			columns: { accountConfig: true },
+		});
+		if (!user) throw new Error("Config not found");
+
+		const accountConfig = setAccountConfigValue(
+			checkAccountConfig(user.accountConfig),
+			"regional.timeZone",
+			normalizeTimeZone(input.timeZone),
+		);
+		await ctx.db.update(users).set({ accountConfig }).where(eq(users.id, ctx.user.id));
+		return accountConfig;
+	}),
 	listImports: protectedProcedure.query(async ({ ctx }) => {
 		const imports = await ctx.db.query.eventImports.findMany({
 			where: (imports, { eq, and }) => and(eq(imports.userId, ctx.user.id)),

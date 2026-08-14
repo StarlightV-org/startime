@@ -3,6 +3,7 @@ import { auth } from ".";
 import { headers } from "next/headers";
 
 import { db } from "@startime/db";
+import { checkAccountConfig, type AccountConfig } from "~/lib/account-config";
 
 export async function getAuth(): Promise<SessionType> {
 	const data = await auth.api.getSession({
@@ -20,7 +21,7 @@ export async function getAuth(): Promise<SessionType> {
 	]);
 
 	const user = userData.status === "fulfilled" ? userData.value : undefined;
-
+	const accountConfig = checkAccountConfig(user?.accountConfig);
 	return {
 		...data,
 		org: org.status === "fulfilled" ? org.value : undefined,
@@ -29,6 +30,7 @@ export async function getAuth(): Promise<SessionType> {
 			...(user ?? {}),
 			...data.user,
 			role: org.status === "fulfilled" ? (org.value.membership?.role ?? "member") : "member",
+			accountConfig,
 		},
 	};
 }
@@ -39,8 +41,7 @@ declare module "better-auth" {
 		invitations: Awaited<ReturnType<typeof getInvitation>> | [];
 		user: {
 			role: "member" | "admin" | "owner";
-			timeZone?: string | null;
-			startOfWeek?: "monday" | "sunday" | "manual-monday" | "manual-sunday" | null;
+			accountConfig: AccountConfig;
 		};
 	};
 
