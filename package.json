@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@better-auth/drizzle-adapter": "^1.6.27",
 		"@better-auth/passkey": "^1.6.27",
+		"@date-fns/tz": "^1.5.0",
 		"@mantine/hooks": "^9.5.1",
 		"@startime/db": "workspace:*",
 		"@startime/env": "workspace:*",

@@ -143,7 +143,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 						}}
 					>
 						<SelectTrigger className="w-full max-w-40" disabled={user.id === member.userId}>
-							<SelectValue placeholder="Select a fruit" />
+							<SelectValue fallback={member.role.charAt(0).toUpperCase() + member.role.slice(1)} placeholder="Select a role" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>

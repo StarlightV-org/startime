@@ -2,11 +2,70 @@ import { sql } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { eventLogs } from "@startime/db";
 import { and, eq, gte, lt } from "drizzle-orm";
-import { startOfDay, endOfDay } from "date-fns/fp";
+import {
+	startOfDay,
+	endOfDay,
+	subHours,
+	subDays,
+	startOfWeek,
+	endOfWeek,
+	endOfMonth,
+	endOfYear,
+	startOfMonth,
+	startOfYear,
+} from "date-fns/fp";
+import z from "zod";
+
+export type TimeRange =
+	// The Past 24 hours
+	| "past1"
+	// The Past 7 days
+	| "past7"
+	// The Past 30 days
+	| "past30"
+	// The Past 90 days
+	| "past90"
+	// The Past 365 days
+	| "past365"
+	// This day
+	| "thisDay"
+	// This week
+	| "thisWeek"
+	// This month
+	| "thisMonth"
+	// This year
+	| "thisYear"
+	// All time
+	| "allTime";
+
+export function getTimeRange(timeRange: TimeRange): [Date, Date] | [null, null] {
+	switch (timeRange) {
+		case "past1":
+			return [subDays(1, new Date()), new Date()];
+		case "past7":
+			return [subDays(7, new Date()), new Date()];
+		case "past30":
+			return [subDays(30, new Date()), new Date()];
+		case "past90":
+			return [subDays(90, new Date()), new Date()];
+		case "past365":
+			return [subDays(365, new Date()), new Date()];
+		case "thisDay":
+			return [startOfDay(new Date()), endOfDay(new Date())];
+		case "thisWeek":
+			return [startOfWeek(new Date()), endOfWeek(new Date())];
+		case "thisMonth":
+			return [startOfMonth(new Date()), endOfMonth(new Date())];
+		case "thisYear":
+			return [startOfYear(new Date()), endOfYear(new Date())];
+		case "allTime":
+			return [null, null];
+	}
+}
 
 export const overviewRouter = createTRPCRouter({
-	getTotalTime: protectedProcedure.query(async ({ ctx }) => {
-		Print.Time("getTotalTime");
+	getTime: protectedProcedure.input(z.string() as z.ZodType<TimeRange>).query(async ({ ctx, input }) => {
+		const [start, end] = getTimeRange(input);
 
 		const activeMinutes = ctx.db.$with("active_minutes").as(
 			ctx.db
@@ -17,8 +76,8 @@ export const overviewRouter = createTRPCRouter({
 				.where(
 					and(
 						eq(eventLogs.userId, ctx.user.id),
-						gte(eventLogs.eventTime, startOfDay(new Date())),
-						lt(eventLogs.eventTime, endOfDay(new Date())), // exclusive end avoids boundary double-counting
+						start ? gte(eventLogs.eventTime, start) : undefined,
+						end ? lt(eventLogs.eventTime, end) : undefined,
 					),
 				),
 		);
@@ -30,8 +89,6 @@ export const overviewRouter = createTRPCRouter({
 				activeMinutes: sql<number>`count(*)`.mapWith(Number),
 			})
 			.from(activeMinutes);
-
-		Print.Time("getTotalTime");
 
 		if (!result) return null;
 

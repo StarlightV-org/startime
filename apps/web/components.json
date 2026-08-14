@@ -21,7 +21,6 @@
 	},
 	"menuColor": "default-translucent",
 	"menuAccent": "subtle",
-	"template": "bunx --bun shadcn@latest init --preset b4zju2izy --base radix --template next --pointer",
 	"registries": {
 		"@svgl": "https://svgl.app/r/{name}.json"
 	}

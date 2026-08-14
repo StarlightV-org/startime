@@ -31,6 +31,10 @@ export const users = createTable("users", {
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 	organizationId: t.text("organization_id").references(() => organizations.id),
+
+	timeZone: t.text("time_zone"),
+	language: t.text("language", { enum: ["en", "de"] }),
+	startOfWeek: t.text("start_of_week", { enum: ["monday", "sunday"] }),
 });
 
 export const userRelations = relations(users, ({ many, one }) => ({
