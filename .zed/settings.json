@@ -1,0 +1,23 @@
+{
+	"language_servers": [
+		"!eslint",
+		"!typescript-language-server",
+		// "!vtsls",
+		// "!tsgo",
+		// "!codetime",
+		// "biome",
+		// "discord_presence",
+		"...",
+	],
+	"lsp": {
+		"harper-ls": {
+			"settings": {
+				"harper-ls": {
+					// Use a specific English dialect
+
+					"linters": {},
+				},
+			},
+		},
+	},
+}

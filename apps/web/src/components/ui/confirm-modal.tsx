@@ -127,7 +127,7 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 			{state && (
 				<Dialog open={!!state} onOpenChange={handleOpenChange}>
 					<DialogContent
-						className="gap-1 sm:max-w-[500px]"
+						className="gap-1 sm:max-w-125"
 						// onPointerDownOutside={(e) => {
 						// 	if (!state.closeOnClickOutside) e.preventDefault();
 						// }}

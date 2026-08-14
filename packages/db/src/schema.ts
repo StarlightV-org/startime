@@ -247,11 +247,65 @@ export const eventLogs = createTable("event_logs", {
 		.text("id")
 		.primaryKey()
 		.$defaultFn(() => generateShortId()),
+	userId: t
+		.text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
 	eventTime: t.timestamp("event_time", { withTimezone: true }).notNull(),
 	language: t.text("language").notNull(),
 	project: t.text("project").notNull(),
 	fileHash: t.text("file_hash"),
 	editor: t.text("editor").notNull(),
 	platform: t.text("platform").notNull(),
+	gitBranch: t.text("git_branch"),
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
 });
+
+const eventImportStates = ["uploaded", "pending", "completed", "failed"] as const;
+export type EventImportState = (typeof eventImportStates)[number];
+
+export const eventImports = createTable("event_imports", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	userId: t
+		.text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	status: t.text("status", { enum: eventImportStates }).notNull(),
+	fileId: t.text("file_id").references(() => files.id, { onDelete: "set null", onUpdate: "cascade" }),
+	message: t.text("message"),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+});
+
+export const eventImportRelations = relations(eventImports, ({ one }) => ({
+	importFile: one(files, { fields: [eventImports.fileId], references: [files.id] }),
+}));
+
+export const fileLocations = ["none", "user_import"] as const;
+export type FileLocation = (typeof fileLocations)[number];
+
+export const files = createTable(
+	"files",
+	{
+		id: t
+			.varchar("id", { length: 255 })
+			.notNull()
+			.primaryKey()
+			.$defaultFn(() => generateShortId()),
+		createdBy: t.varchar("created_by", { length: 255 }).notNull(),
+		fileName: t.varchar("file_name", { length: 255 }).notNull(),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+		fileKey: t.varchar("file_key", { length: 255 }).notNull(),
+		fileUrl: t.varchar("file_url", { length: 1024 }).notNull(),
+		size: t.integer("size").notNull(),
+		lastModified: t.integer("last_modified"),
+		type: t.varchar("type", { length: 255 }).notNull(),
+		location: t.varchar("location", { length: 255, enum: fileLocations }).default("none"),
+		locationId: t.varchar("location_id", { length: 255 }),
+		metadata: t.json("metadata").$type<{ [key: string]: any }>(),
+	},
+	(table) => [t.index("files_size_idx").on(table.size)],
+);

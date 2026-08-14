@@ -14,6 +14,10 @@ import { SessionProvider } from "~/provider/session-provider";
 import { ConfirmModalProvider } from "~/components/ui/confirm-modal";
 import { Toaster } from "~/components/ui/sonner";
 
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/uploadthing/core";
+
 export async function generateMetadata(): Promise<Metadata> {
 	return {
 		title: "Startime",
@@ -38,6 +42,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 				<meta name="darkreader-lock" />
 			</head>
 			<body className="@container/body">
+				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 				<SessionProvider initialSession={session}>
 					<NuqsAdapter>
 						<TRPCReactProvider>

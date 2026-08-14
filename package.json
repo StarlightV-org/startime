@@ -33,6 +33,7 @@
 		"@trpc/client": "^11.18.0",
 		"@trpc/react-query": "^11.18.0",
 		"@trpc/server": "^11.18.0",
+		"@uploadthing/react": "^7.3.3",
 		"better-auth": "^1.6.27",
 		"chalk": "^6.0.0",
 		"date-fns": "^4.4.0",
@@ -40,8 +41,10 @@
 		"next": "^16.3.0",
 		"nuqs": "^2.9.5",
 		"postgres": "^3.4.9",
+		"react-dropzone": "^20.1.0",
 		"short-unique-id": "^5.3.2",
 		"superjson": "^2.2.6",
+		"uploadthing": "^7.7.4",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
