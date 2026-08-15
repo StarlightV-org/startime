@@ -12,6 +12,10 @@ export async function proxy(request: NextRequest) {
 		return NextResponse.redirect(new URL("/auth/signin", request.url));
 	}
 
+	if (request.nextUrl.pathname.startsWith("/auth") && session.id) {
+		return NextResponse.redirect(new URL("/dash", request.url));
+	}
+
 	return NextResponse.next();
 }
 
@@ -19,5 +23,5 @@ export async function proxy(request: NextRequest) {
 // export default function proxy(request: NextRequest) { ... }
 
 export const config = {
-	matcher: ["/dash/:path*", "/"],
+	matcher: ["/dash/:path*", "/auth/:path*", "/"],
 } as ProxyConfig;

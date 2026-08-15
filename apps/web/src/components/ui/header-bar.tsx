@@ -18,13 +18,15 @@ export function HeaderBar() {
 
 	return (
 		<header className="sticky top-0 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">
-			<div className="flex items-center justify-between px-6 pt-4">
-				<div className="flex items-center gap-2">
-					<Avatar size="lg">
-						<AvatarImage src="/favicon.svg" />
-					</Avatar>
-					<h1 className="text-3xl text-white">Star Time</h1>
-				</div>
+			<div className="flex items-center justify-between px-6 pt-3 pb-1">
+				<Link href="/" className="text-3xl text-white" prefetch={false}>
+					<div className="flex items-center gap-2">
+						<Avatar size="lg">
+							<AvatarImage src="/favicon.svg" />
+						</Avatar>
+						<h1 className="text-3xl text-white">Star Time</h1>
+					</div>
+				</Link>
 				<AccountButton />
 			</div>
 			<Separator className="my-1" />

@@ -129,16 +129,16 @@ function AutoConfigField({
 export function AutoConfigSettings({ config, disabled, onValueChange, onValueCommit }: Props) {
 	return sections.map((section) => (
 		<Card key={section.cardTitle}>
-			<CardHeader>
+			{/*<CardHeader>
 				<CardTitle>{section.cardTitle}</CardTitle>
 				{section.cardDescription ? <p className="text-sm text-muted-foreground">{section.cardDescription}</p> : null}
-			</CardHeader>
-			<CardContent className="flex flex-col gap-8">
+			</CardHeader>*/}
+			<CardContent className="flex flex-col gap-8 px-4">
 				{section.subgroups.map((group) => (
 					<div key={group.groupId} className="flex flex-col gap-1">
 						{group.title ? (
 							<div>
-								<h2 className="text-xl font-medium">{group.title}</h2>
+								<h2 className="text-lg font-medium">{group.title}</h2>
 								{group.description ? <p className="mt-1 text-sm text-muted-foreground">{group.description}</p> : null}
 							</div>
 						) : null}

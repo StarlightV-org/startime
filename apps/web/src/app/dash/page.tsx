@@ -31,8 +31,7 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	const { data: top, error: topError } = await tryCatch(
 		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform } }),
 	);
-	// Print.Debug("data", activity, "error", activityError);
-	// Print.Debug("top", top, "error", topError);
+
 	const regional = auth.user.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 

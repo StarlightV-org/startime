@@ -148,8 +148,8 @@ export default function DataManagement({
 	return (
 		<Card>
 			<CardContent className="flex w-full flex-col">
-				<div className="flex w-full flex-row justify-between space-x-4 px-4">
-					<div className="flex w-1/2 flex-col">
+				<div className="flex w-full flex-row justify-between space-x-4">
+					<div className="flex w-full flex-col flex-nowrap">
 						<p>
 							Import CSV file from other sources. <br />
 							<span className="text-xs text-muted-foreground">
@@ -234,8 +234,8 @@ export default function DataManagement({
 						</Dialog>
 					</div>
 
-					<Separator orientation="vertical" className="w-fit" />
-					<div className="flex w-1/2 flex-col justify-end">
+					<Separator orientation="vertical" />
+					<div className="flex w-full flex-col justify-end">
 						<p>
 							Export your data to a ZIP file. <br />
 							<span className="text-xs text-muted-foreground">Export all of your data, associated with your account.</span>
@@ -283,12 +283,12 @@ export default function DataManagement({
 					</div>
 				</div>
 				{imports && (
-					<div className="px-4">
+					<div className="">
 						<Separator className="my-4" />
 
 						<div className="space-y-2">
 							{imports.pendingImports?.length > 0 && (
-								<section className="space-y-3">
+								<section className="space-y-1.5">
 									<h3 className="flex items-center gap-1 text-sm font-medium">
 										Pending imports <Spinner className="size-3" />
 									</h3>
@@ -305,7 +305,7 @@ export default function DataManagement({
 								<section className="w-full">
 									<h3 className="text-sm font-medium">Past imports</h3>
 
-									<div className="space-y-3">
+									<div className="space-y-1.5">
 										{imports.otherImports.slice(0, 4).map((imp) => (
 											<ImportRow key={imp.id} imp={imp} />
 										))}

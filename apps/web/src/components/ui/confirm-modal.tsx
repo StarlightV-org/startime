@@ -179,10 +179,10 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 							)}
 							<div className="flex shrink-0 gap-2">
 								<Button variant="outline" onClick={handleCancel}>
-									Abbrechen
+									Cancel
 								</Button>
 								<Button variant={state.variant ?? "destructive"} onClick={handleConfirm} disabled={!isMatch || !canInteract}>
-									{state.confirmLabel ?? "Bestätigen"}
+									{state.confirmLabel ?? "Confirm"}
 								</Button>
 							</div>
 						</DialogFooter>
