@@ -15,7 +15,7 @@ const timeRangeLabels: Record<TimeRange, string> = {
 	thisWeek: "This week",
 	thisMonth: "This month",
 	thisYear: "This year",
-	allTime: "All time",
+	allTime: "All Time",
 };
 
 export default function TimeSelect({ timeRange }: { timeRange: TimeRange }) {

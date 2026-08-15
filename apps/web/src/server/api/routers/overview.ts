@@ -11,6 +11,7 @@ import {
 } from "~/lib/time-range";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import z from "zod";
+import type { API } from "~/trpc/server";
 
 export { getTimeRange, type TimeRange } from "~/lib/time-range";
 
@@ -51,6 +52,8 @@ function getLocalDate(timeZone: string): string {
 		"-",
 	);
 }
+
+export type OverviewTopElement = API["overview"]["getTop"]["editor"]["p1"];
 
 export const overviewRouter = createTRPCRouter({
 	getActivity: protectedProcedure.input(timeRangeSchema).query(async ({ ctx, input }) => {
@@ -98,4 +101,82 @@ export const overviewRouter = createTRPCRouter({
 			allTimeStreak: toDayString(allTimeStreak),
 		};
 	}),
+
+	getTop: protectedProcedure
+		.input(
+			z.object({
+				timeRange: timeRangeSchema,
+				filter: z.object({
+					editor: z.string().or(z.literal("")),
+					workspace: z.string().or(z.literal("")),
+					language: z.string().or(z.literal("")),
+					platform: z.string().or(z.literal("")),
+				}),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { timeRange, filter } = input;
+			Print.Debug("filter", filter);
+			const regional = ctx.user.accountConfig.regional;
+			const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
+
+			const where = and(
+				eq(eventLogs.userId, ctx.user.id),
+				start ? gte(eventLogs.eventTime, start) : undefined,
+				end ? lt(eventLogs.eventTime, end) : undefined,
+				filter.editor ? eq(eventLogs.editor, filter.editor) : undefined,
+				filter.workspace ? eq(eventLogs.project, filter.workspace) : undefined,
+				filter.language ? eq(eventLogs.language, filter.language) : undefined,
+				filter.platform ? eq(eventLogs.platform, filter.platform) : undefined,
+			);
+
+			// Print.Debug("where", where?.getSQL());
+
+			const events = await ctx.db
+				.select({
+					editor: eventLogs.editor,
+					workspace: eventLogs.project,
+					language: eventLogs.language,
+					platform: eventLogs.platform,
+				})
+				.from(eventLogs)
+				.where(where);
+
+			const rankedItems = (values: string[]) => {
+				const counts = new Map<string, number>();
+				for (const value of values) {
+					counts.set(value, (counts.get(value) ?? 0) + 1);
+				}
+
+				const totalEvents = values.length;
+				const topItems = [...counts.entries()]
+					.map(([value, eventCount]) => ({
+						value,
+						eventCount,
+						percentage: totalEvents === 0 ? 0 : Number(((eventCount / totalEvents) * 100).toFixed(2)),
+					}))
+					.sort((a, b) => b.percentage - a.percentage || a.value.localeCompare(b.value))
+					.slice(0, 5);
+				const rankItem = (item: (typeof topItems)[number] | undefined) => ({
+					value: item?.value ?? "",
+					time: toTimeString(item?.eventCount ?? 0),
+					percentage: item?.percentage ?? 0,
+				});
+
+				return {
+					p1: rankItem(topItems[0]),
+					p2: rankItem(topItems[1]),
+					p3: rankItem(topItems[2]),
+					p4: rankItem(topItems[3]),
+					p5: rankItem(topItems[4]),
+				};
+			};
+
+			return {
+				editor: rankedItems(events.map((event) => event.editor)),
+				workspace: rankedItems(events.map((event) => event.workspace)),
+				language: rankedItems(events.map((event) => event.language)),
+				platform: rankedItems(events.map((event) => event.platform)),
+			};
+		}),
 });
