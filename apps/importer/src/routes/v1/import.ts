@@ -101,18 +101,21 @@ async function processImport(importId: string, fileKey: string, formatId: string
 			const batch: ImportedEvent[] = events.slice(index, index + 500);
 			processedRows += batch.length;
 			await db.transaction(async (tx) => {
-				await tx.insert(eventLogs).values(
-					batch.map((event) => ({
-						userId: eventImport.userId,
-						eventTime: new Date(event.eventTime),
-						createdAt: new Date(event.createdAt),
-						language: event.language,
-						project: event.project,
-						fileHash: event.fileHash,
-						editor: event.editor,
-						platform: event.platform,
-					})),
-				);
+				await tx
+					.insert(eventLogs)
+					.values(
+						batch.map((event) => ({
+							userId: eventImport.userId,
+							eventTime: new Date(event.eventTime),
+							createdAt: new Date(event.createdAt),
+							language: event.language,
+							project: event.project,
+							fileHash: event.fileHash,
+							editor: event.editor,
+							platform: event.platform,
+						})),
+					)
+					.onConflictDoNothing();
 				await tx
 					.update(eventImports)
 					.set({ processedRows, totalRows, message: `Imported ${processedRows} of ${totalRows} rows` })

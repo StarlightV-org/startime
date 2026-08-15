@@ -127,7 +127,7 @@ const stateLabels: Record<string, { label: string; description: string; classNam
 	},
 };
 
-const benefits = ["Easy setup"];
+const benefits = ["Easy setup", "Free", "Open source"];
 
 export default async function Home() {
 	const { user } = await getAuth();
@@ -169,9 +169,7 @@ export default async function Home() {
 							<h1 className="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
 								Track how you spend your time
 							</h1>
-							<p className="max-w-xl text-lg leading-8 text-muted-foreground">
-								Startime tracks your time working on your projects.
-							</p>
+							<p className="max-w-xl text-lg leading-8 text-muted-foreground">Visualize your coding time.</p>
 						</div>
 						<nav className="flex items-center gap-2" aria-label="Primary navigation">
 							{!user ? (
@@ -182,14 +180,14 @@ export default async function Home() {
 									</Link>
 								</Button>
 							) : (
-								<div className="flex items-center gap-2 rounded-full bg-accent">
+								<div className="flex items-center gap-2 rounded-lg bg-accent">
 									<Button asChild className="hidden sm:inline-flex">
 										<Link href="/dash">
 											Open dashboard
 											<ArrowRight data-icon="inline-end" aria-hidden="true" />
 										</Link>
 									</Button>
-									<div className="flex items-center gap-2">
+									<div className="flex items-center gap-2 pr-2">
 										<span className="text-sm">{user.name}</span>
 										<Avatar size="sm">
 											<AvatarImage src={user.image!} alt={`User Avatar - ${user.name}`} />

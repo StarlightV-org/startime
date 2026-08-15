@@ -2,10 +2,10 @@ import { formatDate } from "date-fns/format";
 import { subSeconds } from "date-fns/fp";
 import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, PencilIcon } from "lucide-react";
 import { cookies } from "next/headers";
-import { Filter, TimeSelect, TopElement } from "~/components/overview";
+import { BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { tryCatch } from "~/lib/utils";
-import { getTimeRange, type TimeRange } from "~/server/api/routers/overview";
+import { getTimeRange, type BiggestUnit, type TimeRange } from "~/server/api/routers/overview";
 import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
 import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
@@ -26,10 +26,12 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	const { editor, workspace, language, platform } = await loadSearchParams(searchParams);
 
 	const timeRange = (cookieManager.get("startime_timeRange")?.value ?? "past30") as TimeRange;
+	const biggestUnit = (cookieManager.get("startime_biggestUnit")?.value ?? "hour") as BiggestUnit;
+
 	Print.Debug("timeRange", timeRange);
-	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity(timeRange));
+	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity({ timeRange, biggestUnit }));
 	const { data: top, error: topError } = await tryCatch(
-		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform } }),
+		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform }, biggestUnit }),
 	);
 
 	const regional = auth.user.accountConfig.regional;
@@ -46,12 +48,13 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 						<CardDescription className="flex flex-col justify-between">
 							<div className="flex flex-row items-center gap-2">
 								<TimeSelect timeRange={timeRange} />
+								<BiggestUnitSelect biggestUnit={biggestUnit} />
+								<Filter />
 								{start && end && (
 									<p className="text-xs text-muted-foreground">
 										{formatDate(start, "yyyy-MM-dd")} - {formatDate(subSeconds(1, end), "yyyy-MM-dd")}
 									</p>
 								)}
-								<Filter />
 							</div>
 						</CardDescription>
 					</CardContent>

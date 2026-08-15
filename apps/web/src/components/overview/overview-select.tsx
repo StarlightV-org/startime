@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
-import type { TimeRange } from "~/server/api/routers/overview";
+import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
 import { useRouter } from "next/navigation";
 
 const timeRangeLabels: Record<TimeRange, string> = {
@@ -18,7 +18,7 @@ const timeRangeLabels: Record<TimeRange, string> = {
 	allTime: "All Time",
 };
 
-export default function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
+export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	const [value, setValue] = useState(timeRange);
 	const router = useRouter();
 
@@ -50,6 +50,40 @@ export default function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 					<SelectItem value="thisWeek">This week</SelectItem>
 					<SelectItem value="thisMonth">This month</SelectItem>
 					<SelectItem value="thisYear">This year</SelectItem>
+				</SelectGroup>
+			</SelectContent>
+		</Select>
+	);
+}
+
+const bigestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
+	hour: "Hour",
+	day: "Day",
+	week: "Week",
+};
+
+export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit }) {
+	const [value, setValue] = useState(biggestUnit);
+	const router = useRouter();
+
+	const handleChange = (value: NonNullable<BiggestUnit>) => {
+		setValue(value);
+		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
+		document.cookie = `startime_biggestUnit=${value}; path=/`;
+		router.refresh();
+	};
+
+	return (
+		<Select value={value} onValueChange={handleChange}>
+			<SelectTrigger className="min-w-max">
+				<SelectValue fallback={bigestUnitLabels[value ?? "day"]} />
+			</SelectTrigger>
+			<SelectContent position={"popper"}>
+				<SelectGroup>
+					<SelectLabel>Bigest Unit</SelectLabel>
+					<SelectItem value="hour">Hour</SelectItem>
+					<SelectItem value="day">Day</SelectItem>
+					<SelectItem value="week">Week</SelectItem>
 				</SelectGroup>
 			</SelectContent>
 		</Select>

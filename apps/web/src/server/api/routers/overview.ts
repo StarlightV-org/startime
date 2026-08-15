@@ -55,57 +55,68 @@ function getLocalDate(timeZone: string): string {
 
 export type OverviewTopElement = API["overview"]["getTop"]["editor"]["p1"];
 
+const biggestUnitSchema = z.enum(["hour", "day", "week"]).optional();
+export type BiggestUnit = z.infer<typeof biggestUnitSchema>;
+
 export const overviewRouter = createTRPCRouter({
-	getActivity: protectedProcedure.input(timeRangeSchema).query(async ({ ctx, input }) => {
-		const regional = ctx.user.accountConfig.regional;
-		const [start, end] = getTimeRange(input, regional.timeZone, undefined, regional.startOfWeek);
-		const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+	getActivity: protectedProcedure
+		.input(
+			z.object({
+				timeRange: timeRangeSchema,
+				biggestUnit: biggestUnitSchema,
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const regional = ctx.user.accountConfig.regional;
+			const [start, end] = getTimeRange(input.timeRange, regional.timeZone, undefined, regional.startOfWeek);
+			const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
 
-		if (!startToday || !endToday) {
-			throw new Error("Unable to determine the current day range");
-		}
+			if (!startToday || !endToday) {
+				throw new Error("Unable to determine the current day range");
+			}
 
-		const timeZone = normalizeTimeZone(regional.timeZone);
-		const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
-		const rangeFilter = and(
-			eq(eventLogs.userId, ctx.user.id),
-			start ? gte(eventLogs.eventTime, start) : undefined,
-			end ? lt(eventLogs.eventTime, end) : undefined,
-		);
-		const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
+			const timeZone = normalizeTimeZone(regional.timeZone);
+			const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
+			const rangeFilter = and(
+				eq(eventLogs.userId, ctx.user.id),
+				start ? gte(eventLogs.eventTime, start) : undefined,
+				end ? lt(eventLogs.eventTime, end) : undefined,
+			);
+			const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
 
-		const [activityResult, activeDays] = await Promise.all([
-			ctx.db
-				.select({
-					activeMinutes: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
-					activeMinutesToday: sql<number>`
+			const [activityResult, activeDays] = await Promise.all([
+				ctx.db
+					.select({
+						activeMinutes: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
+						activeMinutesToday: sql<number>`
 						count(distinct date_trunc('minute', ${eventLogs.eventTime}))
 						filter (where ${todayFilter})
 					`.mapWith(Number),
-				})
-				.from(eventLogs)
-				.where(rangeFilter),
-			ctx.db.selectDistinct({ day: activeDay }).from(eventLogs).where(eq(eventLogs.userId, ctx.user.id)),
-		]);
+					})
+					.from(eventLogs)
+					.where(rangeFilter),
+				ctx.db.selectDistinct({ day: activeDay }).from(eventLogs).where(eq(eventLogs.userId, ctx.user.id)),
+			]);
 
-		const activity = activityResult[0];
-		const { currentStreak, allTimeStreak } = getStreaks(
-			activeDays.map(({ day }) => day),
-			getLocalDate(timeZone),
-		);
+			const activity = activityResult[0];
+			const { currentStreak, allTimeStreak } = getStreaks(
+				activeDays.map(({ day }) => day),
+				getLocalDate(timeZone),
+			);
 
-		return {
-			timeTotal: toTimeString(activity?.activeMinutes ?? 0),
-			timeToday: toTimeString(activity?.activeMinutesToday ?? 0),
-			currentStreak: toDayString(currentStreak),
-			allTimeStreak: toDayString(allTimeStreak),
-		};
-	}),
+			return {
+				timeTotal: toTimeString(activity?.activeMinutes ?? 0, input.biggestUnit),
+				timeToday: toTimeString(activity?.activeMinutesToday ?? 0, input.biggestUnit),
+				currentStreak: toDayString(currentStreak),
+				allTimeStreak: toDayString(allTimeStreak),
+			};
+		}),
 
 	getTop: protectedProcedure
 		.input(
 			z.object({
 				timeRange: timeRangeSchema,
+				biggestUnit: biggestUnitSchema,
 				filter: z.object({
 					editor: z.string().or(z.literal("")),
 					workspace: z.string().or(z.literal("")),
@@ -115,7 +126,7 @@ export const overviewRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			const { timeRange, filter } = input;
+			const { timeRange, filter, biggestUnit } = input;
 			Print.Debug("filter", filter);
 			const regional = ctx.user.accountConfig.regional;
 			const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
@@ -159,7 +170,7 @@ export const overviewRouter = createTRPCRouter({
 					.slice(0, 5);
 				const rankItem = (item: (typeof topItems)[number] | undefined) => ({
 					value: item?.value ?? "",
-					time: toTimeString(item?.eventCount ?? 0),
+					time: toTimeString(item?.eventCount ?? 0, biggestUnit),
 					percentage: item?.percentage ?? 0,
 				});
 

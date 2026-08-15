@@ -269,7 +269,10 @@ export const eventLogs = createTable(
 		platform: t.text("platform").notNull(),
 		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
 	},
-	(table) => [t.index("event_logs_user_id_event_time_idx").on(table.userId, table.eventTime)],
+	(table) => [
+		t.index("event_logs_user_id_event_time_idx").on(table.userId, table.eventTime),
+		t.unique("event_logs_user_id_event_time_unique").on(table.userId, table.eventTime),
+	],
 );
 
 export const eventLogsRelation = relations(eventLogs, ({ one }) => ({

@@ -1,5 +1,7 @@
 import { TZDate } from "@date-fns/tz";
 import { addDays, addMonths, addWeeks, addYears, startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns";
+import { LucideAlignHorizontalJustifyCenter } from "lucide-react";
+import type { BiggestUnit } from "~/server/api/routers/overview";
 
 export const timeRangeValues = [
 	"past1",
@@ -97,10 +99,28 @@ export function getTimeRange(
 	}
 }
 
-export function toTimeString(minutes: number): string {
+export function toTimeString(minutes: number, biggestUnit?: BiggestUnit): string {
+	if (biggestUnit === "day") {
+		const fullDays = Math.floor(minutes / (60 * 24));
+		const remainingHours = Math.floor((minutes - fullDays * (60 * 24)) / 60);
+		const remainingMinutes = minutes - fullDays * (60 * 24) - remainingHours * 60;
+		return [`${fullDays}d`, `${remainingHours}h`, `${remainingMinutes}m`]
+			.filter((value) => value !== "0d" && value !== "0h" && value !== "0m")
+			.join(" ");
+	}
+	if (biggestUnit === "week") {
+		const fullWeeks = Math.floor(minutes / (60 * 24 * 7));
+		const fullDays = Math.floor((minutes - fullWeeks * (60 * 24 * 7)) / (60 * 24));
+		const remainingHours = Math.floor((minutes - fullWeeks * (60 * 24 * 7) - fullDays * (60 * 24)) / 60);
+		const remainingMinutes = minutes - fullWeeks * (60 * 24 * 7) - fullDays * (60 * 24) - remainingHours * 60;
+		return [`${fullWeeks}w`, `${fullDays}d`, `${remainingHours}h`, `${remainingMinutes}m`]
+			.filter((value) => value !== "0w" && value !== "0d" && value !== "0h" && value !== "0m")
+			.join(" ");
+	}
+
 	const fullHours = Math.floor(minutes / 60);
 	const remainingMinutes = minutes - fullHours * 60;
-	return `${fullHours}h ${remainingMinutes}m`;
+	return [`${fullHours}h`, `${remainingMinutes}m`].filter((value) => value !== "0h" && value !== "0m").join(" ");
 }
 
 export function toDayString(days: number): string {
