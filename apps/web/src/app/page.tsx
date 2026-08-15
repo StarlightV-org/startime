@@ -169,7 +169,9 @@ export default async function Home() {
 							<h1 className="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
 								Track how you spend your time
 							</h1>
-							<p className="max-w-xl text-lg leading-8 text-muted-foreground">Visualize your coding time.</p>
+							<p className="max-w-xl text-lg leading-8 text-muted-foreground">
+								Visualize your coding time. <br /> We are currently in closed beta. Singups will be open soon.
+							</p>
 						</div>
 						<nav className="flex items-center gap-2" aria-label="Primary navigation">
 							{!user ? (
