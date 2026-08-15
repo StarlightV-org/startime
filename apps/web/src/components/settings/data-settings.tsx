@@ -19,18 +19,41 @@ import { useEffect } from "react";
 import type { EventImportState } from "@startime/db";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
+import { useConfirmModal } from "../ui/confirm-modal";
+import { cn } from "~/lib/utils";
 
 type ImportItem = NonNullable<NonNullable<API["self"]["listImports"]>["pendingImports"]>[number];
 
-export default function DataManagement({ imports: initialImports }: { imports: API["self"]["listImports"] }) {
+export default function DataManagement({
+	imports: initialImports,
+	exports: initialExports,
+}: {
+	imports: API["self"]["listImports"];
+	exports: API["self"]["listExports"];
+}) {
 	const [opened, { toggle }] = useDisclosure();
+	const confirmModal = useConfirmModal();
 
 	const [hasPendingImports, setHasPendingImports] = useState(initialImports?.pendingImports?.length > 0);
+	const [hasPendingExports, setHasPendingExports] = useState(initialExports?.pending?.length > 0);
 
 	const { data: imports, refetch } = api.self.listImports.useQuery(undefined, {
 		initialData: initialImports,
 		refetchInterval: hasPendingImports ? 1000 : false,
 	});
+
+	const { data: exports, refetch: refetchExports } = api.self.listExports.useQuery(undefined, {
+		initialData: initialExports,
+		refetchInterval: hasPendingExports ? 1000 : false,
+	});
+
+	const { mutate: startExport, isPending } = api.self.triggerExport.useMutation({
+		onSuccess: () => {
+			refetchExports();
+		},
+	});
+
+	const { mutate: getExportUrl, isPending: isLoadingExportUrl, data: exportUrl } = api.self.getExportUrl.useMutation();
 
 	const form = useForm({
 		defaultValues: {
@@ -105,11 +128,27 @@ export default function DataManagement({ imports: initialImports }: { imports: A
 
 		setHasPendingImports(imports.pendingImports.length > 0);
 	}, [imports.pendingImports.length]);
+	useEffect(() => {
+		if (!exports) return setHasPendingExports(false);
+
+		setHasPendingExports(exports.pending.length > 0);
+	}, [exports.pending.length]);
+
+	const latestPendingExport = exports.pending.reduce<(typeof exports.pending)[number] | undefined>(
+		(latest, exportItem) => (!latest || exportItem.createdAt > latest.createdAt ? exportItem : latest),
+		undefined,
+	);
+	const recentUploadedExport = exports.other.find(
+		(exportItem) =>
+			exportItem.status === "uploaded" &&
+			exportItem.completedAt !== null &&
+			Date.now() - exportItem.completedAt.getTime() <= 60 * 1000,
+	);
 
 	return (
 		<Card>
 			<CardContent className="flex w-full flex-col">
-				<div className="flex w-full flex-row justify-between px-4">
+				<div className="flex w-full flex-row justify-between space-x-4 px-4">
 					<div className="flex w-1/2 flex-col">
 						<p>
 							Import CSV file from other sources. <br />
@@ -196,12 +235,51 @@ export default function DataManagement({ imports: initialImports }: { imports: A
 					</div>
 
 					<Separator orientation="vertical" className="w-fit" />
-					<div className="flex w-1/2 flex-col px-4">
+					<div className="flex w-1/2 flex-col justify-end">
 						<p>
 							Export your data to a ZIP file. <br />
 							<span className="text-xs text-muted-foreground">Export all of your data, associated with your account.</span>
 						</p>
-						<Button className="mt-auto">Export</Button>
+						{recentUploadedExport ? (
+							<Button
+								className="mt-auto"
+								variant="outline"
+								onMouseEnter={() => {
+									if (!isLoadingExportUrl && !exportUrl) getExportUrl();
+								}}
+								asChild
+							>
+								<a
+									href={exportUrl ?? ""}
+									download
+									target="_blank"
+									rel="noopener noreferrer"
+									className={cn(isLoadingExportUrl && "cursor-progress")}
+									inert={isLoadingExportUrl}
+								>
+									Download
+								</a>
+							</Button>
+						) : latestPendingExport ? (
+							<p className="mt-auto text-sm text-muted-foreground">Latest: {latestPendingExport.message}</p>
+						) : (
+							<Button
+								className="mt-auto"
+								disabled={isPending}
+								onClick={async () => {
+									const result = await confirmModal({
+										content: "Are you sure you want to export your data? This may take a few minutes.",
+										closeOnClickOutside: true,
+										delay: 2000,
+										title: "Export your data",
+									});
+									if (!result) return;
+									startExport();
+								}}
+							>
+								Export
+							</Button>
+						)}
 					</div>
 				</div>
 				{imports && (

@@ -46,7 +46,9 @@ export const userRelations = relations(users, ({ many, one }) => ({
 		fields: [users.organizationId],
 		references: [organizations.id],
 	}),
+	events: many(eventLogs),
 	memberships: many(members),
+	exports: many(userExports),
 }));
 
 export const accounts = createTable("accounts", {
@@ -270,6 +272,36 @@ export const eventLogs = createTable(
 	(table) => [t.index("event_logs_user_id_event_time_idx").on(table.userId, table.eventTime)],
 );
 
+export const eventLogsRelation = relations(eventLogs, ({ one }) => ({
+	user: one(users, { fields: [eventLogs.userId], references: [users.id] }),
+}));
+
+export const fileLocations = ["none", "user_import", "user_export"] as const;
+export type FileLocation = (typeof fileLocations)[number];
+
+export const files = createTable(
+	"files",
+	{
+		id: t
+			.varchar("id", { length: 255 })
+			.notNull()
+			.primaryKey()
+			.$defaultFn(() => generateShortId()),
+		createdBy: t.varchar("created_by", { length: 255 }).notNull(),
+		fileName: t.varchar("file_name", { length: 255 }).notNull(),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+		fileKey: t.varchar("file_key", { length: 255 }).notNull(),
+		fileUrl: t.varchar("file_url", { length: 1024 }).notNull(),
+		size: t.integer("size").notNull(),
+		lastModified: t.timestamp("last_modified", { withTimezone: true }),
+		type: t.varchar("type", { length: 255 }).notNull(),
+		location: t.varchar("location", { length: 255, enum: fileLocations }).default("none"),
+		locationId: t.varchar("location_id", { length: 255 }),
+		metadata: t.json("metadata").$type<{ [key: string]: any }>(),
+	},
+	(table) => [t.index("files_size_idx").on(table.size)],
+);
+
 const eventImportStates = ["uploaded", "pending", "completed", "failed"] as const;
 export type EventImportState = (typeof eventImportStates)[number];
 
@@ -296,28 +328,28 @@ export const eventImportRelations = relations(eventImports, ({ one }) => ({
 	importFile: one(files, { fields: [eventImports.fileId], references: [files.id] }),
 }));
 
-export const fileLocations = ["none", "user_import"] as const;
-export type FileLocation = (typeof fileLocations)[number];
+export const userExports = createTable("user_exports", {
+	id: t
+		.varchar("id", { length: 255 })
+		.notNull()
+		.primaryKey()
+		.$defaultFn(() => generateShortId()),
+	userId: t
+		.varchar("user_id", { length: 255 })
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	fileId: t.varchar("file_id", { length: 255 }).references(() => files.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	updatedAt: t.timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+	completedAt: t.timestamp("completed_at", { withTimezone: true }),
+	status: t
+		.text("status", { enum: ["pending", "uploaded", "failed"] })
+		.notNull()
+		.default("pending"),
+	message: t.text("message"),
+});
 
-export const files = createTable(
-	"files",
-	{
-		id: t
-			.varchar("id", { length: 255 })
-			.notNull()
-			.primaryKey()
-			.$defaultFn(() => generateShortId()),
-		createdBy: t.varchar("created_by", { length: 255 }).notNull(),
-		fileName: t.varchar("file_name", { length: 255 }).notNull(),
-		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-		fileKey: t.varchar("file_key", { length: 255 }).notNull(),
-		fileUrl: t.varchar("file_url", { length: 1024 }).notNull(),
-		size: t.integer("size").notNull(),
-		lastModified: t.integer("last_modified"),
-		type: t.varchar("type", { length: 255 }).notNull(),
-		location: t.varchar("location", { length: 255, enum: fileLocations }).default("none"),
-		locationId: t.varchar("location_id", { length: 255 }),
-		metadata: t.json("metadata").$type<{ [key: string]: any }>(),
-	},
-	(table) => [t.index("files_size_idx").on(table.size)],
-);
+export const userExportRelations = relations(userExports, ({ one }) => ({
+	user: one(users, { fields: [userExports.userId], references: [users.id] }),
+	file: one(files, { fields: [userExports.fileId], references: [files.id] }),
+}));

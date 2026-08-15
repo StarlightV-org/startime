@@ -1,11 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
-import { UTApi } from "uploadthing/server";
 import { z } from "zod";
 import { db, eventImports, eventLogs, files } from "@startime/db";
 import { ENV } from "@startime/env";
 import { verifyInternalRequest } from "@startime/service-auth";
 import { getFormat, type ImportedEvent } from "../../formats";
+import { utapi } from "../..";
+import { wait, type JsonBody } from "../../server";
 
 const importRequestSchema = z.object({
 	importId: z.string().min(1),
@@ -14,15 +15,8 @@ const importRequestSchema = z.object({
 });
 
 const activeImports = new Set<string>();
-const utapi = new UTApi({ token: ENV.UPLOADTHING_TOKEN });
 const DOWNLOAD_DELAY_MS = 5_000;
 const MAX_DOWNLOAD_ATTEMPTS = 3;
-
-function wait(milliseconds: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, milliseconds));
-}
-
-type JsonBody = { raw: string; value: unknown };
 
 async function updateImport(
 	importId: string,
@@ -46,7 +40,6 @@ async function deleteImportFile(fileId: string, fileKey: string): Promise<void> 
 	}
 }
 
-
 async function processImport(importId: string, fileKey: string, formatId: string): Promise<void> {
 	let processedRows = 0;
 	let totalRows = 0;
@@ -66,16 +59,21 @@ async function processImport(importId: string, fileKey: string, formatId: string
 
 		let contents: string | undefined;
 		for (let attempt = 1; attempt <= MAX_DOWNLOAD_ATTEMPTS; attempt += 1) {
-			await updateImport(importId, { status: "pending", message: `Downloading import file (attempt ${attempt} of ${MAX_DOWNLOAD_ATTEMPTS})` });
+			await updateImport(importId, {
+				status: "pending",
+				message: `Downloading import file (attempt ${attempt} of ${MAX_DOWNLOAD_ATTEMPTS})`,
+			});
 			const { ufsUrl: downloadUrl } = await utapi.generateSignedURL(fileKey, { expiresIn: 60 * 60 });
 			const response = await fetch(downloadUrl, { redirect: "error" });
 			if (!response.ok) throw new Error(`File download failed with ${response.status}`);
 
 			const contentLength = Number(response.headers.get("content-length"));
-			if (Number.isFinite(contentLength) && contentLength > 64 * 1024 * 1024) throw new Error("File exceeds the 64 MB import limit");
+			if (Number.isFinite(contentLength) && contentLength > 64 * 1024 * 1024)
+				throw new Error("File exceeds the 64 MB import limit");
 
 			const downloadedContents = await response.text();
-			if (new TextEncoder().encode(downloadedContents).byteLength > 64 * 1024 * 1024) throw new Error("File exceeds the 64 MB import limit");
+			if (new TextEncoder().encode(downloadedContents).byteLength > 64 * 1024 * 1024)
+				throw new Error("File exceeds the 64 MB import limit");
 			const leadingContent = downloadedContents.trimStart().slice(0, 32).toLowerCase();
 			const isHtml = leadingContent.startsWith("<!doctype html") || leadingContent.startsWith("<html");
 			if (!isHtml) {
@@ -137,7 +135,15 @@ async function processImport(importId: string, fileKey: string, formatId: string
 export async function registerImportRoutes(app: FastifyInstance): Promise<void> {
 	app.post("/imports", async (request, reply) => {
 		const body = request.body as JsonBody;
-		if (!verifyInternalRequest(ENV.INTERNAL_SERVICE_SECRET, "POST", "/v1/imports", body.raw, new Headers(request.headers as Record<string, string>))) {
+		if (
+			!verifyInternalRequest(
+				ENV.INTERNAL_SERVICE_SECRET,
+				"POST",
+				"/v1/imports",
+				body.raw,
+				new Headers(request.headers as Record<string, string>),
+			)
+		) {
 			return reply.code(401).send({ error: "Unauthorized" });
 		}
 		const parsed = importRequestSchema.safeParse(body.value);

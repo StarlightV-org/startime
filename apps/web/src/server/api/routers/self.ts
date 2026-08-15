@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-import { eventImports, users } from "@startime/db";
+import { eventImports, users, userExports } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
 import {
 	checkAccountConfig,
@@ -10,6 +10,10 @@ import {
 } from "~/lib/account-config";
 import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
 import z from "zod";
+import { signInternalRequest } from "@startime/service-auth";
+import { ENV } from "@startime/env";
+import { utapi } from "~/app/api/uploadthing/core";
+import { TRPCError } from "@trpc/server";
 
 const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "Select a valid IANA time zone.");
 
@@ -80,5 +84,61 @@ export const selfRouter = createTRPCRouter({
 
 			totalCount: totalCount?.[0]?.count ?? 0,
 		};
+	}),
+
+	triggerExport: protectedProcedure.mutation(async ({ ctx }) => {
+		const importResult = await ctx.db
+			.insert(userExports)
+			.values({
+				userId: ctx.user.id,
+				message: "Export queued",
+			})
+			.returning({ id: userExports.id });
+		const exportId = importResult[0]?.id;
+
+		try {
+			const path = "/v1/export";
+			const body = JSON.stringify({
+				userId: ctx.user.id,
+				exportId: exportId,
+			});
+			const response = await fetch(new URL(path, ENV.IMPORTER_URL), {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					...signInternalRequest(ENV.INTERNAL_SERVICE_SECRET, "POST", path, body),
+				},
+				body,
+			});
+			if (!response.ok) throw new Error(`Importer request failed with ${response.status}`);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Unable to queue export";
+			Print.Error("Unable to queue export", { error });
+			await ctx.db.update(userExports).set({ status: "failed", message }).where(eq(userExports.id, exportId!));
+		}
+	}),
+
+	listExports: protectedProcedure.query(async ({ ctx }) => {
+		const exports = await ctx.db.query.userExports.findMany({
+			where: eq(userExports.userId, ctx.user.id),
+		});
+		return {
+			pending: exports.filter((e) => e.status === "pending"),
+			other: exports.filter((e) => e.status !== "pending"),
+		};
+	}),
+	getExportUrl: protectedProcedure.mutation(async ({ ctx }) => {
+		const exports = await ctx.db.query.userExports.findFirst({
+			where: (userExports, { eq, and }) => and(eq(userExports.userId, ctx.user.id), eq(userExports.status, "uploaded")),
+			orderBy: (userExports, { desc }) => [desc(userExports.completedAt)],
+			with: { file: true },
+		});
+		if (!exports?.file) {
+			throw new TRPCError({ code: "NOT_FOUND", message: "No uploaded export found" });
+		}
+
+		const { ufsUrl: downloadUrl } = await utapi.generateSignedURL(exports?.file?.fileKey, { expiresIn: 60 * 60 });
+
+		return downloadUrl;
 	}),
 });

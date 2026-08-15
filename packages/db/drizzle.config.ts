@@ -1,5 +1,5 @@
 import { ENV } from "@startime/env";
-import { type Config } from "drizzle-kit";
+import type { Config } from "drizzle-kit";
 
 export default {
 	schema: "./packages/db/src/schema.ts",

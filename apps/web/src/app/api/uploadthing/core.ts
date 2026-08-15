@@ -128,7 +128,7 @@ async function saveFileToDatabase(
 			fileUrl: file.ufsUrl,
 			size: file.size,
 			type: file.type,
-			lastModified: file.lastModified,
+			lastModified: file.lastModified ? new Date(file.lastModified) : null,
 			metadata: metadata.extraData,
 		})
 		.returning();
