@@ -76,7 +76,8 @@ async function createExport(request: z.infer<typeof createExportRequestSchema>) 
 	const { userId, exportId } = request;
 	try {
 		const pastExports = await db.query.userExports.findMany({
-			where: (exports, { eq }) => eq(exports.userId, userId),
+			where: (exports, { eq, and, not }) =>
+				and(eq(exports.userId, userId), not(eq(exports.status, "uploaded")), not(eq(exports.id, exportId))),
 			with: {
 				file: { columns: { fileKey: true } },
 			},
@@ -86,9 +87,12 @@ async function createExport(request: z.infer<typeof createExportRequestSchema>) 
 		if (pastExports.length > 0) {
 			const fileKeys = pastExports.map((e) => e.file?.fileKey).filter((fileKey): fileKey is string => Boolean(fileKey));
 			Print.Debug("[EXPORT]", "fileKeys", fileKeys);
-			if (fileKeys.length === 0) return;
-			const result = await utapi.deleteFiles(fileKeys);
-			Print.Debug("[EXPORT]", "delete result", result);
+			if (fileKeys.length > 0) {
+				const result = await utapi.deleteFiles(fileKeys);
+				Print.Debug("[EXPORT]", "delete result", result);
+				// return;
+			}
+			// await updateExport(exportId, { status: "failed", message: "No file keys to delete" });
 		}
 
 		const user = await db.query.users.findFirst({
