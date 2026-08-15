@@ -49,6 +49,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	events: many(eventLogs),
 	memberships: many(members),
 	exports: many(userExports),
+	apiKeys: many(apiKeys),
 }));
 
 export const accounts = createTable("accounts", {
@@ -92,6 +93,7 @@ export const sessions = createTable("sessions", {
 		.text("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	lastAuthenticatedAt: t.timestamp("last_authenticated_at", { withTimezone: true }),
 });
 
 export const sessionRelations = relations(sessions, ({ one }) => ({
@@ -140,6 +142,33 @@ export const passkeys = createTable(
 export const passkeyRelations = relations(passkeys, ({ one }) => ({
 	user: one(users, {
 		fields: [passkeys.userId],
+		references: [users.id],
+	}),
+}));
+
+export const apiKeys = createTable("api_keys", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId(8)),
+	userId: t
+		.text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	name: t.text("name").notNull(),
+	key: t
+		.text("key")
+		.notNull()
+		.unique()
+		.$defaultFn(() => Bun.randomUUIDv7("hex")),
+	createdAt: t.timestamp("created_at").notNull().defaultNow(),
+});
+
+export type DbApiKey = typeof apiKeys.$inferSelect;
+
+export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
+	user: one(users, {
+		fields: [apiKeys.userId],
 		references: [users.id],
 	}),
 }));

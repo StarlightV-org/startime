@@ -14,6 +14,7 @@ import { SessionProvider } from "~/provider/session-provider";
 import { ConfirmModalProvider } from "~/components/ui/confirm-modal";
 import { Toaster } from "~/components/ui/sonner";
 import { TimeZoneSync } from "~/components/time-zone-sync";
+import { ReauthProvider } from "~/components/auth/reauth-provider";
 
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
@@ -51,6 +52,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 								<ConfirmModalProvider>
 									<TooltipProvider>
 										<TimeZoneSync />
+										<ReauthProvider />
 										<Toaster />
 										{children}
 									</TooltipProvider>

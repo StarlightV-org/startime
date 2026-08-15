@@ -1,14 +1,32 @@
 "use client";
 
 import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
-import { httpBatchStreamLink, loggerLink } from "@trpc/client";
+import { httpBatchStreamLink, httpSubscriptionLink, loggerLink, splitLink } from "@trpc/client";
+import type { TRPCLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import { observable } from "@trpc/server/observable";
 import { useState } from "react";
 import SuperJSON from "superjson";
 
 import type { AppRouter } from "~/server/api/root";
+
 import { createQueryClient } from "./query-client";
+import { reauthLink } from "./reauth-link";
+import { printBinding } from "@startime/print";
+import { ENV } from "@startime/env";
+
+const subscriptionDisableLink: TRPCLink<AppRouter> = () => {
+	return ({ next, op }) => {
+		if (op.type === "subscription" && ENV.NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV && ENV.NODE_ENV === "development") {
+			return observable((observer) => {
+				observer.complete();
+				return () => {};
+			});
+		}
+		return next(op);
+	};
+};
 
 let clientQueryClientSingleton: QueryClient | undefined;
 const getQueryClient = () => {
@@ -45,16 +63,30 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 		api.createClient({
 			links: [
 				loggerLink({
+					console: printBinding,
 					enabled: (op) => process.env.NODE_ENV === "development" || (op.direction === "down" && op.result instanceof Error),
 				}),
-				httpBatchStreamLink({
-					transformer: SuperJSON,
-					url: `${getBaseUrl()}/api/trpc`,
-					headers: () => {
-						const headers = new Headers();
-						headers.set("x-trpc-source", "nextjs-react");
-						return headers;
-					},
+				reauthLink<AppRouter>(),
+				subscriptionDisableLink,
+				splitLink({
+					condition: (op) => op.type === "subscription",
+					true: httpSubscriptionLink({
+						transformer: SuperJSON,
+						url: `${getBaseUrl()}/api/trpc`,
+						// EventSource needs credentials for cookies/auth to work
+						eventSourceOptions: () => ({
+							withCredentials: true,
+						}),
+					}),
+					false: httpBatchStreamLink({
+						transformer: SuperJSON,
+						url: `${getBaseUrl()}/api/trpc`,
+						headers: () => {
+							const headers = new Headers();
+							headers.set("x-trpc-source", "nextjs-react");
+							return headers;
+						},
+					}),
 				}),
 			],
 		}),

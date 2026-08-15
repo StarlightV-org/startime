@@ -12,6 +12,9 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod";
 import { getAuth } from "../better-auth";
+import type { SessionType } from "better-auth";
+import { PASSKEY_REGISTRATION_REQUIRED_CAUSE, REAUTH_REQUIRED_CAUSE } from "~/lib/reauth-util";
+import { addSeconds } from "date-fns/fp";
 
 /**
  * 1. CONTEXT
@@ -105,6 +108,47 @@ const errorMiddleware = t.middleware(async ({ next, path, ctx }) => {
 	}
 	return result;
 });
+
+const FRESH_AUTH_MAX_AGE_SECONDS = 10;
+
+export async function checkReauth(_auth: SessionType | null) {
+	const auth = _auth ?? (await getAuth());
+	// IF the user does not have a valid session, throw an error
+	if (!auth.user?.id || !auth.session?.token) {
+		throw new TRPCError({
+			code: "UNAUTHORIZED",
+			message: "Unauthorized",
+		});
+	}
+
+	const passkey = await db.query.passkeys.findFirst({
+		where: (passkeys, { eq }) => eq(passkeys.userId, auth.user.id),
+		columns: { id: true },
+	});
+	if (!passkey) {
+		throw new TRPCError({
+			code: "UNAUTHORIZED",
+			message: "A passkey is required before this action can be verified",
+			cause: PASSKEY_REGISTRATION_REQUIRED_CAUSE,
+		});
+	}
+
+	const sessionRow = await db.query.sessions.findFirst({
+		where: (s, { eq }) => eq(s.token, auth.session?.token),
+		columns: { lastAuthenticatedAt: true },
+	});
+	const lastAuth = sessionRow?.lastAuthenticatedAt ?? auth.session?.lastAuthenticatedAt;
+	const cutoff = addSeconds(-FRESH_AUTH_MAX_AGE_SECONDS, new Date());
+
+	if (!lastAuth || new Date(lastAuth) < cutoff) {
+		throw new TRPCError({
+			code: "UNAUTHORIZED",
+			message: "Re-authentication required",
+			cause: REAUTH_REQUIRED_CAUSE,
+		});
+	}
+}
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -128,3 +172,19 @@ export const protectedProcedure = t.procedure
 			},
 		});
 	});
+
+export const reauthProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	// Fetch from DB - getSession may not include lastAuthenticatedAt
+	await checkReauth({
+		session: ctx.session,
+		user: ctx.user,
+		invitations: ctx.invitations,
+		org: ctx.org,
+	});
+
+	return next({
+		ctx: {
+			session: { ...ctx.session, user: ctx.user },
+		},
+	});
+});

@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, reauthProcedure } from "~/server/api/trpc";
 
 import { eventImports, users, userExports } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
@@ -86,7 +86,7 @@ export const selfRouter = createTRPCRouter({
 		};
 	}),
 
-	triggerExport: protectedProcedure.mutation(async ({ ctx }) => {
+	triggerExport: reauthProcedure.mutation(async ({ ctx }) => {
 		const importResult = await ctx.db
 			.insert(userExports)
 			.values({
@@ -117,7 +117,6 @@ export const selfRouter = createTRPCRouter({
 			await ctx.db.update(userExports).set({ status: "failed", message }).where(eq(userExports.id, exportId!));
 		}
 	}),
-
 	listExports: protectedProcedure.query(async ({ ctx }) => {
 		const exports = await ctx.db.query.userExports.findMany({
 			where: eq(userExports.userId, ctx.user.id),
@@ -141,4 +140,23 @@ export const selfRouter = createTRPCRouter({
 
 		return downloadUrl;
 	}),
+
+	listPasskeys: protectedProcedure.query(async ({ ctx }) => {
+		const passkeys = await ctx.db.query.users.findFirst({
+			where: (users, { eq }) => eq(users.id, ctx.user.id),
+			columns: {},
+			with: { passkeys: true },
+		});
+		return passkeys?.passkeys ?? [];
+	}),
+
+	listApiKeys: protectedProcedure.query(async ({ ctx }) => {
+		const keys = await ctx.db.query.apiKeys.findMany({
+			where: (apiKeys, { eq }) => eq(apiKeys.userId, ctx.user.id),
+			columns: { key: false },
+		});
+		return keys.map((key) => ({ ...key, key: undefined }));
+	}),
+
+	createApiKey: protectedProcedure.mutation(async ({ ctx }) => {}),
 });

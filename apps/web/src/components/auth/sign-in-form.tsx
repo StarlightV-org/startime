@@ -46,7 +46,7 @@ export function SignInForm() {
 			return;
 		}
 
-		window.location.assign("/");
+		window.location.assign("/dash");
 	};
 
 	return (
