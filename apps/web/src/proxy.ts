@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
 		return NextResponse.redirect(new URL("/auth/signin", request.url));
 	}
 
-	if (request.nextUrl.pathname.startsWith("/auth") && session.id) {
+	if (request.nextUrl.pathname.startsWith("/auth") && session?.id) {
 		return NextResponse.redirect(new URL("/dash", request.url));
 	}
 

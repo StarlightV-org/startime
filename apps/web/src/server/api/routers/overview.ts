@@ -127,7 +127,6 @@ export const overviewRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			const { timeRange, filter, biggestUnit } = input;
-			Print.Debug("filter", filter);
 			const regional = ctx.user.accountConfig.regional;
 			const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 

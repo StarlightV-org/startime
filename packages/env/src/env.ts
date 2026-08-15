@@ -22,6 +22,8 @@ export const ENV = createEnv({
 		IMPORTER_PORT: z.coerce.number().int().positive().default(3001),
 		INTERNAL_SERVICE_SECRET: z.string().min(32),
 
+		ALLOWED_EMAILS: z.string().optional(),
+
 		// MISC
 		FILE_HASH_KEY: z.string(),
 	},
@@ -65,6 +67,8 @@ export const ENV = createEnv({
 
 		// MISC
 		FILE_HASH_KEY: process.env.FILE_HASH_KEY,
+
+		ALLOWED_EMAILS: process.env.ALLOWED_EMAILS,
 
 		// SUBSCRIPTIONS
 		NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV: process.env.NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV === "true",
