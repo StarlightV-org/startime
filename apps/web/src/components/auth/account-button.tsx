@@ -19,7 +19,7 @@ export default function AccountButton() {
 
 	if (!session.id) {
 		return (
-			<Link href="/login">
+			<Link href="/auth/signin">
 				<Button>Login</Button>
 			</Link>
 		);
