@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import z from "zod";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { inputStatsSchema, outputCompatibilityStatsSchema, outputStatsSchema } from "@startime/zod";
 import { checkApiKey } from "~/server/better-auth/auth";
 
 import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
@@ -16,10 +17,6 @@ export const coordinatesSearchParams = {
 };
 const loadSearchParams = createLoader(coordinatesSearchParams);
 
-export const statsSchema = z.object({
-	project: z.string().optional(),
-});
-
 export async function GET(req: NextRequest) {
 	const apiKey = await checkApiKey(req);
 	if (apiKey instanceof NextResponse) {
@@ -27,7 +24,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	const data = loadSearchParams(req);
-	const parsed = statsSchema.safeParse(data);
+	const parsed = inputStatsSchema.safeParse(data);
 	if (!parsed.success) {
 		return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 });
 	}
@@ -73,13 +70,13 @@ export async function GET(req: NextRequest) {
 			],
 		};
 
-		return NextResponse.json(activity, { status: 200 });
+		return NextResponse.json(outputCompatibilityStatsSchema.parse(activity), { status: 200 });
 	}
 
 	return NextResponse.json(
-		{
+		outputStatsSchema.parse({
 			time: toTimeString(activityResult[0]?.activeMinutesToday ?? 0),
-		},
+		}),
 		{ status: 200 },
 	);
 }

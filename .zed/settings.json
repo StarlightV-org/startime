@@ -19,5 +19,14 @@
 				},
 			},
 		},
+
+		"startime": {
+			// Sent once in the LSP `initialize` request.
+			"initialization_options": {
+				"test": true,
+				"url": "https://localhost:3000/",
+				"allowSelfSignedCertificates": true,
+			},
+		},
 	},
 }
