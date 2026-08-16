@@ -20,6 +20,7 @@ import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { SyncConfigLocal } from "~/components/auth/sync-config-local";
+import { VersionProvider } from "~/provider/version-provider";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 										<TimeZoneSync />
 										<ReauthProvider />
 										<Toaster />
+										<VersionProvider />
 										<SyncConfigLocal />
 										{children}
 									</TooltipProvider>

@@ -9,6 +9,7 @@
 		// "discord_presence",
 		"...",
 	],
+	"file_scan_exclusions": ["**/language-icons"],
 	"lsp": {
 		"harper-ls": {
 			"settings": {
