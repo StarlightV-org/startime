@@ -27,7 +27,7 @@ export const auth = betterAuth({
 			clientId: ENV.BETTER_AUTH_GITHUB_CLIENT_ID,
 			clientSecret: ENV.BETTER_AUTH_GITHUB_CLIENT_SECRET,
 			scope: ["user:email"],
-			redirectURI: "https://localhost:3000/api/auth/callback/github",
+			// redirectURI: "https://localhost:3000/api/auth/callback/github",
 			prompt: "select_account consent",
 			// mapProfileToUser: async (data) => {
 			// 	if (ENV.ALLOWED_EMAILS && !allowedEmails?.includes(data.email!)) {
