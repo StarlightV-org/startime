@@ -26,6 +26,7 @@ import { Neovim } from "~/components/ui/svgs/neovim";
 import { Obsidian } from "~/components/ui/svgs/obsidian";
 import { cn } from "~/lib/utils";
 import { CursorLight } from "~/components/ui/svgs/cursorLight";
+import type { Route } from "next";
 
 const features = [
 	{
@@ -306,7 +307,7 @@ export default async function Home() {
 							return (
 								<Link
 									key={editor}
-									href={url ?? ""}
+									href={(url as Route) ?? ""}
 									aria-disabled={url === undefined}
 									className={cn(url === undefined && "pointer-events-none")}
 									rel="noopener noreferrer"

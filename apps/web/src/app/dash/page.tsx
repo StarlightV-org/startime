@@ -40,7 +40,7 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 
 	return (
 		<div>
-			<div className="flex w-full flex-col gap-4">
+			<div className="flex w-full flex-col gap-4 pt-2">
 				<Card>
 					<CardContent>
 						<CardHeader>
