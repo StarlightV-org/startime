@@ -1,6 +1,6 @@
 import { formatDate } from "date-fns/format";
 import { subSeconds } from "date-fns/fp";
-import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, PencilIcon } from "lucide-react";
+import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, InfoIcon, PencilIcon } from "lucide-react";
 import { cookies } from "next/headers";
 import { BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
@@ -10,6 +10,7 @@ import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
 import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
 import type { SearchParams } from "nuqs/server";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
 export const coordinatesSearchParams = {
@@ -86,8 +87,23 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 				</Card>
 				<Card>
 					<CardContent>
-						<CardHeader>
+						<CardHeader className="flex items-center justify-between">
 							<CardTitle>Top</CardTitle>
+
+							<Dialog>
+								<DialogTrigger asChild>
+									<InfoIcon className="size-5 cursor-pointer" />
+								</DialogTrigger>
+								<DialogContent>
+									<DialogTitle>Calculations</DialogTitle>
+									<span className="text-sm text-pretty text-muted-foreground">
+										Total time counts each active minute once. <br />
+										If you switch workspace or language within a minute, that same minute is counted for every matching category.{" "}
+										<br />
+										So category times and percentages can exceed 100%.
+									</span>
+								</DialogContent>
+							</Dialog>
 						</CardHeader>
 						<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">
 							<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
