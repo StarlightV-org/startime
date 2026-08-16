@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { execFileSync } from "node:child_process";
+import { platform, release } from "node:os";
 import { basename } from "node:path";
 import { stdin, stdout } from "node:process";
 import { fileURLToPath } from "node:url";
@@ -19,6 +21,36 @@ import { version } from "../package.json";
 const DEFAULT_API_URL = "https://time.starlightv.dev";
 const EVENT_LOG_PATH = "/api/users/event-log";
 const LOG_INTERVAL_MS = 1_000;
+
+function getMacOSVersion() {
+	try {
+		return execFileSync("sw_vers", ["-productVersion"], {
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+	} catch {
+		return "";
+	}
+}
+
+function getPlatformName() {
+	const osRelease = release();
+
+	switch (platform()) {
+		case "win32": {
+			const build = Number(osRelease.split(".")[2]);
+			return `Windows ${build >= 22_000 ? "11" : "10"}`;
+		}
+		case "darwin": {
+			const version = getMacOSVersion();
+			return version ? `macOS ${version}` : `macOS ${osRelease}`;
+		}
+		case "linux":
+			return `Linux ${osRelease}`;
+		default:
+			return `${platform()} ${osRelease}`;
+	}
+}
 
 interface StartimeLspOptions {
 	url: string;
@@ -156,7 +188,7 @@ class StartimeLanguageServer {
 			project: this.project,
 			fileHash: document.uri,
 			editor: "Zed",
-			platform: process.platform,
+			platform: getPlatformName(),
 		};
 
 		void this.sendEventLog(event);

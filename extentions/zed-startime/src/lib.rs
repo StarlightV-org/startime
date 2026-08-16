@@ -15,7 +15,7 @@ impl zed::Extension for StartimeExtension {
 
     fn language_server_command(
         &mut self,
-        _language_server_id: &zed::LanguageServerId,
+        language_server_id: &zed::LanguageServerId,
         worktree: &zed::Worktree,
     ) -> Result<zed::Command, String> {
         if worktree.read_text_file(LOCAL_LSP_PACKAGE).is_ok() {
@@ -26,8 +26,27 @@ impl zed::Extension for StartimeExtension {
             });
         }
 
-        if zed::npm_package_installed_version(LSP_PACKAGE)?.is_none() {
-            zed::npm_install_package(LSP_PACKAGE, "latest")?;
+        let installed_version = zed::npm_package_installed_version(LSP_PACKAGE)?;
+        zed::set_language_server_installation_status(
+            language_server_id,
+            &zed::LanguageServerInstallationStatus::CheckingForUpdate,
+        );
+
+        match zed::npm_package_latest_version(LSP_PACKAGE) {
+            Ok(latest_version) if installed_version.as_ref() != Some(&latest_version) => {
+                zed::set_language_server_installation_status(
+                    language_server_id,
+                    &zed::LanguageServerInstallationStatus::Downloading,
+                );
+
+                if let Err(error) = zed::npm_install_package(LSP_PACKAGE, &latest_version) {
+                    if installed_version.is_none() {
+                        return Err(error);
+                    }
+                }
+            }
+            Err(error) if installed_version.is_none() => return Err(error),
+            _ => {}
         }
 
         let lsp_binary = match zed::current_platform().0 {
