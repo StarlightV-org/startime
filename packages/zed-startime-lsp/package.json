@@ -3,14 +3,14 @@
 	"version": "0.1.0",
 	"type": "module",
 	"bin": {
-		"startime-lsp": "./dist/index.js"
+		"startime-lsp": "dist/index.js"
 	},
 	"files": [
 		"dist"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/StarlightV-org/startime.git",
+		"url": "git+https://github.com/StarlightV-org/startime.git",
 		"directory": "packages/zed-startime-lsp"
 	},
 	"dependencies": {
