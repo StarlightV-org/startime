@@ -18,6 +18,17 @@ impl zed::Extension for StartimeExtension {
         language_server_id: &zed::LanguageServerId,
         worktree: &zed::Worktree,
     ) -> Result<zed::Command, String> {
+        let lsp_settings = zed::settings::LspSettings::for_worktree("startime", worktree)?;
+        if let Some(binary) = lsp_settings.binary {
+            if let Some(path) = binary.path {
+                return Ok(zed::Command {
+                    command: path,
+                    args: binary.arguments.unwrap_or_default(),
+                    env: binary.env.unwrap_or_default().into_iter().collect(),
+                });
+            }
+        }
+
         if worktree.read_text_file(LOCAL_LSP_PACKAGE).is_ok() {
             return Ok(zed::Command {
                 command: zed::node_binary_path()?,

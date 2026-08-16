@@ -23,11 +23,14 @@
 		"startime": {
 			// Sent once in the LSP `initialize` request.
 			"initialization_options": {
-				"test": true,
-				// "url": "https://localhost:3000/",
 				// "url": "https://localhost:3000/",
 				// "allowSelfSignedCertificates": true,
 			},
+			// "binary": {
+			// 	"path": "C:\\nvm4w\\nodejs\\node.exe",
+			// 	"arguments": ["D:\\Dev\\startime\\packages\\zed-startime-lsp\\dist\\index.js"],
+			// 	"env": {},
+			// },
 		},
 	},
 }
