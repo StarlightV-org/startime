@@ -46,7 +46,7 @@ jobs:
 
    - name: Bump patch version
      working-directory: packages/zed-startime-lsp
-     run: npm version patch --no-git-tag-version --ignore-scripts
+     run: npm version patch --no-git-tag-version --ignore-scripts --workspaces=false
 
    - name: Update Bun lockfile
      run: bun install --lockfile-only
