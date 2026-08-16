@@ -17,7 +17,7 @@ export function HeaderBar() {
 	const { org } = useSession();
 
 	return (
-		<header className="sticky top-0 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">
+		<header className="sticky top-0 z-50 mb-2 flex h-fit w-full flex-col rounded-b-xl bg-accent">
 			<div className="flex items-center justify-between px-6 pt-3 pb-1">
 				<Link href="/" className="text-3xl text-white" prefetch={false}>
 					<div className="flex items-center gap-2">

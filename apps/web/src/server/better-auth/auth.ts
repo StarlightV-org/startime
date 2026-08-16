@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 
 import { db } from "@startime/db";
 import { checkAccountConfig, type AccountConfig } from "~/lib/account-config";
+import { NextResponse, type NextRequest } from "next/server";
 
 export async function getAuth(): Promise<SessionType> {
 	const data = await auth.api.getSession({
@@ -99,5 +100,20 @@ export async function getInvitation(userEmail: string) {
 			organization: true,
 		},
 	});
+	return data;
+}
+
+export async function checkApiKey(req: NextRequest) {
+	const apiKey = req.headers.get("x-api-key") ?? req.headers.get("Authorization")?.replace("Bearer ", "");
+
+	if (!apiKey) return NextResponse.json({ error: "api-key-not-provided" }, { status: 401 });
+	const data = await db.query.apiKeys.findFirst({
+		where: (apiKeys, { eq }) => eq(apiKeys.key, apiKey),
+		with: {
+			user: true,
+		},
+	});
+	if (!data) return NextResponse.json({ error: "api-key-invalid" }, { status: 401 });
+
 	return data;
 }

@@ -146,23 +146,30 @@ export const passkeyRelations = relations(passkeys, ({ one }) => ({
 	}),
 }));
 
-export const apiKeys = createTable("api_keys", {
-	id: t
-		.text("id")
-		.primaryKey()
-		.$defaultFn(() => generateShortId(8)),
-	userId: t
-		.text("user_id")
-		.notNull()
-		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
-	name: t.text("name").notNull(),
-	key: t
-		.text("key")
-		.notNull()
-		.unique()
-		.$defaultFn(() => Bun.randomUUIDv7("hex")),
-	createdAt: t.timestamp("created_at").notNull().defaultNow(),
-});
+export const apiKeys = createTable(
+	"api_keys",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId(8)),
+		userId: t
+			.text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		name: t.text("name").notNull(),
+		key: t
+			.text("key")
+			.notNull()
+			.unique()
+			.$defaultFn(() => crypto.randomUUID()),
+		createdAt: t.timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		t.index("apiKey_userId_idx").on(table.userId),
+		t.unique("apiKey_userId_name_unique").on(table.userId, table.name),
+	],
+);
 
 export type DbApiKey = typeof apiKeys.$inferSelect;
 
@@ -296,7 +303,7 @@ export const eventLogs = createTable(
 		fileHash: t.text("file_hash"),
 		editor: t.text("editor").notNull(),
 		platform: t.text("platform").notNull(),
-		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull(),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	},
 	(table) => [
 		t.index("event_logs_user_id_event_time_idx").on(table.userId, table.eventTime),

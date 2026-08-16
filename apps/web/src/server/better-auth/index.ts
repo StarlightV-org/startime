@@ -1,2 +1,2 @@
 export { auth } from "./config";
-export { getAuth } from "./server";
+export { getAuth } from "./auth";

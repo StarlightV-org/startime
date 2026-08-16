@@ -44,6 +44,26 @@ export const ourFileRouter = {
 					message: "You already have a pending import. Please complete it before uploading a new one.",
 				});
 
+			try {
+				const path = "/health";
+
+				const response = await fetch(new URL(path, ENV.IMPORTER_URL), {
+					method: "GET",
+					headers: {
+						"content-type": "application/json",
+						...signInternalRequest(ENV.INTERNAL_SERVICE_SECRET, "GET", path, ""),
+					},
+					body: null,
+				});
+				if (!response.ok) throw new Error(`Importer request failed with ${response.status}`);
+			} catch (error) {
+				throw new UploadThingError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Error with the importer service",
+				});
+				// await db.update(eventImports).set({ status: "failed", message }).where(eq(eventImports.id, eventImport.id));
+			}
+
 			// Whatever is returned here is accessible in onUploadComplete as `metadata`
 			return { userId: user.id };
 		})

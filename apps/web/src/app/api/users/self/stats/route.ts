@@ -1,0 +1,85 @@
+import { NextRequest, NextResponse } from "next/server";
+import z from "zod";
+import { checkApiKey } from "~/server/better-auth/auth";
+
+import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
+import { checkAccountConfig } from "~/lib/account-config";
+import { getTimeRange, normalizeTimeZone, toTimeString } from "~/lib/time-range";
+import { and, eq, gte, lt, sql } from "drizzle-orm";
+
+import { db, eventLogs } from "@startime/db";
+import { isCompatibilityMode } from "~/lib/api-lib";
+
+// Describe your search params, and reuse this in useQueryStates / createSerializer:
+export const coordinatesSearchParams = {
+	project: parseAsString.withDefault(""),
+};
+const loadSearchParams = createLoader(coordinatesSearchParams);
+
+export const statsSchema = z.object({
+	project: z.string().optional(),
+});
+
+export async function GET(req: NextRequest) {
+	const apiKey = await checkApiKey(req);
+	if (apiKey instanceof NextResponse) {
+		return apiKey;
+	}
+
+	const data = loadSearchParams(req);
+	const parsed = statsSchema.safeParse(data);
+	if (!parsed.success) {
+		return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 });
+	}
+
+	const regional = checkAccountConfig(apiKey.user.accountConfig).regional;
+
+	const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+
+	if (!startToday || !endToday) {
+		throw new Error("Unable to determine the current day range");
+	}
+
+	const timeZone = normalizeTimeZone(regional.timeZone);
+	const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
+	const rangeFilter = and(
+		eq(eventLogs.userId, apiKey.user.id),
+		parsed.data.project ? eq(eventLogs.project, parsed.data.project) : undefined,
+	);
+	const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
+
+	const [activityResult] = await Promise.all([
+		db
+			.select({
+				activeMinutesToday: sql<number>`
+						count(distinct date_trunc('minute', ${eventLogs.eventTime}))
+						filter (where ${todayFilter})
+					`.mapWith(Number),
+			})
+			.from(eventLogs)
+			.where(rangeFilter),
+	]);
+
+	if (isCompatibilityMode(req)) {
+		const activity: {
+			data: Array<{
+				duration: number;
+			}>;
+		} = {
+			data: [
+				{
+					duration: activityResult[0]?.activeMinutesToday ?? 0,
+				},
+			],
+		};
+
+		return NextResponse.json(activity, { status: 200 });
+	}
+
+	return NextResponse.json(
+		{
+			time: toTimeString(activityResult[0]?.activeMinutesToday ?? 0),
+		},
+		{ status: 200 },
+	);
+}

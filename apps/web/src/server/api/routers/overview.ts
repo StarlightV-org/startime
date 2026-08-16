@@ -1,6 +1,7 @@
 import { TZDate } from "@date-fns/tz";
 import { eventLogs } from "@startime/db";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
+import { rankByActiveMinutes } from "~/lib/overview-ranking";
 import {
 	getTimeRange,
 	normalizeTimeZone,
@@ -144,6 +145,7 @@ export const overviewRouter = createTRPCRouter({
 
 			const events = await ctx.db
 				.select({
+					eventTime: eventLogs.eventTime,
 					editor: eventLogs.editor,
 					workspace: eventLogs.project,
 					language: eventLogs.language,
@@ -152,24 +154,11 @@ export const overviewRouter = createTRPCRouter({
 				.from(eventLogs)
 				.where(where);
 
-			const rankedItems = (values: string[]) => {
-				const counts = new Map<string, number>();
-				for (const value of values) {
-					counts.set(value, (counts.get(value) ?? 0) + 1);
-				}
-
-				const totalEvents = values.length;
-				const topItems = [...counts.entries()]
-					.map(([value, eventCount]) => ({
-						value,
-						eventCount,
-						percentage: totalEvents === 0 ? 0 : Number(((eventCount / totalEvents) * 100).toFixed(2)),
-					}))
-					.sort((a, b) => b.percentage - a.percentage || a.value.localeCompare(b.value))
-					.slice(0, 5);
+			const rankedItems = (values: { value: string; eventTime: Date }[]) => {
+				const topItems = rankByActiveMinutes(values);
 				const rankItem = (item: (typeof topItems)[number] | undefined) => ({
 					value: item?.value ?? "",
-					time: toTimeString(item?.eventCount ?? 0, biggestUnit),
+					time: toTimeString(item?.minutes ?? 0, biggestUnit),
 					percentage: item?.percentage ?? 0,
 				});
 
@@ -183,10 +172,10 @@ export const overviewRouter = createTRPCRouter({
 			};
 
 			return {
-				editor: rankedItems(events.map((event) => event.editor)),
-				workspace: rankedItems(events.map((event) => event.workspace)),
-				language: rankedItems(events.map((event) => event.language)),
-				platform: rankedItems(events.map((event) => event.platform)),
+				editor: rankedItems(events.map(({ editor, eventTime }) => ({ value: editor, eventTime }))),
+				workspace: rankedItems(events.map(({ workspace, eventTime }) => ({ value: workspace, eventTime }))),
+				language: rankedItems(events.map(({ language, eventTime }) => ({ value: language, eventTime }))),
+				platform: rankedItems(events.map(({ platform, eventTime }) => ({ value: platform, eventTime }))),
 			};
 		}),
 });

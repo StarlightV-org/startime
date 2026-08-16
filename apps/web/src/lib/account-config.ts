@@ -34,6 +34,9 @@ export const defaultAccountConfig = {
 	privacy: {
 		publicProfile: false,
 	},
+	ui: {
+		popupForReauth: true,
+	},
 } as const;
 
 const timeZoneSchema = z
@@ -115,6 +118,30 @@ const privacySchema = z
 		}),
 	);
 
+const uiSchema = z
+	.object({
+		popupForReauth: z
+			.boolean()
+			.optional()
+			.default(defaultAccountConfig.ui.popupForReauth)
+			.meta(
+				createMeta({
+					groupTitle: "UI settings",
+					label: "Popup for reauthentication",
+					description: "Whether to show a popup for reauthentication, or show it in the main window.",
+					defaultBadge: "On",
+				}),
+			),
+	})
+	.optional()
+	.default(defaultAccountConfig.ui)
+	.catch(defaultAccountConfig.ui)
+	.meta(
+		createMeta({
+			groupTitle: "UI settings",
+		}),
+	);
+
 const accountConfigObjectSchema = z.object({
 	regional: regionalSchema.meta(
 		createMeta({
@@ -122,6 +149,7 @@ const accountConfigObjectSchema = z.object({
 		}),
 	),
 	privacy: privacySchema,
+	ui: uiSchema,
 });
 
 export const accountConfigSchema = accountConfigObjectSchema.catch(defaultAccountConfig).default(defaultAccountConfig);
@@ -360,6 +388,7 @@ export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
 	z.object({ path: z.literal("regional.startOfWeek"), value: z.enum(["monday", "sunday"]) }),
 	z.object({ path: z.literal("regional.lang"), value: z.enum(["en-EN", "de-DE"]) }),
 	z.object({ path: z.literal("privacy.publicProfile"), value: z.boolean() }),
+	z.object({ path: z.literal("ui.popupForReauth"), value: z.boolean() }),
 ]);
 
 export function checkAccountConfig(config: unknown): AccountConfig {

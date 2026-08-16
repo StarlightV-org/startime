@@ -19,6 +19,7 @@ import { ReauthProvider } from "~/components/auth/reauth-provider";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
+import { SyncConfigLocal } from "~/components/auth/sync-config-local";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -43,7 +44,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<head>
 				<meta name="darkreader-lock" />
 			</head>
-			<body className="@container/body">
+			<body className="dark @container/body">
 				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 				<SessionProvider initialSession={session}>
 					<NuqsAdapter>
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 										<TimeZoneSync />
 										<ReauthProvider />
 										<Toaster />
+										<SyncConfigLocal />
 										{children}
 									</TooltipProvider>
 								</ConfirmModalProvider>

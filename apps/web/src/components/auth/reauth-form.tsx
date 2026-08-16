@@ -1,6 +1,8 @@
 "use client";
 
+import { useMounted } from "@mantine/hooks";
 import { KeyRound, LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -16,8 +18,8 @@ function notifyOpener(message: ReauthMessage) {
 export function ReauthForm({ onSuccess, onFailure }: { onSuccess?: () => void; onFailure?: () => void }) {
 	const [pending, setPending] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-
-	const reauthenticate = async () => {
+	const mounted = useMounted();
+	const reauthenticate = async (autofill: boolean = true) => {
 		if (!window.PublicKeyCredential) {
 			setError("Passkeys are not supported in this browser.");
 			return;
@@ -26,7 +28,9 @@ export function ReauthForm({ onSuccess, onFailure }: { onSuccess?: () => void; o
 		setPending(true);
 		setError(null);
 
-		const result = await authClient.signIn.passkey();
+		const result = await authClient.signIn.passkey({
+			autoFill: autofill,
+		});
 		if (result.error) {
 			const message = result.error.message ?? "Your passkey could not be verified.";
 			setError(message);
@@ -47,6 +51,18 @@ export function ReauthForm({ onSuccess, onFailure }: { onSuccess?: () => void; o
 		}
 	};
 
+	useEffect(() => {
+		let timeout: NodeJS.Timeout | undefined;
+		if (mounted) {
+			timeout = setTimeout(() => {
+				void reauthenticate(false);
+			}, 300);
+		}
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
+	}, [mounted]);
+
 	return (
 		<>
 			<CardHeader className="items-center px-6 text-center">
@@ -54,7 +70,7 @@ export function ReauthForm({ onSuccess, onFailure }: { onSuccess?: () => void; o
 				<CardDescription>Use a passkey to continue with this sensitive action.</CardDescription>
 			</CardHeader>
 			<CardContent className="grid gap-3 px-6">
-				<Button className="w-full" disabled={pending} onClick={reauthenticate} size="lg" type="button">
+				<Button className="w-full" disabled={pending} onClick={() => void reauthenticate()} size="lg" type="button">
 					{pending ? <LoaderCircle className="animate-spin" /> : <KeyRound />}
 					Continue with a passkey
 				</Button>
@@ -63,6 +79,7 @@ export function ReauthForm({ onSuccess, onFailure }: { onSuccess?: () => void; o
 						{error}
 					</p>
 				)}
+				{mounted && <input hidden type="text" name="name" autoComplete="webauthn" />}
 			</CardContent>
 			<CardFooter className="justify-center px-6 text-center">
 				<p className="text-xs leading-5 text-muted-foreground">

@@ -17,11 +17,12 @@ function openReauth(): Promise<boolean> {
 	return new Promise((resolve) => {
 		const { left, top } = getCenteredPosition("screen", REAUTH_POPUP_WIDTH, REAUTH_POPUP_HEIGHT);
 		const url = typeof window !== "undefined" ? `${window.location.origin}${REAUTH_POPUP_URL}` : REAUTH_POPUP_URL;
-		const popup = window.open(
-			url,
-			"reauth",
-			toWindowFeatures({ width: REAUTH_POPUP_WIDTH, height: REAUTH_POPUP_HEIGHT, left, top }),
-		);
+		const usePopup =
+			typeof window !== "undefined" &&
+			JSON.parse(window.localStorage.getItem("account_config") ?? `{"ui": { "popupForReauth": true}}`).ui.popupForReauth;
+		const popup = usePopup
+			? window.open(url, "reauth", toWindowFeatures({ width: REAUTH_POPUP_WIDTH, height: REAUTH_POPUP_HEIGHT, left, top }))
+			: null;
 
 		if (!popup) {
 			// Popup blocked (common on mobile) – fallback to in-page modal

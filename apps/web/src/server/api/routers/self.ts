@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, reauthProcedure } from "~/server/api/trpc";
 
-import { eventImports, users, userExports } from "@startime/db";
+import { eventImports, users, userExports, apiKeys } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
 import {
 	checkAccountConfig,
@@ -14,6 +14,7 @@ import { signInternalRequest } from "@startime/service-auth";
 import { ENV } from "@startime/env";
 import { utapi } from "~/app/api/uploadthing/core";
 import { TRPCError } from "@trpc/server";
+import { tryCatch } from "~/lib/utils";
 
 const timeZoneSchema = z.string().trim().refine(isValidTimeZone, "Select a valid IANA time zone.");
 
@@ -86,7 +87,7 @@ export const selfRouter = createTRPCRouter({
 		};
 	}),
 
-	triggerExport: reauthProcedure.mutation(async ({ ctx }) => {
+	triggerExport: protectedProcedure.mutation(async ({ ctx }) => {
 		const importResult = await ctx.db
 			.insert(userExports)
 			.values({
@@ -158,5 +159,33 @@ export const selfRouter = createTRPCRouter({
 		return keys.map((key) => ({ ...key, key: undefined }));
 	}),
 
-	createApiKey: protectedProcedure.mutation(async ({ ctx }) => {}),
+	createApiKey: protectedProcedure.input(z.object({ name: z.string() })).mutation(async ({ ctx, input }) => {
+		const { name } = input;
+		const apiKey = await tryCatch(ctx.db.insert(apiKeys).values({ name, userId: ctx.user.id }).returning());
+
+		if (!apiKey.data) {
+			throw new TRPCError({ code: "BAD_REQUEST", message: "Api key with that name already exists" });
+		}
+
+		return { success: true };
+	}),
+
+	getApiKey: reauthProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+		const { id } = input;
+		const apiKey = await ctx.db.query.apiKeys.findFirst({
+			where: (apiKeys, { eq, and }) => and(eq(apiKeys.id, id), eq(apiKeys.userId, ctx.user.id)),
+			columns: { key: true },
+		});
+
+		if (!apiKey) {
+			throw new TRPCError({ code: "NOT_FOUND", message: "Api key not found" });
+		}
+
+		return apiKey?.key;
+	}),
+	deleteApiKey: reauthProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+		const { id } = input;
+		await ctx.db.delete(apiKeys).where(and(eq(apiKeys.id, id), eq(apiKeys.userId, ctx.user.id)));
+		return { success: true };
+	}),
 });
