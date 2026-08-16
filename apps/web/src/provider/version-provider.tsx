@@ -131,7 +131,7 @@ export function VersionProvider() {
 				},
 			},
 			actionButtonStyle: {
-				backgroundColor: "var(--secondary) !important",
+				backgroundColor: "var(--primary) !important",
 				cursor: "pointer !important",
 				pointerEvents: "auto",
 			},

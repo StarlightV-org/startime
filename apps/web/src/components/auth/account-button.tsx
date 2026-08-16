@@ -39,7 +39,11 @@ export default function AccountButton() {
 			<DropdownMenuContent align="end" sideOffset={10}>
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>Account</DropdownMenuLabel>
-					<DropdownMenuItem>Settings</DropdownMenuItem>
+					<DropdownMenuItem asChild>
+						<Link href="/dash/settings">
+							<span>Settings</span>
+						</Link>
+					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => {
 							void authClient.signOut();

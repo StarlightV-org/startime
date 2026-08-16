@@ -58,7 +58,7 @@ const extensions: Array<{
 		description: "Fast and AI-powered code editor that makes you more productive.",
 		url: undefined,
 		icon: <ZedLogo className="size-10 text-white" />,
-		state: "not-started",
+		state: "completed",
 	},
 	{
 		editor: "VS Code",
@@ -100,7 +100,7 @@ const extensions: Array<{
 		description: "Note-taking and knowledge management app",
 		url: undefined,
 		icon: <Obsidian className="size-10" />,
-		state: "not-started",
+		state: "started",
 	},
 	{
 		editor: "More?",
