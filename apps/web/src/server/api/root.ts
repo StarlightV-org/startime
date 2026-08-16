@@ -2,6 +2,7 @@ import { selfRouter } from "~/server/api/routers/self";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { orgRouter } from "./routers/org";
 import { overviewRouter } from "./routers/overview";
+import { miscRouter } from "./routers/misc";
 
 /**
  * This is the primary router for your server.
@@ -9,6 +10,7 @@ import { overviewRouter } from "./routers/overview";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+	misc: miscRouter,
 	self: selfRouter,
 	org: orgRouter,
 	overview: overviewRouter,

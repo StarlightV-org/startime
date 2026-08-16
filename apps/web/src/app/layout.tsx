@@ -26,9 +26,6 @@ export async function generateMetadata(): Promise<Metadata> {
 		title: "Startime",
 		description: "Startime tracks your time spend coding.",
 		icons: [{ rel: "icon", url: "/favicon.svg" }],
-		other: {
-			"darkreader-lock": "",
-		},
 	};
 }
 
@@ -44,6 +41,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
 	return (
 		<html lang="en" className={cn("dark", nunito.className)}>
+			<head>
+				<meta name="darkreader-lock" />
+			</head>
 			<body className="dark @container/body">
 				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 				<SessionProvider initialSession={session}>
