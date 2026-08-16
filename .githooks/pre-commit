@@ -1,3 +1,9 @@
 #!/usr/bin/env sh
-bun --cwd apps/web pm version patch --no-git-tag-version
-git add package.json
+set -eu
+
+(
+	cd apps/web
+	bun pm version patch --no-git-tag-version
+)
+
+git add apps/web/package.json
