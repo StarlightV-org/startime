@@ -13,6 +13,7 @@ import { createAuthMiddleware } from "better-auth/api";
 const allowedEmails = ENV.ALLOWED_EMAILS?.split(",");
 
 export const auth = betterAuth({
+	baseURL: ENV.BETTER_AUTH_URL,
 	database: drizzleAdapter(db, {
 		provider: "pg", // or "pg" or "mysql"
 		usePlural: true,
