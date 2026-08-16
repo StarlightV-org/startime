@@ -8,12 +8,14 @@ import { Vscode } from "../ui/svgs/vscode";
 import { ZedLogo } from "../ui/svgs/zedLogo";
 import { CursorDark } from "../ui/svgs/cursorDark";
 import { CursorLight } from "../ui/svgs/cursorLight";
+import { Webstorm } from "../ui/svgs/webstorm";
 
 const defaultClassName = "size-4";
 
 type SvgIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
-type EditorName = "vscode" | "visual-studio" | "cursor" | "vim" | "neovim" | "obsidian" | "intellij-idea" | "zed";
+type EditorName =
+	"vscode" | "visual-studio" | "cursor" | "vim" | "neovim" | "obsidian" | "intellij-idea" | "zed" | "webstorm";
 
 const editorIcons: Record<EditorName, SvgIcon> = {
 	vscode: Vscode,
@@ -24,6 +26,7 @@ const editorIcons: Record<EditorName, SvgIcon> = {
 	obsidian: Obsidian,
 	"intellij-idea": Intellijidea,
 	zed: ZedLogo,
+	webstorm: Webstorm,
 };
 
 const editorAliases: Record<string, EditorName> = {
