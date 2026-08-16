@@ -1,7 +1,7 @@
 use zed_extension_api as zed;
 
 const LSP_PACKAGE: &str = "@starlightv-org/zed-startime-lsp";
-const LOCAL_LSP_PACKAGE: &str = "packages/zed-startime-lsp/package.json";
+const LOCAL_LSP_PACKAGE: &str = "packages/zed-startime-lsp/dist/index.js";
 const LOCAL_LSP_ENTRYPOINT: &str = "packages/zed-startime-lsp/dist/index.js";
 const LSP_BINARY: &str = "node_modules/.bin/startime-lsp";
 const WINDOWS_LSP_BINARY: &str = "node_modules/.bin/startime-lsp.cmd";
