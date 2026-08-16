@@ -7,7 +7,7 @@
 		"packages/*"
 	],
 	"scripts": {
-		"prepare": "git config core.hooksPath .githooks",
+		"config:githooks": "git config core.hooksPath .githooks",
 		"build": "turbo run build",
 		"check": "turbo run check",
 		"check:unsafe": "turbo run check:unsafe",
