@@ -1,0 +1,18 @@
+{
+	"name": "@startime/zod",
+	"version": "0.1.0",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"dependencies": {
+		"zod": "^4.4.3"
+	},
+	"scripts": {
+		"build": "tsc",
+		"check": "biome check ."
+	}
+}

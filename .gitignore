@@ -1,6 +1,7 @@
 node_modules/
 .next/
 dist/
+target/
 .env
 .env.*
 !.env.example

@@ -1,0 +1,27 @@
+{
+	"name": "@starlightv-org/zed-startime-lsp",
+	"version": "0.1.0",
+	"type": "module",
+	"bin": {
+		"startime-lsp": "./dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/StarlightV-org/startime.git",
+		"directory": "packages/zed-startime-lsp"
+	},
+	"dependencies": {
+		"vscode-languageserver": "^9.0.1",
+		"vscode-languageserver-textdocument": "^1.0.12"
+	},
+	"scripts": {
+		"build": "bun build ./src/index.ts --outdir ./dist --target node --external=vscode-languageserver/node.js --external=vscode-languageserver-textdocument",
+		"check": "biome check src package.json tsconfig.json"
+	},
+	"devDependencies": {
+		"@types/node": "^26.2.0"
+	}
+}
