@@ -56,7 +56,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	);
 }
 
-const bigestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
+const biggestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
 	hour: "Hour",
 	day: "Day",
 	week: "Week",
@@ -76,11 +76,11 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 	return (
 		<Select value={value} onValueChange={handleChange}>
 			<SelectTrigger className="min-w-max">
-				<SelectValue fallback={bigestUnitLabels[value ?? "day"]} />
+				<SelectValue fallback={biggestUnitLabels[value ?? "day"]} />
 			</SelectTrigger>
 			<SelectContent position={"popper"}>
 				<SelectGroup>
-					<SelectLabel>Bigest Unit</SelectLabel>
+					<SelectLabel>Biggest Unit</SelectLabel>
 					<SelectItem value="hour">Hour</SelectItem>
 					<SelectItem value="day">Day</SelectItem>
 					<SelectItem value="week">Week</SelectItem>
