@@ -1,0 +1,30 @@
+.git
+.github
+.turbo
+.zed
+
+# Local dependencies and build artifacts
+node_modules
+apps/importer/node_modules
+apps/web/node_modules
+apps/web/.next
+packages/db/node_modules
+packages/env/node_modules
+packages/print/node_modules
+packages/service-auth/node_modules
+packages/zed-startime-lsp/node_modules
+packages/zod/node_modules
+
+# Not needed to build the web workspace
+extentions
+old
+
+# Local-only files
+.env
+.env.*
+apps/web/certificates
+apps/web/coverage
+apps/web/tsconfig.tsbuildinfo
+*.csv
+
+apps/importer/dist
