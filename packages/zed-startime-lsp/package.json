@@ -1,6 +1,6 @@
 {
 	"name": "@starlightv-org/zed-startime-lsp",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"type": "module",
 	"bin": {
 		"startime-lsp": "dist/index.js"
