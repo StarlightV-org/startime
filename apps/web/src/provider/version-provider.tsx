@@ -133,6 +133,7 @@ export function VersionProvider() {
 			actionButtonStyle: {
 				backgroundColor: "var(--primary) !important",
 				cursor: "pointer !important",
+				color: "white",
 				pointerEvents: "auto",
 			},
 			className: "w-[600px]!",
@@ -144,8 +145,8 @@ export function VersionProvider() {
 				<>
 					Du bist {props.patchDiff} Versionen zurück. Bitte aktualisiere jetzt, um Fehler zu vermeiden.
 					<br />
-					Deine Version: <span className="text-primary">{props.currentVersion}</span>, Neuste Version:{" "}
-					<span className="text-primary">{props.newVersion}</span>
+					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
 		});
@@ -160,9 +161,10 @@ export function VersionProvider() {
 				},
 			},
 			actionButtonStyle: {
-				backgroundColor: "var(--secondary) !important",
+				backgroundColor: "var(--primary) !important",
 				cursor: "pointer !important",
 				pointerEvents: "auto",
+				color: "white",
 			},
 			className: "w-[500px]!",
 			dismissible: false,
@@ -174,8 +176,8 @@ export function VersionProvider() {
 				<>
 					Du bist {props.patchDiff} Versionen zurück. Bitte aktualisiere jetzt, um Fehler zu vermeiden.
 					<br />
-					Deine Version: <span className="text-primary">{props.currentVersion}</span>, Neuste Version:{" "}
-					<span className="text-primary">{props.newVersion}</span>
+					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
 		});
@@ -189,8 +191,9 @@ export function VersionProvider() {
 				},
 			},
 			actionButtonStyle: {
-				backgroundColor: "var(--secondary) !important",
+				backgroundColor: "var(--primary) !important",
 				cursor: "pointer !important",
+				color: "white",
 				pointerEvents: "auto",
 			},
 			className: "w-[500px]!",
@@ -203,8 +206,8 @@ export function VersionProvider() {
 				<>
 					Bitte aktualisiere die Seite, um die neueste Version zu verwenden und Fehler zu vermeiden
 					<br />
-					Deine Version: <span className="text-primary">{props.currentVersion}</span>, Neuste Version:{" "}
-					<span className="text-primary">{props.newVersion}</span>
+					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
 		});
