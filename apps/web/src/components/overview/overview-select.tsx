@@ -40,7 +40,6 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 			<SelectContent position={"popper"}>
 				<SelectGroup>
 					<SelectLabel>Relative</SelectLabel>
-					<SelectItem value="allTime">All Time</SelectItem>
 					<SelectItem value="past1">Last 24 hours</SelectItem>
 					<SelectItem value="past7">Last 7 days</SelectItem>
 					<SelectItem value="past30">Last 30 days</SelectItem>
@@ -53,6 +52,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 					<SelectItem value="thisWeek">This week</SelectItem>
 					<SelectItem value="thisMonth">This month</SelectItem>
 					<SelectItem value="thisYear">This year</SelectItem>
+					<SelectItem value="allTime">All Time</SelectItem>
 				</SelectGroup>
 			</SelectContent>
 		</Select>
