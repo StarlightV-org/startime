@@ -5,6 +5,7 @@
 import type { NextConfig } from "next";
 import "@startime/env";
 import "@startime/print";
+import { ENV } from "@startime/env";
 
 const config: NextConfig = {
 	output: "standalone",
@@ -36,6 +37,14 @@ const config: NextConfig = {
 
 	env: {
 		NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+	},
+	rewrites: async () => {
+		return [
+			{
+				source: "/script",
+				destination: `https://openpanel.dev/op1.js`,
+			},
+		];
 	},
 };
 

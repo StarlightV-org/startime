@@ -9,6 +9,7 @@ import { organization } from "better-auth/plugins";
 import { generateShortId } from "~/lib/utils";
 
 import { createAuthMiddleware } from "better-auth/api";
+import { op } from "~/lib/op";
 
 const allowedEmails = ENV.ALLOWED_EMAILS?.split(",");
 
@@ -51,6 +52,36 @@ export const auth = betterAuth({
 						throw new APIError("FORBIDDEN", {
 							message: "email-not-allowed",
 						});
+					}
+				},
+			},
+		},
+		session: {
+			create: {
+				after: async ({ userId }) => {
+					const user = await db.query.users.findFirst({
+						where: (users, { eq }) => eq(users.id, userId),
+						with: {
+							organization: true,
+						},
+					});
+
+					if (!user) return;
+
+					op.identify({
+						profileId: user.id,
+						avatar: user.image ?? undefined,
+						firstName: user.name,
+					});
+					op.track("session-created", { profileId: user.id });
+
+					if (user.organizationId) {
+						op.upsertGroup({
+							id: user.organizationId,
+							type: "organization",
+							name: user.organization!.name,
+						});
+						op.setGroup(user.organizationId);
 					}
 				},
 			},

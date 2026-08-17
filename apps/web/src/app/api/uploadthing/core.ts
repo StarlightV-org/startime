@@ -8,6 +8,7 @@ import { signInternalRequest } from "@startime/service-auth";
 
 import { UTApi } from "uploadthing/server";
 import { ENV } from "@startime/env";
+import { op } from "~/lib/op";
 
 export const utapi = new UTApi({
 	token: ENV.UPLOADTHING_TOKEN,
@@ -61,8 +62,10 @@ export const ourFileRouter = {
 					code: "INTERNAL_SERVER_ERROR",
 					message: "Error with the importer service",
 				});
-				// await db.update(eventImports).set({ status: "failed", message }).where(eq(eventImports.id, eventImport.id));
 			}
+			op.track("uploadthing:import_csv:start", {
+				profileId: user.id,
+			});
 
 			// Whatever is returned here is accessible in onUploadComplete as `metadata`
 			return { userId: user.id };
@@ -121,6 +124,10 @@ export const ourFileRouter = {
 				await db.update(eventImports).set({ status: "failed", message }).where(eq(eventImports.id, eventImport.id));
 			}
 
+			op.track("uploadthing:import_csv:complete", {
+				profileId: metadata.userId,
+			});
+
 			return { success: true, fileId: newFile.id };
 			// !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
 		}),
@@ -177,10 +184,4 @@ async function saveFileToDatabase(
 	// });
 
 	return newFile;
-}
-
-export async function getUploadThingFile(fileKey: string) {
-	const url = await utapi.generateSignedURL(fileKey, {
-		expiresIn: 60 * 60, // 1 hour
-	});
 }

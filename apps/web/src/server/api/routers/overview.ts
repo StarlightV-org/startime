@@ -2,14 +2,7 @@ import { TZDate } from "@date-fns/tz";
 import { eventLogs } from "@startime/db";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
-import {
-	getTimeRange,
-	normalizeTimeZone,
-	timeRangeValues,
-	toDayString,
-	toTimeString,
-	type TimeRange,
-} from "~/lib/time-range";
+import { getTimeRange, normalizeTimeZone, timeRangeValues, toDayString, toTimeString } from "~/lib/time-range";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import z from "zod";
 import type { API } from "~/trpc/server";

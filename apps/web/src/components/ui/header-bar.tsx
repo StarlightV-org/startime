@@ -10,7 +10,6 @@ import { Separator } from "./separator";
 
 export function HeaderBar() {
 	const pathname = usePathname();
-	const router = useRouter();
 	const { org } = useSession();
 
 	return (
@@ -29,12 +28,7 @@ export function HeaderBar() {
 				</div>
 				<Separator className="my-1" />
 				<Tabs value={pathname} className="px-6 pb-1">
-					<TabsList
-						className="h-10! space-x-2"
-						onClick={() => {
-							router.refresh();
-						}}
-					>
+					<TabsList className="h-10! space-x-2">
 						<TabsTrigger value="/dash" asChild>
 							<Link href="/dash" className="text-sm">
 								Overview

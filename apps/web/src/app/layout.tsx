@@ -21,6 +21,8 @@ import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/uploadthing/core";
 import { SyncConfigLocal } from "~/components/auth/sync-config-local";
 import { VersionProvider } from "~/provider/version-provider";
+import { IdentifyComponent, OpenPanelComponent } from "@openpanel/nextjs";
+import { ENV } from "@startime/env";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -38,7 +40,7 @@ const nunito = Nunito({
 });
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const session = await getAuth();
+	const auth = await getAuth();
 
 	return (
 		<html lang="en" className={cn("dark", nunito.className)}>
@@ -47,7 +49,25 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			</head>
 			<body className="dark @container/body">
 				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-				<SessionProvider initialSession={session}>
+				<SessionProvider initialSession={auth}>
+					<OpenPanelComponent
+						debug={ENV.NODE_ENV === "development"}
+						clientId={ENV.CLIENT_ID}
+						clientSecret={ENV.CLIENT_SECRET}
+						apiUrl={ENV.NEXT_PUBLIC_OPENPANEL_API_URL}
+						scriptUrl={"/script"}
+						trackAttributes
+						trackOutgoingLinks
+						trackScreenViews
+						profileId={auth?.user?.id}
+						strategy="afterInteractive"
+					/>
+					<IdentifyComponent
+						profileId={auth?.user?.id}
+						avatar={auth?.user?.image ?? undefined}
+						firstName={auth?.user?.name}
+					/>
+
 					<NuqsAdapter>
 						<TRPCReactProvider>
 							<HydrateClient>

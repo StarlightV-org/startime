@@ -26,6 +26,7 @@
 		"@better-auth/passkey": "^1.6.29",
 		"@date-fns/tz": "^1.5.0",
 		"@mantine/hooks": "^9.5.1",
+		"@openpanel/nextjs": "^1.5.1",
 		"@startime/db": "workspace:*",
 		"@startime/env": "workspace:*",
 		"@startime/print": "workspace:*",

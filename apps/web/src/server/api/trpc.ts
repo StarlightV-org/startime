@@ -15,6 +15,7 @@ import { getAuth } from "../better-auth";
 import type { SessionType } from "better-auth";
 import { PASSKEY_REGISTRATION_REQUIRED_CAUSE, REAUTH_REQUIRED_CAUSE } from "~/lib/reauth-util";
 import { addSeconds } from "date-fns/fp";
+import { op } from "~/lib/op";
 
 /**
  * 1. CONTEXT
@@ -148,6 +149,22 @@ export async function checkReauth(_auth: SessionType | null) {
 		});
 	}
 }
+
+export type TrackMiddlewareOptions = {
+	event: string;
+	addInput?: boolean;
+};
+
+export const trackMiddleware = ({ event, addInput = true }: TrackMiddlewareOptions) =>
+	t.middleware(async ({ next, ctx, input }) => {
+		await op.track(event, {
+			profileId: ctx.user.id,
+			groups: [ctx.user.organizationId],
+			...(addInput && input && typeof input === "object" ? input : {}),
+		});
+
+		return next();
+	});
 
 /**
  * Public (unauthenticated) procedure

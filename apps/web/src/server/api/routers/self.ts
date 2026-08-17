@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure, reauthProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, reauthProcedure, trackMiddleware } from "~/server/api/trpc";
 
 import { eventImports, users, userExports, apiKeys } from "@startime/db";
 import { count, eq, and, or } from "drizzle-orm";
@@ -87,7 +87,7 @@ export const selfRouter = createTRPCRouter({
 		};
 	}),
 
-	triggerExport: protectedProcedure.mutation(async ({ ctx }) => {
+	triggerExport: protectedProcedure.use(trackMiddleware({ event: "export:start" })).mutation(async ({ ctx }) => {
 		const importResult = await ctx.db
 			.insert(userExports)
 			.values({
@@ -116,6 +116,7 @@ export const selfRouter = createTRPCRouter({
 			const message = error instanceof Error ? error.message : "Unable to queue export";
 			Print.Error("Unable to queue export", { error });
 			await ctx.db.update(userExports).set({ status: "failed", message }).where(eq(userExports.id, exportId!));
+			throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Unable to queue export" });
 		}
 	}),
 	listExports: protectedProcedure.query(async ({ ctx }) => {
@@ -127,7 +128,7 @@ export const selfRouter = createTRPCRouter({
 			other: exports.filter((e) => e.status !== "pending"),
 		};
 	}),
-	getExportUrl: protectedProcedure.mutation(async ({ ctx }) => {
+	getExportUrl: protectedProcedure.use(trackMiddleware({ event: "self:export:url" })).mutation(async ({ ctx }) => {
 		const exports = await ctx.db.query.userExports.findFirst({
 			where: (userExports, { eq, and }) => and(eq(userExports.userId, ctx.user.id), eq(userExports.status, "uploaded")),
 			orderBy: (userExports, { desc }) => [desc(userExports.completedAt)],
@@ -159,16 +160,19 @@ export const selfRouter = createTRPCRouter({
 		return keys.map((key) => ({ ...key, key: undefined }));
 	}),
 
-	createApiKey: protectedProcedure.input(z.object({ name: z.string() })).mutation(async ({ ctx, input }) => {
-		const { name } = input;
-		const apiKey = await tryCatch(ctx.db.insert(apiKeys).values({ name, userId: ctx.user.id }).returning());
+	createApiKey: protectedProcedure
+		.input(z.object({ name: z.string() }))
+		.use(trackMiddleware({ event: "api_key:create" }))
+		.mutation(async ({ ctx, input }) => {
+			const { name } = input;
+			const apiKey = await tryCatch(ctx.db.insert(apiKeys).values({ name, userId: ctx.user.id }).returning());
 
-		if (!apiKey.data) {
-			throw new TRPCError({ code: "BAD_REQUEST", message: "Api key with that name already exists" });
-		}
+			if (!apiKey.data) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Api key with that name already exists" });
+			}
 
-		return { success: true };
-	}),
+			return { success: true };
+		}),
 
 	getApiKey: reauthProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
 		const { id } = input;
@@ -183,9 +187,12 @@ export const selfRouter = createTRPCRouter({
 
 		return apiKey?.key;
 	}),
-	deleteApiKey: reauthProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-		const { id } = input;
-		await ctx.db.delete(apiKeys).where(and(eq(apiKeys.id, id), eq(apiKeys.userId, ctx.user.id)));
-		return { success: true };
-	}),
+	deleteApiKey: reauthProcedure
+		.input(z.object({ id: z.string() }))
+		.use(trackMiddleware({ event: "api_key:delete" }))
+		.mutation(async ({ ctx, input }) => {
+			const { id } = input;
+			await ctx.db.delete(apiKeys).where(and(eq(apiKeys.id, id), eq(apiKeys.userId, ctx.user.id)));
+			return { success: true };
+		}),
 });

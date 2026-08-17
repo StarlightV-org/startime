@@ -1,10 +1,11 @@
 import { and, eq } from "drizzle-orm";
 import z from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, trackMiddleware } from "~/server/api/trpc";
 import { auth } from "~/server/better-auth";
 
 import { users, invitations, organizations, members } from "@startime/db";
 import { TRPCError } from "@trpc/server";
+import { op } from "~/lib/op";
 
 export const OrgConfig = {
 	maxMembers: 10,
@@ -20,6 +21,7 @@ const orgMembersRouter = createTRPCRouter({
 				role: z.enum(["member", "admin", "owner"]),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:member:update" }))
 		.mutation(async ({ ctx, input }) => {
 			const { userId, role } = input;
 
@@ -55,6 +57,7 @@ const orgMembersRouter = createTRPCRouter({
 				userId: z.string(),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:member:kick" }))
 		.mutation(async ({ ctx, input }) => {
 			const { userId } = input;
 
@@ -79,6 +82,7 @@ const orgInvitesRouter = createTRPCRouter({
 				email: z.email(),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:invite:create", addInput: false }))
 		.mutation(async ({ ctx, input }) => {
 			const user = await ctx.db.query.users.findFirst({
 				where: eq(users.email, input.email),
@@ -149,6 +153,7 @@ const orgInvitesRouter = createTRPCRouter({
 				invitationId: z.string(),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:invite:accept" }))
 		.mutation(async ({ ctx, input }) => {
 			const invitation = await ctx.db.query.invitations.findFirst({
 				where: eq(invitations.id, input.invitationId),
@@ -201,6 +206,7 @@ const orgInvitesRouter = createTRPCRouter({
 				invitationId: z.string(),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:invite:decline" }))
 		.mutation(async ({ ctx, input }) => {
 			const invitation = await ctx.db.query.invitations.findFirst({
 				where: eq(invitations.id, input.invitationId),
@@ -249,6 +255,7 @@ export const orgRouter = createTRPCRouter({
 				logo: z.string().min(5, "Logo must be at least 5 characters.").or(z.literal("")),
 			}),
 		)
+		.use(trackMiddleware({ event: "org:create" }))
 		.mutation(async ({ ctx, input }) => {
 			const data = await ctx.db.transaction(async (tx) => {
 				const [data] = await tx
@@ -271,10 +278,11 @@ export const orgRouter = createTRPCRouter({
 					createdAt: new Date(),
 				});
 
-				await tx.delete(invitations).where(eq(invitations.email, ctx.user.email));
+				await tx.update(invitations).set({ status: "declined" }).where(eq(invitations.email, ctx.user.email));
 
 				return data;
 			});
+			op.setGroup(data.id);
 
 			return data;
 		}),

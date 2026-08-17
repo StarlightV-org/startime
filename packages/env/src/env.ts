@@ -24,6 +24,10 @@ export const ENV = createEnv({
 
 		ALLOWED_EMAILS: z.string().optional(),
 
+		// OPENPANEL
+		CLIENT_SECRET: z.string(),
+		CLIENT_ID: z.string(),
+
 		// MISC
 		FILE_HASH_KEY: z.string(),
 	},
@@ -37,6 +41,8 @@ export const ENV = createEnv({
 	client: {
 		NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),
 		NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV: z.boolean(),
+
+		NEXT_PUBLIC_OPENPANEL_API_URL: z.url(),
 	},
 
 	/**
@@ -72,6 +78,11 @@ export const ENV = createEnv({
 
 		// SUBSCRIPTIONS
 		NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV: process.env.NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV === "true",
+
+		// OPENPANEL
+		CLIENT_ID: process.env.CLIENT_ID,
+		NEXT_PUBLIC_OPENPANEL_API_URL: process.env.NEXT_PUBLIC_OPENPANEL_API_URL,
+		CLIENT_SECRET: process.env.CLIENT_SECRET,
 	},
 
 	emptyStringAsUndefined: true,

@@ -13,9 +13,11 @@ import {
 	DropdownMenuLabel,
 } from "../ui/dropdown-menu";
 import { authClient } from "~/server/better-auth/client";
+import { useOpenPanel } from "@openpanel/nextjs";
 
 export default function AccountButton() {
 	const { user, session } = useSession();
+	const op = useOpenPanel();
 
 	if (!session.id) {
 		return (
@@ -45,8 +47,10 @@ export default function AccountButton() {
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
-						onClick={() => {
-							void authClient.signOut();
+						onClick={async () => {
+							await authClient.signOut();
+							op.track("session:end");
+
 							window.location.href = "/";
 						}}
 						className="text-destructive hover:bg-destructive/15! hover:text-destructive"

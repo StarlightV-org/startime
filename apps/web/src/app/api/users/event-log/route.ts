@@ -6,6 +6,7 @@ import { inputEventLogSchema, outputEventLogSchema } from "@startime/zod";
 import { createHmac } from "node:crypto";
 import { ENV } from "@startime/env";
 import { normalizeLanguageId } from "~/lib/api-lib";
+import { op } from "~/lib/op";
 
 export async function POST(req: NextRequest) {
 	const apiKey = await checkApiKey(req);
@@ -18,8 +19,6 @@ export async function POST(req: NextRequest) {
 	if (!parsed.success) {
 		return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 });
 	}
-
-	Print.Debug("[event-log] parsed.data", parsed.data);
 
 	const fileName = "fileHash" in parsed.data ? parsed.data.fileHash : parsed.data.relativeFile;
 	const fileHash = createHmac("sha256", ENV.FILE_HASH_KEY).update(fileName).digest("hex");
@@ -39,7 +38,8 @@ export async function POST(req: NextRequest) {
 		})
 		.returning()
 		.onConflictDoNothing();
-	Print.Debug("[event-log] log", log);
+
+	op.track("event-log", { profileId: apiKey.userId, platform: parsed.data.platform });
 
 	return NextResponse.json(
 		outputEventLogSchema.parse({

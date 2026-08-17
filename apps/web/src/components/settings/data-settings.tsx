@@ -21,6 +21,7 @@ import { Spinner } from "../ui/spinner";
 import Link from "next/link";
 import { useConfirmModal } from "../ui/confirm-modal";
 import { cn } from "~/lib/utils";
+import { toast } from "sonner";
 
 type ImportItem = NonNullable<NonNullable<API["self"]["listImports"]>["pendingImports"]>[number];
 
@@ -50,6 +51,14 @@ export default function DataManagement({
 	const { mutate: startExport, isPending } = api.self.triggerExport.useMutation({
 		onSuccess: () => {
 			refetchExports();
+		},
+		onError: (error) => {
+			toast.error(error.message, {
+				id: "trigger-export",
+			});
+		},
+		onMutate: () => {
+			toast.dismiss("trigger-export");
 		},
 	});
 
