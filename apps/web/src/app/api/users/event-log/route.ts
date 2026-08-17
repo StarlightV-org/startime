@@ -39,7 +39,12 @@ export async function POST(req: NextRequest) {
 		.returning()
 		.onConflictDoNothing();
 
-	op.track("event-log", { profileId: apiKey.userId, platform: parsed.data.platform });
+	op.track("event-log", {
+		profileId: apiKey.userId,
+		platform: parsed.data.platform,
+		editor: parsed.data.editor,
+		language: parsed.data.language,
+	});
 
 	return NextResponse.json(
 		outputEventLogSchema.parse({

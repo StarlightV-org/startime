@@ -7,6 +7,8 @@ import { FileIcons } from "./file-icons";
 import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "../ui/button";
 import { EditorIcon } from "./editor-icons";
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 export default function TopElement({
 	element,
@@ -17,7 +19,12 @@ export default function TopElement({
 	isP1?: boolean;
 	filterKey?: "editor" | "workspace" | "language" | "platform";
 }) {
-	const [_, setState] = useQueryState(filterKey ?? "editor", parseAsString.withDefault(""));
+	const [_, setState] = useQueryState(
+		filterKey ?? "editor",
+		parseAsString.withDefault("").withOptions({ history: "push", clearOnDefault: true }),
+	);
+	const utils = api.useUtils();
+	const router = useRouter();
 
 	return (
 		<div
@@ -25,6 +32,7 @@ export default function TopElement({
 			role="button"
 			onClick={() => {
 				setState((prev) => (prev !== element.value ? element.value : ""));
+				// utils.overview.invalidate();
 			}}
 		>
 			<div className="flex flex-row flex-nowrap items-center justify-start gap-1">

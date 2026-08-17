@@ -1,11 +1,12 @@
 import { TZDate } from "@date-fns/tz";
 import { eventLogs } from "@startime/db";
-import { and, eq, gte, lt, sql } from "drizzle-orm";
+import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
 import { getTimeRange, normalizeTimeZone, timeRangeValues, toDayString, toTimeString } from "~/lib/time-range";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import z from "zod";
 import type { API } from "~/trpc/server";
+import { differenceInMinutes } from "date-fns/fp";
 
 export { getTimeRange, type TimeRange } from "~/lib/time-range";
 
@@ -78,7 +79,7 @@ export const overviewRouter = createTRPCRouter({
 			);
 			const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
 
-			const [activityResult, activeDays] = await Promise.all([
+			const [activityResult, activeDays, lastEvent] = await Promise.all([
 				ctx.db
 					.select({
 						activeMinutes: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
@@ -90,6 +91,7 @@ export const overviewRouter = createTRPCRouter({
 					.from(eventLogs)
 					.where(rangeFilter),
 				ctx.db.selectDistinct({ day: activeDay }).from(eventLogs).where(eq(eventLogs.userId, ctx.user.id)),
+				ctx.db.select().from(eventLogs).where(rangeFilter).orderBy(desc(eventLogs.eventTime)).limit(1),
 			]);
 
 			const activity = activityResult[0];
@@ -103,6 +105,7 @@ export const overviewRouter = createTRPCRouter({
 				timeToday: toTimeString(activity?.activeMinutesToday ?? 0, input.biggestUnit),
 				currentStreak: toDayString(currentStreak),
 				allTimeStreak: toDayString(allTimeStreak),
+				lastEvent: lastEvent[0],
 			};
 		}),
 

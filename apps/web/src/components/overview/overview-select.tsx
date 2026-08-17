@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
 import { useRouter } from "next/navigation";
+import { api } from "~/trpc/react";
 
 const timeRangeLabels: Record<TimeRange, string> = {
 	past1: "Last 24 hours",
@@ -21,11 +22,13 @@ const timeRangeLabels: Record<TimeRange, string> = {
 export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	const [value, setValue] = useState(timeRange);
 	const router = useRouter();
+	// const utils = api.useUtils();
 
 	const handleChange = (value: TimeRange) => {
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		document.cookie = `startime_timeRange=${value}; path=/`;
+		// utils.overview.invalidate();
 		router.refresh();
 	};
 
@@ -65,12 +68,14 @@ const biggestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
 export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit }) {
 	const [value, setValue] = useState(biggestUnit);
 	const router = useRouter();
+	// const utils = api.useUtils();
 
 	const handleChange = (value: NonNullable<BiggestUnit>) => {
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		document.cookie = `startime_biggestUnit=${value}; path=/`;
 		router.refresh();
+		// utils.overview.invalidate();
 	};
 
 	return (
