@@ -24,10 +24,14 @@ const LOG_INTERVAL_MS = 1_000;
 
 function getMacOSVersion() {
 	try {
-		return execFileSync("sw_vers", ["-productVersion"], {
+		const [majorVersion] = execFileSync("sw_vers", ["-productVersion"], {
 			encoding: "utf8",
 			stdio: ["ignore", "pipe", "ignore"],
-		}).trim();
+		})
+			.trim()
+			.split(".");
+
+		return majorVersion ?? "";
 	} catch {
 		return "";
 	}
