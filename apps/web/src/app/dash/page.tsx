@@ -35,16 +35,21 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	Print.Debug("timeRange", timeRange);
 	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity({ timeRange, biggestUnit }));
 	const { data: dailyActivity, error: dailyActivityError } = await tryCatch(
-		withRedisCache(`api:overview:getDailyActivity:${auth.user.id}`, 60 * 10, () => api.overview.getDailyActivity()),
+		withRedisCache(`api:overview:getDailyActivity:${auth.user.id}`, 60 * 5, () => api.overview.getDailyActivity()),
 	);
+	// const { data: dailyActivity, error: dailyActivityError } = await tryCatch(api.overview.getDailyActivity());
 	const { data: top, error: topError } = await tryCatch(
 		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform }, biggestUnit }),
 	);
 
+	if (activityError || dailyActivityError || topError) {
+		activityError && Print.Error("[OVERVIEW]", "activityError", activityError);
+		dailyActivityError && Print.Error("[OVERVIEW]", "dailyActivityError", dailyActivityError);
+		topError && Print.Error("[OVERVIEW]", "topError", topError);
+	}
+
 	const regional = auth.user.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
-
-	Print.Debug("activity", activity);
 
 	return (
 		<div>

@@ -138,9 +138,9 @@ export const overviewRouter = createTRPCRouter({
 		const calendarStart = startOfWeek(firstDay, { weekStartsOn });
 
 		return Array.from({ length: 365 }, (_, index) => {
-			// Reapply the account timezone after date arithmetic so a browser in a
-			// different timezone cannot change this user's calendar coordinates.
-			const day = TZDate.tz(timeZone, addDays(start, index));
+			// Advance from the account-local start date so DST transitions preserve
+			// one entry per local calendar day.
+			const day = addDays(firstDay, index);
 			const date = format(day, "yyyy-MM-dd");
 			const numOfMin = minutesByDay.get(date) ?? 0;
 			const codeTime = toTimeString(numOfMin);

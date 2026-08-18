@@ -84,8 +84,8 @@ export default function ActivityCalendar({
 			scale: () => scaleBand<number>().paddingInner(0.08).paddingOuter(0.04),
 			axis: {
 				line: false,
-				ticks: { values: monthTicks, size: 0, padding: 6, format: (week) => monthLabels.get(week) ?? "" },
-				tickLabels: { anchor: "start" },
+				ticks: { values: monthTicks, format: (week) => monthLabels.get(week) ?? "" },
+				tickLabels: { anchor: "middle" },
 			},
 		},
 		y: {
@@ -121,7 +121,7 @@ export default function ActivityCalendar({
 			definition={chart}
 			height={150}
 			initialWidth={896}
-			aspectRatio={21 / 9}
+			// aspectRatio={21 / 9}
 			className="outline-none! select-none focus:outline-none! focus-visible:outline-none! [&_*:focus]:outline-none! [&_*:focus-visible]:outline-none!"
 			tabIndex={0}
 			renderTooltipBody={({ points }) => {
