@@ -3,7 +3,7 @@ import { subSeconds } from "date-fns/fp";
 import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, InfoIcon, PencilIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
+import { ActivityCalendar, BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
 import { getTimeRange, type BiggestUnit, type TimeRange } from "~/server/api/routers/overview";
 import { cookies } from "next/headers";
 import { tryCatch } from "~/lib/utils";
@@ -13,6 +13,7 @@ import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
 import type { SearchParams } from "nuqs/server";
 import RefetchOverview, { ActivityIndicator, RefetchOverviewButton } from "./client-overview";
 import { Button } from "~/components/ui/button";
+import { withRedisCache } from "~/server/redis/cache";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
 export const coordinatesSearchParams = {
@@ -33,6 +34,9 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 
 	Print.Debug("timeRange", timeRange);
 	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity({ timeRange, biggestUnit }));
+	const { data: dailyActivity, error: dailyActivityError } = await tryCatch(
+		withRedisCache(`api:overview:getDailyActivity:${auth.user.id}`, 60 * 10, () => api.overview.getDailyActivity()),
+	);
 	const { data: top, error: topError } = await tryCatch(
 		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform }, biggestUnit }),
 	);
@@ -70,23 +74,26 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 							<CardTitle className="h-8">Activity </CardTitle>
 							<ActivityIndicator lastEvent={activity?.lastEvent} />
 						</CardHeader>
-						<CardDescription className="grid grid-cols-4 divide-x divide-border">
-							<div className="col-span-1 flex flex-col pr-4 first:pl-0">
-								<h3 className="text-sm text-sidebar-primary">Time/Total</h3>
-								<p className="text-xl text-primary-foreground">{activity?.timeTotal ?? "—"}</p>
+						<CardDescription>
+							<div className="grid grid-cols-4 divide-x divide-border">
+								<div className="col-span-1 flex flex-col pr-4 first:pl-0">
+									<h3 className="text-sm text-sidebar-primary">Time/Total</h3>
+									<p className="text-xl text-primary-foreground">{activity?.timeTotal ?? "—"}</p>
+								</div>
+								<div className="col-span-1 flex flex-col px-4">
+									<h3 className="text-sm text-sidebar-primary">Time/Today</h3>
+									<p className="text-xl text-primary-foreground">{activity?.timeToday ?? "—"}</p>
+								</div>
+								<div className="col-span-1 flex flex-col px-4">
+									<h3 className="text-sm text-sidebar-primary">Streak/Current</h3>
+									<p className="text-xl text-primary-foreground">{activity?.currentStreak ?? "—"}</p>
+								</div>
+								<div className="col-span-1 flex flex-col pl-4">
+									<h3 className="text-sm text-sidebar-primary">Streak/Max</h3>
+									<p className="text-xl text-primary-foreground">{activity?.allTimeStreak ?? "—"}</p>
+								</div>
 							</div>
-							<div className="col-span-1 flex flex-col px-4">
-								<h3 className="text-sm text-sidebar-primary">Time/Today</h3>
-								<p className="text-xl text-primary-foreground">{activity?.timeToday ?? "—"}</p>
-							</div>
-							<div className="col-span-1 flex flex-col px-4">
-								<h3 className="text-sm text-sidebar-primary">Streak/Current</h3>
-								<p className="text-xl text-primary-foreground">{activity?.currentStreak ?? "—"}</p>
-							</div>
-							<div className="col-span-1 flex flex-col pl-4">
-								<h3 className="text-sm text-sidebar-primary">Streak/Max</h3>
-								<p className="text-xl text-primary-foreground">{activity?.allTimeStreak ?? "—"}</p>
-							</div>
+							<ActivityCalendar dailyActivity={dailyActivity ?? []} startOfWeek={regional.startOfWeek} />
 						</CardDescription>
 					</CardContent>
 				</Card>
