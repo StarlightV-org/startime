@@ -19,16 +19,21 @@ export default function TopElement({
 	isP1?: boolean;
 	filterKey?: "editor" | "workspace" | "language" | "platform";
 }) {
-	const [_, setState] = useQueryState(
+	const [state, setState] = useQueryState(
 		filterKey ?? "editor",
 		parseAsString.withDefault("").withOptions({ history: "push", clearOnDefault: true }),
 	);
 	const utils = api.useUtils();
 	const router = useRouter();
 
+	const isActiveFilter = state === element.value;
+
 	return (
 		<div
-			className="flex cursor-pointer flex-col rounded-sm p-1 hover:bg-accent"
+			className={cn(
+				"flex cursor-pointer flex-col rounded-sm p-1 hover:bg-accent",
+				isActiveFilter && "shadow-[0_0_8px_rgba(0,0,0,0.3)] shadow-primary/80 outline outline-primary/80",
+			)}
 			role="button"
 			onClick={async () => {
 				await setState((prev) => (prev !== element.value ? element.value : ""));
@@ -48,7 +53,6 @@ export default function TopElement({
 			</div>
 			<div className="flex flex-row items-center gap-1">
 				<Progress value={element.percentage} />
-				{/*<span className="line-clamp-1 min-w-fit text-xs/3">{element.percentage}%</span>*/}
 			</div>
 		</div>
 	);
