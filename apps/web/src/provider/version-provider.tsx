@@ -123,9 +123,9 @@ export function VersionProvider() {
 	}, [isUpToDate, isSuccess, serverVersion, clientVersion]);
 
 	function showErrorToast(props: toastProps) {
-		toast.error("Eine neue Version ist verfügbar!", {
+		toast.error("A new version is available!", {
 			action: {
-				label: "Jetzt aktualisieren",
+				label: "Update now",
 				onClick: () => {
 					window.location.reload();
 				},
@@ -143,18 +143,18 @@ export function VersionProvider() {
 			position: "top-center",
 			description: (
 				<>
-					Du bist {props.patchDiff} Versionen zurück. Bitte aktualisiere jetzt, um Fehler zu vermeiden.
+					You are {props.patchDiff} versions behind. Please update now to avoid errors.
 					<br />
-					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					Your version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Latest version:{" "}
 					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
 		});
 	}
 	function showWarningToast(props: toastProps) {
-		toast.warning("Eine neue Version ist verfügbar!", {
+		toast.warning("A new version is available!", {
 			action: {
-				label: "Jetzt aktualisieren",
+				label: "Update now",
 
 				onClick: () => {
 					window.location.reload();
@@ -174,18 +174,18 @@ export function VersionProvider() {
 
 			description: (
 				<>
-					Du bist {props.patchDiff} Versionen zurück. Bitte aktualisiere jetzt, um Fehler zu vermeiden.
+					You are {props.patchDiff} versions behind. Please update now to avoid errors.
 					<br />
-					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					Your version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Latest version:{" "}
 					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
 		});
 	}
 	function showInfoToast(props: toastProps) {
-		toast.info("Eine neue Version ist verfügbar", {
+		toast.info("A new version is available", {
 			action: {
-				label: "Jetzt aktualisieren",
+				label: "Update now",
 				onClick: () => {
 					window.location.reload();
 				},
@@ -201,12 +201,11 @@ export function VersionProvider() {
 			duration: Number.POSITIVE_INFINITY,
 			id: "version-update",
 			position: "top-center",
-			// description: "Bitte aktualisiere die Seite, um die neueste Version zu verwenden und Fehler zu vermeiden",
 			description: (
 				<>
-					Bitte aktualisiere die Seite, um die neueste Version zu verwenden und Fehler zu vermeiden
+					Please refresh the page to use the latest version and avoid errors.
 					<br />
-					Deine Version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Neuste Version:{" "}
+					Your version: <span className="text-sidebar-primary">{props.currentVersion}</span>, Latest version:{" "}
 					<span className="text-sidebar-primary">{props.newVersion}</span>
 				</>
 			),
@@ -221,21 +220,21 @@ export function VersionProvider() {
 		<Dialog open={showForceModal} onOpenChange={() => {}}>
 			<DialogContent showCloseButton={false} onPointerDownOutside={(e) => e.preventDefault()}>
 				<DialogHeader>
-					<DialogTitle>Aktualisierung erforderlich</DialogTitle>
+					<DialogTitle>Update required</DialogTitle>
 					<DialogDescription>
-						Eine wichtige neue Version ist verfügbar. Bitte lade die Seite neu, um fortzufahren und Fehler zu vermeiden.
+						An important new version is available. Please reload the page to continue and avoid errors.
 					</DialogDescription>
 				</DialogHeader>
 				<div className="text-sm text-muted-foreground">
 					<p>
-						Deine Version: <span className="font-mono">{clientVersion}</span>
+						Your version: <span className="font-mono">{clientVersion}</span>
 					</p>
 					<p>
-						Neuste Version: <span className="font-mono">{serverVersion}</span>
+						Latest version: <span className="font-mono">{serverVersion}</span>
 					</p>
 				</div>
 				<DialogFooter>
-					<Button onClick={handleForceReload}>Seite neu laden</Button>
+					<Button onClick={handleForceReload}>Reload page</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
