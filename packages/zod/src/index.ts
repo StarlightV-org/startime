@@ -27,17 +27,17 @@ export const inputEventLogSchema = z.union([
 export const outputEventLogRecordSchema = z.object({
 	id: z.string(),
 	userId: z.string(),
-	eventTime: z.string().datetime(),
+	eventTime: z.iso.datetime(),
 	language: z.string(),
 	project: z.string(),
 	fileHash: z.string().nullable(),
 	editor: z.string(),
 	platform: z.string(),
-	createdAt: z.string().datetime(),
+	createdAt: z.iso.datetime(),
 });
 
 export const outputEventLogSchema = z.object({
-	log: z.array(outputEventLogRecordSchema),
+	success: z.boolean(),
 });
 
 export const inputStatsSchema = z.object({

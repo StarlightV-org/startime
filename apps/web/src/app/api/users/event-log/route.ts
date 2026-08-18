@@ -39,6 +39,19 @@ export async function POST(req: NextRequest) {
 		.returning()
 		.onConflictDoNothing();
 
+	if (log.length === 0) {
+		return NextResponse.json(
+			{ success: false },
+			{
+				// Rate limit exceeded
+				status: 429,
+				headers: {
+					"Retry-After": "1000",
+				},
+			},
+		);
+	}
+
 	op.track("event-log", {
 		profileId: apiKey.userId,
 		platform: parsed.data.platform,
@@ -46,13 +59,5 @@ export async function POST(req: NextRequest) {
 		language: parsed.data.language,
 	});
 
-	return NextResponse.json(
-		outputEventLogSchema.parse({
-			log: log.map((event) => ({
-				...event,
-				eventTime: event.eventTime.toISOString(),
-				createdAt: event.createdAt.toISOString(),
-			})),
-		}),
-	);
+	return NextResponse.json(outputEventLogSchema.parse({ success: true }));
 }
