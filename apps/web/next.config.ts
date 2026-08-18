@@ -2,13 +2,21 @@
  * Run `build` or `dev` with `SKIP_VALIDATION=true` to skip env validation. This is especially useful
  * for Docker builds.
  */
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 import "@startime/env";
 import "@startime/print";
 import { ENV } from "@startime/env";
 
+const withMDX = createMDX({
+	options: {
+		remarkPlugins: ["remark-gfm", "remark-github-blockquote-alert"],
+	},
+});
+
 const config: NextConfig = {
 	output: "standalone",
+	pageExtensions: ["ts", "tsx", "mdx"],
 	reactStrictMode: true,
 	reactCompiler: true,
 	typescript: {
@@ -48,4 +56,4 @@ const config: NextConfig = {
 	},
 };
 
-export default config;
+export default withMDX(config);

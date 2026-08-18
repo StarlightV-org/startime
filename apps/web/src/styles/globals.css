@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -54,6 +56,7 @@
 }
 
 :root {
+	color-scheme: light;
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0.008 326);
 	--popover: oklch(1 0 0);
@@ -89,6 +92,7 @@
 }
 
 .dark {
+	color-scheme: dark;
 	--background: oklch(0.145 0.008 326);
 	--foreground: oklch(0.985 0 0);
 	--card: oklch(0.212 0.019 322.12);
@@ -120,6 +124,68 @@
 	--sidebar-accent-foreground: oklch(0.985 0 0);
 	--sidebar-border: oklch(1 0 0 / 10%);
 	--sidebar-ring: oklch(0.542 0.034 322.5);
+}
+
+@layer components {
+	.markdown-alert {
+		@apply my-2 rounded-r-2xl border-l-4 border-border bg-muted/50 px-4 py-1;
+	}
+
+	.markdown-alert > :last-child {
+		margin-bottom: 0;
+	}
+
+	.markdown-alert-title {
+		@apply my-2! flex items-center gap-2 text-lg! leading-none font-semibold;
+	}
+
+	.markdown-alert > p:not(.markdown-alert-title) {
+		@apply my-1! text-[16px]/5 whitespace-pre-wrap;
+	}
+
+	.markdown-alert-title .octicon {
+		@apply size-4 shrink-0 fill-current;
+	}
+
+	.markdown-alert-note {
+		@apply border-l-blue-500;
+	}
+
+	.markdown-alert-note .markdown-alert-title {
+		@apply text-blue-500;
+	}
+
+	.markdown-alert-tip {
+		@apply border-l-emerald-500;
+	}
+
+	.markdown-alert-tip .markdown-alert-title {
+		@apply text-emerald-500;
+	}
+
+	.markdown-alert-important {
+		@apply border-l-violet-500;
+	}
+
+	.markdown-alert-important .markdown-alert-title {
+		@apply text-violet-500;
+	}
+
+	.markdown-alert-warning {
+		@apply border-l-amber-500;
+	}
+
+	.markdown-alert-warning .markdown-alert-title {
+		@apply text-amber-500;
+	}
+
+	.markdown-alert-caution {
+		@apply border-l-red-500;
+	}
+
+	.markdown-alert-caution .markdown-alert-title {
+		@apply text-red-500;
+	}
 }
 
 @layer base {

@@ -23,6 +23,7 @@ import { SyncConfigLocal } from "~/components/auth/sync-config-local";
 import { VersionProvider } from "~/provider/version-provider";
 import { IdentifyComponent, OpenPanelComponent } from "@openpanel/nextjs";
 import { ENV } from "@startime/env";
+import Footer from "~/components/ui/footer";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -78,7 +79,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 										<Toaster />
 										<VersionProvider />
 										<SyncConfigLocal />
-										{children}
+										<main className="relative z-1 mb-8 w-full flex-1 border-b-3 border-b-border bg-background">{children}</main>
+										<Footer />
 									</TooltipProvider>
 								</ConfirmModalProvider>
 							</HydrateClient>
