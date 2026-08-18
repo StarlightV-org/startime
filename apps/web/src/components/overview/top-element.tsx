@@ -30,9 +30,8 @@ export default function TopElement({
 		<div
 			className="flex cursor-pointer flex-col rounded-sm p-1 hover:bg-accent"
 			role="button"
-			onClick={() => {
-				setState((prev) => (prev !== element.value ? element.value : ""));
-				// utils.overview.invalidate();
+			onClick={async () => {
+				await setState((prev) => (prev !== element.value ? element.value : ""));
 			}}
 		>
 			<div className="flex flex-row flex-nowrap items-center justify-start gap-1">
@@ -42,7 +41,6 @@ export default function TopElement({
 				<h3 className={cn("line-clamp-1 truncate text-[1rem]", isP1 ? "text-sidebar-primary" : "")} title={element.value}>
 					{element.value}
 				</h3>
-				{/*<p className="line-clamp-1 min-w-fit text-sm">{element.time}</p>*/}
 			</div>
 			<div className="flex flex-row items-center justify-between gap-1">
 				<p className="line-clamp-1 min-w-fit text-xs">{element.time}</p>
