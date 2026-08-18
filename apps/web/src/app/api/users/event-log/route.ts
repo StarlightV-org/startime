@@ -54,9 +54,21 @@ export async function POST(req: NextRequest) {
 
 	op.track("event-log", {
 		profileId: apiKey.userId,
+	});
+
+	op.track("event-log:platform", {
+		profileId: apiKey.userId,
 		platform: parsed.data.platform,
+	});
+
+	op.track("event-log:editor", {
+		profileId: apiKey.userId,
 		editor: parsed.data.editor,
-		language: parsed.data.language,
+	});
+
+	op.track("event-log:language", {
+		profileId: apiKey.userId,
+		language: normalizeLanguageId(parsed.data.language),
 	});
 
 	return NextResponse.json(outputEventLogSchema.parse({ success: true }));
