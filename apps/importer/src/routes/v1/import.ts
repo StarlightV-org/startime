@@ -4,14 +4,13 @@ import { z } from "zod";
 import { db, eventImports, eventLogs, files } from "@startime/db";
 import { ENV } from "@startime/env";
 import { verifyInternalRequest } from "@startime/service-auth";
-import { getFormat, type ImportedEvent } from "../../formats";
+import { detectFormat, type ImportedEvent } from "../../formats";
 import { utapi } from "../..";
 import { wait, type JsonBody } from "../../server";
 
 const importRequestSchema = z.object({
 	importId: z.string().min(1),
 	fileKey: z.string().min(1),
-	format: z.string().min(1),
 });
 
 const activeImports = new Set<string>();
@@ -40,8 +39,9 @@ async function deleteImportFile(fileId: string, fileKey: string): Promise<void> 
 	}
 }
 
-async function processImport(importId: string, fileKey: string, formatId: string): Promise<void> {
+async function processImport(importId: string, fileKey: string): Promise<void> {
 	let processedRows = 0;
+	let insertedRows = 0;
 	let totalRows = 0;
 	let importFile: { id: string; fileKey: string } | undefined;
 	try {
@@ -93,7 +93,9 @@ async function processImport(importId: string, fileKey: string, formatId: string
 		}
 		if (!contents) throw new Error("CSV download did not return any content");
 
-		const events = getFormat(formatId).parse(contents, ENV.FILE_HASH_KEY);
+		const format = detectFormat(contents);
+		await updateImport(importId, { status: "pending", message: `Detected ${format.id}; validating rows` });
+		const events = format.parse(contents, ENV.FILE_HASH_KEY);
 		totalRows = events.length;
 		await updateImport(importId, { totalRows, processedRows, status: "pending", message: `Validated ${totalRows} rows` });
 
@@ -101,7 +103,7 @@ async function processImport(importId: string, fileKey: string, formatId: string
 			const batch: ImportedEvent[] = events.slice(index, index + 500);
 			processedRows += batch.length;
 			await db.transaction(async (tx) => {
-				await tx
+				const insertedBatch = await tx
 					.insert(eventLogs)
 					.values(
 						batch.map((event) => ({
@@ -115,7 +117,9 @@ async function processImport(importId: string, fileKey: string, formatId: string
 							platform: event.platform,
 						})),
 					)
-					.onConflictDoNothing();
+					.onConflictDoNothing()
+					.returning({ id: eventLogs.id });
+				insertedRows += insertedBatch.length;
 				await tx
 					.update(eventImports)
 					.set({ processedRows, totalRows, message: `Imported ${processedRows} of ${totalRows} rows` })
@@ -123,8 +127,8 @@ async function processImport(importId: string, fileKey: string, formatId: string
 			});
 		}
 
-		await updateImport(importId, { status: "completed", message: `Imported ${processedRows} rows` });
-		Print.Success("Import completed", { importId, processedRows });
+		await updateImport(importId, { status: "completed", message: `Imported ${insertedRows} rows` });
+		Print.Success("Import completed", { importId, insertedRows, processedRows });
 	} catch (error) {
 		const message = error instanceof Error ? error.message : "Unknown import error";
 		Print.Error("Import failed", { importId, message });
@@ -154,7 +158,7 @@ export async function registerImportRoutes(app: FastifyInstance): Promise<void> 
 		if (activeImports.has(parsed.data.importId)) return reply.code(202).send({ accepted: true, duplicate: true });
 
 		activeImports.add(parsed.data.importId);
-		void processImport(parsed.data.importId, parsed.data.fileKey, parsed.data.format);
+		void processImport(parsed.data.importId, parsed.data.fileKey);
 		return reply.code(202).send({ accepted: true });
 	});
 }

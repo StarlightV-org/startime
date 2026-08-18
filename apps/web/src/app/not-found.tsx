@@ -27,7 +27,7 @@ export default async function NotFound() {
 							type="button"
 							asChild
 						>
-							{session.id ? (
+							{session?.id ? (
 								<Link href="/dash">
 									<ArrowLeft /> Back to Dashboard
 								</Link>

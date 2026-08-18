@@ -183,7 +183,7 @@ export default function DataManagement({
 								<DialogTitle>Import CSV</DialogTitle>
 								<p>
 									Currently we support the CSV format form:
-									{/*<br /> - StarTime (this app)*/}
+									<br /> - StarTime (this app)
 									<br /> -{" "}
 									<Link
 										className="cursor-pointer text-sidebar-primary hover:underline"

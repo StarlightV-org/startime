@@ -41,8 +41,14 @@ outside a trusted private network.
 
 ## Format plug-ins
 
-Formats implement `ImportFormat` in `src/formats`. The current
-`codetime/csv` plug-in validates the exact CodeTime headers, skips `Absolute
-File`, `Git Branch`, and `Git Origin`, and creates an HMAC-SHA256 `fileHash` from `Relative File`, falling back to
-`Absolute File` when the relative path is absent. `Recorded At` is used for
-both `eventTime` and `createdAt`.
+Formats implement `ImportFormat` in `src/formats` and are detected from the
+CSV header row. `codetime/csv` validates the exact CodeTime headers, skips
+`Absolute File`, `Git Branch`, and `Git Origin`, and creates an HMAC-SHA256
+`fileHash` from `Relative File`, falling back to `Absolute File` when the
+relative path is absent. `Recorded At` is used for both `eventTime` and
+`createdAt`.
+
+`startime/export-csv` imports the `events.csv` included in a Startime user-data
+export. It validates every exported column and preserves the existing
+`fileHash`; the export's `userId` is validated but events are always assigned
+to the user who uploaded the file.

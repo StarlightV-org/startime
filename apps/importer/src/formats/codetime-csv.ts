@@ -24,6 +24,12 @@ function value(record: Map<Header, string>, header: Header, rowNumber: number): 
 
 export const codeTimeCsvFormat: ImportFormat = {
 	id: "codetime/csv",
+	headers,
+	matchesHeaders(actualHeaders) {
+		return (
+			actualHeaders.length === headers.length && headers.every((header, index) => actualHeaders[index]?.trim() === header)
+		);
+	},
 	parse(contents, fileHashKey) {
 		let rows: string[][];
 		try {
@@ -38,7 +44,7 @@ export const codeTimeCsvFormat: ImportFormat = {
 		}
 
 		const actualHeaders = rows.shift();
-		if (!actualHeaders || actualHeaders.length !== headers.length || headers.some((header, index) => actualHeaders[index]?.trim() !== header)) {
+		if (!actualHeaders || !this.matchesHeaders(actualHeaders)) {
 			throw new Error(`Expected CSV headers: ${headers.join(", ")}`);
 		}
 

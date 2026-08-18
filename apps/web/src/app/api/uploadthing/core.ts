@@ -107,7 +107,6 @@ export const ourFileRouter = {
 				const body = JSON.stringify({
 					importId: eventImport.id,
 					fileKey: newFile.fileKey,
-					format: "codetime/csv",
 				});
 				const response = await fetch(new URL(path, ENV.IMPORTER_URL), {
 					method: "POST",
