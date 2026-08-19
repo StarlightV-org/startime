@@ -52,6 +52,21 @@ export async function POST(req: NextRequest) {
 		);
 	}
 
+	Print.API(
+		"[event-log]",
+		{
+			userName: apiKey.user.email,
+			editor: parsed.data.editor,
+			language: normalizeLanguageId(parsed.data.language),
+			project: parsed.data.project,
+			eventTime: eventTime,
+			platform: normalizePlatform(parsed.data.platform),
+		},
+		{
+			...Object.fromEntries(req.headers.entries()),
+		},
+	);
+
 	op.track("event-log", {
 		profileId: apiKey.userId,
 	});
