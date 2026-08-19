@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
 	op.track("event-log:platform", {
 		profileId: apiKey.userId,
-		platform: parsed.data.platform,
+		platform: normalizePlatform(parsed.data.platform),
 	});
 
 	op.track("event-log:editor", {
