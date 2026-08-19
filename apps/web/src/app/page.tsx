@@ -148,9 +148,7 @@ const benefits = ["Easy setup", "Free", "Open source"];
 export default async function Home() {
 	const { user } = await getAuth();
 
-	const [top] = await Promise.all([
-		withRedisCache("api:publicStats:getTop:dasdsa", 60 * 30, () => api.publicStats.getTop()),
-	]);
+	const [top] = await Promise.all([withRedisCache("api:publicStats:getTop", 60 * 30, () => api.publicStats.getTop())]);
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">

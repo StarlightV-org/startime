@@ -11,16 +11,6 @@
 	],
 	"file_scan_exclusions": ["**/language-icons"],
 	"lsp": {
-		"harper-ls": {
-			"settings": {
-				"harper-ls": {
-					// Use a specific English dialect
-
-					"linters": {},
-				},
-			},
-		},
-
 		"startime": {
 			// Sent once in the LSP `initialize` request.
 			"initialization_options": {

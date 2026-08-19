@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { Nunito, Nunito_Sans } from "next/font/google";
+import { Nunito } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
@@ -53,8 +53,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 				<SessionProvider initialSession={auth}>
 					<OpenPanelComponent
 						debug={ENV.NODE_ENV === "development"}
-						clientId={ENV.CLIENT_ID}
-						clientSecret={ENV.CLIENT_SECRET}
+						clientId={ENV.OPEN_PANEL_CLIENT_ID}
+						clientSecret={ENV.OPEN_PANEL_CLIENT_SECRET}
 						apiUrl={ENV.NEXT_PUBLIC_OPENPANEL_API_URL}
 						scriptUrl={"/script"}
 						trackAttributes
@@ -62,6 +62,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 						trackScreenViews
 						profileId={auth?.user?.id}
 						strategy="afterInteractive"
+						disabled={ENV.OPEN_PANEL_DISABLED}
 					/>
 					<IdentifyComponent
 						profileId={auth?.user?.id}

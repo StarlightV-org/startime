@@ -7,6 +7,8 @@ import { Button } from "~/components/ui/button";
 import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { authClient } from "~/server/better-auth/client";
 import { GithubDark } from "../ui/svgs/githubDark";
+import { FieldError } from "../ui/field";
+import Link from "next/link";
 
 type SignInMethod = "github" | "passkey" | null;
 
@@ -77,7 +79,21 @@ export function SignInForm() {
 					</p>
 				)}
 			</CardContent>
-			<CardFooter className="justify-center px-6 text-center">
+
+			<CardDescription className="text-center">
+				<span className="text-lg text-destructive">Signups are currently disabled.</span>
+				<br />
+				This site is currently in closed beta. Want to contribute?{" "}
+				<Link
+					href="https://starlightv.link/discord"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-primary hover:underline"
+				>
+					Join our Discord
+				</Link>
+			</CardDescription>
+			{/*<CardFooter className="justify-center px-6 text-center">
 				<p className="text-xs leading-5 text-muted-foreground">
 					By continuing, you agree to our{" "}
 					<a className="font-semibold text-primary hover:underline" href="#terms">
@@ -89,7 +105,7 @@ export function SignInForm() {
 					</a>
 					.
 				</p>
-			</CardFooter>
+			</CardFooter>*/}
 		</>
 	);
 }
