@@ -83,7 +83,6 @@ export default function ActivityCalendar({
 		x: {
 			scale: () => scaleBand<number>().paddingInner(0.08).paddingOuter(0.04),
 			axis: {
-				line: false,
 				ticks: { values: monthTicks, format: (week) => monthLabels.get(week) ?? "" },
 				tickLabels: { anchor: "middle" },
 			},
