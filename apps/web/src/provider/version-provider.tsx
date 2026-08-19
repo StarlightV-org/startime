@@ -65,6 +65,7 @@ export function VersionProvider() {
 		refetchIntervalInBackground: true,
 		refetchOnWindowFocus: true,
 		enabled: !!session?.id,
+		refetchOnMount: false,
 	});
 
 	const [clientVersion, setClientVersion] = useState(pkg.version);

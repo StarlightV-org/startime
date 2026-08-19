@@ -29,12 +29,13 @@ import { op } from "~/lib/op";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: { headers: Headers; source?: "http" | "server" }) => {
 	const { session, user, invitations, org } = await getAuth();
 
 	return {
 		...opts,
 		db,
+		source: opts.source ?? "http",
 		session,
 		user,
 		invitations,
@@ -90,7 +91,7 @@ const timingMiddleware = t.middleware(async ({ next, path, ctx }) => {
 	const end = Date.now();
 
 	Print.TRPC(path, end - start, {
-		name: ctx.user.name ?? "no-name",
+		name: ctx.user?.name ?? "no-name",
 		id: ctx.user?.id ?? "no-id",
 		session: ctx.session?.id ?? "no-session",
 		ok: result.ok,
@@ -102,9 +103,9 @@ const errorMiddleware = t.middleware(async ({ next, path, ctx }) => {
 	const result = await next();
 	if (!result.ok) {
 		Print.TRPCError(path, result.error, {
-			name: ctx.user?.name ?? "no-name",
-			id: ctx.user?.id ?? "no-id",
-			session: ctx.session?.id ?? "no-session",
+			name: ctx?.user?.name ?? "no-name",
+			id: ctx?.user?.id ?? "no-id",
+			session: ctx?.session?.id ?? "no-session",
 		});
 	}
 	return result;
@@ -165,6 +166,17 @@ export const trackMiddleware = ({ event, addInput = true }: TrackMiddlewareOptio
 
 		return next();
 	});
+
+export const serverOnlyMiddleware = t.middleware(({ ctx, next, path }) => {
+	if (ctx.source !== "server") {
+		throw new TRPCError({
+			code: "NOT_FOUND",
+			message: `No procedure found on path "${path}"`,
+		});
+	}
+
+	return next();
+});
 
 /**
  * Public (unauthenticated) procedure

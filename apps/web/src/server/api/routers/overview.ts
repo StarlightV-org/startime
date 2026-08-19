@@ -4,7 +4,7 @@ import { eventLogs } from "@startime/db";
 import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
 import { getTimeRange, normalizeTimeZone, timeRangeValues, toDayString, toTimeString } from "~/lib/time-range";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, serverOnlyMiddleware } from "~/server/api/trpc";
 import z from "zod";
 import type { API } from "~/trpc/server";
 import { differenceInMinutes } from "date-fns/fp";
@@ -56,6 +56,7 @@ export type BiggestUnit = z.infer<typeof biggestUnitSchema>;
 
 export const overviewRouter = createTRPCRouter({
 	getActivity: protectedProcedure
+		.use(serverOnlyMiddleware)
 		.input(
 			z.object({
 				timeRange: timeRangeSchema,
@@ -110,7 +111,7 @@ export const overviewRouter = createTRPCRouter({
 			};
 		}),
 
-	getDailyActivity: protectedProcedure.query(async ({ ctx }) => {
+	getDailyActivity: protectedProcedure.use(serverOnlyMiddleware).query(async ({ ctx }) => {
 		const regional = ctx.user.accountConfig.regional;
 		const timeZone = normalizeTimeZone(regional.timeZone);
 		const [start, end] = getTimeRange("past365", timeZone, undefined, regional.startOfWeek);
@@ -161,6 +162,7 @@ export const overviewRouter = createTRPCRouter({
 	}),
 
 	getTop: protectedProcedure
+		.use(serverOnlyMiddleware)
 		.input(
 			z.object({
 				timeRange: timeRangeSchema,

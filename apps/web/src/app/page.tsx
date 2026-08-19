@@ -4,8 +4,11 @@ import {
 	CalendarDays,
 	Check,
 	Clock3,
+	CodeXmlIcon,
+	ComputerIcon,
 	HatGlassesIcon,
 	ImportIcon,
+	PencilIcon,
 	PlusIcon,
 	Sparkles,
 	Users,
@@ -24,9 +27,13 @@ import { VisualStudio } from "~/components/ui/svgs/visualStudio";
 import { Vim } from "~/components/ui/svgs/vim";
 import { Neovim } from "~/components/ui/svgs/neovim";
 import { Obsidian } from "~/components/ui/svgs/obsidian";
-import { cn } from "~/lib/utils";
+import { cn, tryCatch } from "~/lib/utils";
 import { CursorLight } from "~/components/ui/svgs/cursorLight";
 import type { Route } from "next";
+import { api } from "~/trpc/server";
+import { TopElement } from "~/components/overview";
+import { UnityDark } from "~/components/ui/svgs/unityDark";
+import { withRedisCache } from "~/server/redis/cache";
 
 const features = [
 	{
@@ -59,6 +66,20 @@ const extensions: Array<{
 		url: undefined,
 		icon: <ZedLogo className="size-10 text-white" />,
 		state: "completed",
+	},
+	{
+		editor: "Obsidian",
+		description: "Note-taking and knowledge management app",
+		url: undefined,
+		icon: <Obsidian className="size-10" />,
+		state: "started",
+	},
+	{
+		editor: "Unity",
+		description: "Game development engine",
+		url: undefined,
+		icon: <UnityDark className="size-10" />,
+		state: "started",
 	},
 	{
 		editor: "VS Code",
@@ -95,13 +116,7 @@ const extensions: Array<{
 		icon: <Neovim className="size-10" />,
 		state: "not-started",
 	},
-	{
-		editor: "Obsidian",
-		description: "Note-taking and knowledge management app",
-		url: undefined,
-		icon: <Obsidian className="size-10" />,
-		state: "started",
-	},
+
 	{
 		editor: "More?",
 		description: "Missing an editor extension? Create a request on GitHub",
@@ -132,6 +147,10 @@ const benefits = ["Easy setup", "Free", "Open source"];
 
 export default async function Home() {
 	const { user } = await getAuth();
+
+	const [top] = await Promise.all([
+		withRedisCache("api:publicStats:getTop:dasdsa", 60 * 30, () => api.publicStats.getTop()),
+	]);
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">
@@ -272,6 +291,60 @@ export default async function Home() {
 				</div>
 			</section>
 			<section className="border-y border-border">
+				<div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 lg:px-8">
+					<div className="flex max-w-2xl flex-col gap-3">
+						<p className="text-sm font-medium text-primary">The last 90d</p>
+						<h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">What our users are using</h2>
+					</div>
+					<div className="">
+						<Card>
+							<CardContent>
+								<CardHeader className="flex items-center justify-between">
+									<CardTitle>Top</CardTitle>
+								</CardHeader>
+								<CardDescription className="grid grid-cols-3 gap-x-2 divide-x divide-border">
+									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+										<div className="flex items-center gap-2">
+											<PencilIcon className="size-4" />
+											<h3 className="y text-sm">Editor</h3>
+										</div>
+										{top &&
+											Object.entries(top.editor)
+												.filter(([, item]) => item.value !== "")
+												.map(([key, item]) => <TopElement interactive={false} key={key} element={item} isP1={key === "p1"} />)}
+									</div>
+
+									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+										<div className="flex items-center gap-2">
+											<CodeXmlIcon className="size-4" />
+											<h3 className="y text-sm">Language</h3>
+										</div>
+										{top &&
+											Object.entries(top.language)
+												.filter(([, item]) => item.value !== "")
+												.map(([key, item]) => (
+													<TopElement interactive={false} key={key} element={item} isP1={key === "p1"} filterKey="language" />
+												))}
+									</div>
+									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+										<div className="flex items-center gap-2">
+											<ComputerIcon className="size-4" />
+											<h3 className="y text-sm">Platform</h3>
+										</div>
+										{top &&
+											Object.entries(top.platform)
+												.filter(([, item]) => item.value !== "")
+												.map(([key, item]) => (
+													<TopElement interactive={false} key={key} element={item} isP1={key === "p1"} filterKey="platform" />
+												))}
+									</div>
+								</CardDescription>
+							</CardContent>
+						</Card>
+					</div>
+				</div>
+			</section>
+			<section className="border-y border-border bg-muted/40">
 				<div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 lg:px-8">
 					<div className="flex max-w-2xl flex-col gap-3">
 						<p className="text-sm font-medium text-primary">Editor Extensions</p>

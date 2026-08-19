@@ -21,3 +21,16 @@ export function normalizeLanguageId(languageId: string): string {
 
 	return entry ? entry[0] : languageId;
 }
+
+export function normalizePlatform(platform: string): string {
+	switch (true) {
+		case platform === "windows":
+			return "Windows 11";
+		case platform === "macos":
+			return "macOS 26";
+		case platform.toLowerCase().startsWith("windows 11"):
+			return "Windows 11";
+		default:
+			return platform;
+	}
+}

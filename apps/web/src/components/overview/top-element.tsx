@@ -5,37 +5,37 @@ import { Progress } from "../ui/progress";
 import { cn } from "~/lib/utils";
 import { FileIcons } from "./file-icons";
 import { parseAsString, useQueryState } from "nuqs";
-import { Button } from "../ui/button";
 import { EditorIcon } from "./editor-icons";
-import { api } from "~/trpc/react";
-import { useRouter } from "next/navigation";
 
 export default function TopElement({
 	element,
 	isP1,
 	filterKey,
+	interactive = true,
 }: {
 	element: OverviewTopElement;
 	isP1?: boolean;
 	filterKey?: "editor" | "workspace" | "language" | "platform";
+	interactive?: boolean;
 }) {
 	const [state, setState] = useQueryState(
 		filterKey ?? "editor",
 		parseAsString.withDefault("").withOptions({ history: "push", clearOnDefault: true }),
 	);
-	const utils = api.useUtils();
-	const router = useRouter();
 
 	const isActiveFilter = state === element.value;
 
 	return (
 		<div
 			className={cn(
-				"flex cursor-pointer flex-col rounded-sm p-1 hover:bg-accent",
+				"flex flex-col rounded-sm p-1 hover:bg-accent",
 				isActiveFilter && "shadow-[0_0_8px_rgba(0,0,0,0.3)] shadow-primary/80 outline outline-primary/80",
+				interactive ? "cursor-pointer!" : "cursor-default!",
 			)}
+			aria-disabled={!interactive}
 			role="button"
 			onClick={async () => {
+				if (!interactive) return;
 				await setState((prev) => (prev !== element.value ? element.value : ""));
 			}}
 		>

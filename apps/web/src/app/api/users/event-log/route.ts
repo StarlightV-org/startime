@@ -5,7 +5,7 @@ import { db, eventLogs } from "@startime/db";
 import { inputEventLogSchema, outputEventLogSchema } from "@startime/zod";
 import { createHmac } from "node:crypto";
 import { ENV } from "@startime/env";
-import { normalizeLanguageId } from "~/lib/api-lib";
+import { normalizeLanguageId, normalizePlatform } from "~/lib/api-lib";
 import { op } from "~/lib/op";
 
 export async function POST(req: NextRequest) {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 			eventTime: eventTime,
 			userId: apiKey.userId,
 			fileHash: fileHash,
-			platform: parsed.data.platform,
+			platform: normalizePlatform(parsed.data.platform),
 		})
 		.returning()
 		.onConflictDoNothing();
