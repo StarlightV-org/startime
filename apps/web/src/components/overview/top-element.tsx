@@ -6,6 +6,7 @@ import { cn } from "~/lib/utils";
 import { FileIcons } from "./file-icons";
 import { parseAsString, useQueryState } from "nuqs";
 import { EditorIcon } from "./editor-icons";
+import { getLanguageLabel } from "./language-lable";
 
 export default function TopElement({
 	element,
@@ -44,7 +45,7 @@ export default function TopElement({
 				<EditorIcon editor={element.value} />
 
 				<h3 className={cn("line-clamp-1 truncate text-[1rem]", isP1 ? "text-sidebar-primary" : "")} title={element.value}>
-					{element.value}
+					{getLanguageLabel(element.value)}
 				</h3>
 			</div>
 			<div className="flex flex-row items-center justify-between gap-1">

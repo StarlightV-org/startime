@@ -17,7 +17,7 @@ RUN bun install --frozen-lockfile
 
 FROM dependencies AS builder
 COPY . .
-ENV SKIP_VALIDATION=true
+ENV SKIP_VALIDATION=false
 RUN bun run --filter @startime/web build
 
 FROM base AS runner
