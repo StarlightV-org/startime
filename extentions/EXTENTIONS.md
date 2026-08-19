@@ -25,6 +25,8 @@ export const inputEventLogSchema = z.union([
 		platform: z.string(),
 	}),
 ]);
+// The request header
+req.headers.get("x-api-key")
 ```
 
 ### Config options
