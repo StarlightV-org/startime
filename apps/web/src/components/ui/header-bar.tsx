@@ -8,6 +8,7 @@ import { useSession } from "~/provider/session-provider";
 import { Avatar, AvatarImage } from "./avatar";
 import { Separator } from "./separator";
 import { cn } from "~/lib/utils";
+import OpenMinimal from "../overview/open-minimal";
 
 export function HeaderBar({ showTabs = true, showUser = true }) {
 	const pathname = usePathname();
@@ -30,27 +31,30 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 				{showTabs && (
 					<>
 						<Separator className="my-1" />
-						<Tabs value={pathname} className="px-6 pb-1">
-							<TabsList className="h-10! space-x-2">
-								<TabsTrigger value="/dash" asChild>
-									<Link href="/dash" className="text-sm">
-										Overview
-									</Link>
-								</TabsTrigger>
-								{!!org?.id && (
-									<TabsTrigger value="/dash/org" asChild>
-										<Link href="/dash/org" className="text-sm">
-											Your Organization
+						<div className="flex items-center justify-between gap-2 px-6 py-2">
+							<Tabs value={pathname} className="h-8! py-0">
+								<TabsList className="h-8! space-x-2 py-0">
+									<TabsTrigger value="/dash" asChild>
+										<Link href="/dash" className="h-8! text-sm">
+											Overview
 										</Link>
 									</TabsTrigger>
-								)}
-								<TabsTrigger value="/dash/settings" asChild>
-									<Link href="/dash/settings" className="text-sm">
-										Settings
-									</Link>
-								</TabsTrigger>
-							</TabsList>
-						</Tabs>
+									{!!org?.id && (
+										<TabsTrigger value="/dash/org" asChild>
+											<Link href="/dash/org" className="h-8! text-sm">
+												Your Organization
+											</Link>
+										</TabsTrigger>
+									)}
+									<TabsTrigger value="/dash/settings" asChild>
+										<Link href="/dash/settings" className="h-8! text-sm">
+											Settings
+										</Link>
+									</TabsTrigger>
+								</TabsList>
+							</Tabs>
+							<OpenMinimal />
+						</div>
 					</>
 				)}
 			</header>

@@ -66,7 +66,13 @@ export default function RefetchOverview({ lastEvent }: { lastEvent: API["overvie
 	return null;
 }
 
-export function ActivityIndicator({ lastEvent }: { lastEvent: API["overview"]["getActivity"]["lastEvent"] }) {
+export function ActivityIndicator({
+	lastEvent,
+	interactive = true,
+}: {
+	lastEvent: API["overview"]["getActivity"]["lastEvent"];
+	interactive?: boolean;
+}) {
 	const [_, setWorkspace] = useQueryState(
 		"workspace",
 		parseAsString.withDefault("").withOptions({ clearOnDefault: true, history: "push" }),
@@ -84,6 +90,7 @@ export function ActivityIndicator({ lastEvent }: { lastEvent: API["overview"]["g
 			<span className="text-sm text-muted-foreground">
 				Working on{" "}
 				<Button
+					inert={!interactive}
 					variant="link"
 					className="px-0.5 py-0 text-sm hover:no-underline"
 					onClick={async () => {

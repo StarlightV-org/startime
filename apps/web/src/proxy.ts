@@ -16,7 +16,7 @@ export async function proxy(request: NextRequest) {
 
 	const { session } = await getAuth();
 
-	const isProtected = request.nextUrl.pathname.startsWith("/dash");
+	const isProtected = request.nextUrl.pathname.startsWith("/dash") || request.nextUrl.pathname.startsWith("/view");
 
 	if (!session && isProtected) {
 		return NextResponse.redirect(new URL("/auth/signin", request.url));
@@ -33,5 +33,5 @@ export async function proxy(request: NextRequest) {
 // export default function proxy(request: NextRequest) { ... }
 
 export const config = {
-	matcher: ["/v3/:path*", "/dash/:path*", "/auth/:path*", "/"],
+	matcher: ["/v3/:path*", "/dash/:path*", "/view/:path*", "/auth/:path*", "/"],
 } as ProxyConfig;

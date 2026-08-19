@@ -11,7 +11,7 @@ import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
 import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
 import type { SearchParams } from "nuqs/server";
-import RefetchOverview, { ActivityIndicator, RefetchOverviewButton } from "./client-overview";
+import RefetchOverview, { ActivityIndicator, RefetchOverviewButton } from "../../components/overview/client-overview";
 import { Button } from "~/components/ui/button";
 import { withRedisCache } from "~/server/redis/cache";
 

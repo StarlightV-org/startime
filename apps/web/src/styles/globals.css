@@ -204,4 +204,8 @@
 	[role="button"]:not([aria-disabled="true"]) {
 		cursor: pointer !important;
 	}
+	html:has([data-minimal-page]),
+	body:has([data-minimal-page]) {
+		overflow: hidden;
+	}
 }

@@ -85,6 +85,8 @@ export function getCenteredPosition(
 	width: number,
 	height: number,
 ): { left: number; top: number } {
+	if (typeof window === "undefined") return { left: 0, top: 0 };
+
 	if (center === "parent") {
 		const topWindow = window.top ?? window;
 		return {
