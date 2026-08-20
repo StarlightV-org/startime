@@ -24,33 +24,33 @@ function uploadThingErrorCause(error: UploadThingError): {
 	return { message, errorCode, cause };
 }
 
-function parseUploadThingError(error: UploadThingError, t: ReturnType<typeof useLingui>["t"]): string {
-	const { message, errorCode, cause } = uploadThingErrorCause(error);
-
-	if (message && !errorCode) {
-		return message;
-	}
-	switch (errorCode) {
-		case "FileCountMismatch":
-			return t`You cant upload so many files at once.`;
-		case "FileSizeMismatch":
-			return t`The file is too large.`;
-		case "InvalidFileType":
-			return t`This file type is not allowed.`;
-
-		case "NOT_AUTHORIZED":
-			return t`You do not have permission to upload files.`;
-		default: {
-			if (cause && message) {
-				return cause;
-			}
-			return t`An unknown error occurred.`;
-		}
-	}
-}
-
 export function useUploadthingToast() {
 	const { t } = useLingui();
+
+	function parseUploadThingError(error: UploadThingError): string {
+		const { message, errorCode, cause } = uploadThingErrorCause(error);
+
+		if (message && !errorCode) {
+			return message;
+		}
+		switch (errorCode) {
+			case "FileCountMismatch":
+				return t`You cant upload so many files at once.`;
+			case "FileSizeMismatch":
+				return t`The file is too large.`;
+			case "InvalidFileType":
+				return t`This file type is not allowed.`;
+
+			case "NOT_AUTHORIZED":
+				return t`You do not have permission to upload files.`;
+			default: {
+				if (cause && message) {
+					return cause;
+				}
+				return t`An unknown error occurred.`;
+			}
+		}
+	}
 
 	function uploadthingToast(type: "PENDING", percentage: number): void;
 	function uploadthingToast(type: "ERROR", error: UploadThingError | { message: string }): void;
@@ -71,7 +71,7 @@ export function useUploadthingToast() {
 			}
 			case "ERROR": {
 				const error = second as UploadThingError;
-				toast.error(t`Upload failed: ${parseUploadThingError(error, t)}`, {
+				toast.error(t`Upload failed: ${parseUploadThingError(error)}`, {
 					id: "upload-progress",
 					description: undefined,
 				});

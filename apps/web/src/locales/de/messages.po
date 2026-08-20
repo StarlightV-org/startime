@@ -424,7 +424,7 @@ msgstr "Ein Passkey ist erforderlich, um sensible Aktionen zu verifizieren."
 #: src/components/settings/auth-settings.tsx:153
 #: src/components/settings/auth-settings.tsx:260
 #: src/components/settings/auth-settings.tsx:449
-#: src/components/settings/data-settings.tsx:238
+#: src/components/settings/data-settings.tsx:239
 #: src/components/ui/confirm-modal.tsx:185
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -514,90 +514,90 @@ msgstr "API-Schlüssel kopieren"
 msgid "You can copy this API key to your clipboard now."
 msgstr "Sie können diesen API-Schlüssel in die Zwischenablage kopieren."
 
-#: src/components/settings/data-settings.tsx:76
+#: src/components/settings/data-settings.tsx:77
 msgid "File size must be less than 64MB"
 msgstr "Die Dateigröße muss kleiner als 64MB sein"
 
-#: src/components/settings/data-settings.tsx:163
+#: src/components/settings/data-settings.tsx:164
 msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 msgstr "<0>Importiere eine CSV-Datei von anderen Quellen.<1/><2>Du kannst nur eine Datei hochladen und sie darf nicht größer als 64MB sein.</2></0>"
 
-#: src/components/settings/data-settings.tsx:175
-#: src/components/settings/data-settings.tsx:250
+#: src/components/settings/data-settings.tsx:176
+#: src/components/settings/data-settings.tsx:251
 msgid "Import"
 msgstr "Importieren"
 
-#: src/components/settings/data-settings.tsx:189
+#: src/components/settings/data-settings.tsx:190
 msgid "Import CSV"
 msgstr "CSV Importieren"
 
-#: src/components/settings/data-settings.tsx:192
+#: src/components/settings/data-settings.tsx:193
 msgid "Currently we support the CSV format form:"
 msgstr "Aktuell unterstützt wir den CSV-Formate von:"
 
-#: src/components/settings/data-settings.tsx:193
+#: src/components/settings/data-settings.tsx:194
 msgid "<0/> - StarTime (this app)"
 msgstr "<0/> - StarTime (diese App)"
 
-#: src/components/settings/data-settings.tsx:214
+#: src/components/settings/data-settings.tsx:215
 msgid "Drop your CSV file here or click to select one.<0/>"
 msgstr "Datei hier ablegen oder auswählen<0/>"
 
 #. placeholder {0}: file!.name
-#: src/components/settings/data-settings.tsx:221
+#: src/components/settings/data-settings.tsx:222
 msgid "Selected: {0}"
 msgstr "Ausgewählt: {0}"
 
-#: src/components/settings/data-settings.tsx:259
+#: src/components/settings/data-settings.tsx:260
 msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 msgstr "<0>Exportiere deine Daten in eine ZIP-Datei.<1/><2>Exportiere alle Daten, die mit deinem Account verknüpft sind.</2></0>"
 
-#: src/components/settings/data-settings.tsx:293
+#: src/components/settings/data-settings.tsx:294
 msgid "Are you sure you want to export your data? This may take a few minutes."
 msgstr "Bist du sicher, dass du deine Daten exportieren möchtest? Dies kann einige Minuten dauern."
 
-#: src/components/settings/data-settings.tsx:296
+#: src/components/settings/data-settings.tsx:297
 msgid "Export your data"
 msgstr "Exportiere deine Daten"
 
-#: src/components/settings/data-settings.tsx:315
+#: src/components/settings/data-settings.tsx:316
 msgid "Pending imports"
 msgstr "Ausstehende Imports"
 
-#: src/components/settings/data-settings.tsx:330
+#: src/components/settings/data-settings.tsx:331
 msgid "Past imports"
 msgstr "Vergangene Imports"
 
 #. placeholder {0}: imports.totalCount - 4
-#: src/components/settings/data-settings.tsx:340
+#: src/components/settings/data-settings.tsx:341
 msgid "<0>{0} more...</0>"
 msgstr "<0>{0} mehr...</0>"
 
-#: src/components/settings/data-settings.tsx:383
+#: src/components/settings/data-settings.tsx:384
 msgid "No file name available"
 msgstr "Kein Dateiname verfügbar"
 
-#: src/components/settings/data-settings.tsx:391
+#: src/components/settings/data-settings.tsx:392
 msgid "The file was deleted after the import was completed"
 msgstr "Die Datei wurde gelöscht, nach dem Import erfolgreich abgeschlossen wurde"
 
-#: src/components/settings/data-settings.tsx:392
+#: src/components/settings/data-settings.tsx:393
 msgid "The file was deleted after the import failed"
 msgstr "Die Datei wurde gelöscht, nach dem Import fehlgeschlagen ist"
 
-#: src/components/settings/data-settings.tsx:396
+#: src/components/settings/data-settings.tsx:397
 msgid "(deleted)"
 msgstr "(gelöscht)"
 
-#: src/components/settings/data-settings.tsx:402
+#: src/components/settings/data-settings.tsx:403
 msgid "No message available"
 msgstr "Keine Nachricht verfügbar"
 
-#: src/components/settings/data-settings.tsx:405
+#: src/components/settings/data-settings.tsx:406
 msgid "Updated"
 msgstr "Aktualisiert"
 
-#: src/components/settings/data-settings.tsx:405
+#: src/components/settings/data-settings.tsx:406
 msgid "Created"
 msgstr "Erstellt"
 
@@ -630,36 +630,36 @@ msgstr "Übersicht"
 msgid "Your Organization"
 msgstr "Deine Organisation"
 
-#: src/components/uploadthing.tsx:36
+#: src/components/uploadthing.tsx:38
 msgid "You cant upload so many files at once."
 msgstr "Du kannst nicht so viele Dateien gleichzeitig hochladen."
 
-#: src/components/uploadthing.tsx:38
+#: src/components/uploadthing.tsx:40
 msgid "The file is too large."
 msgstr "Die Datei ist zu groß."
 
-#: src/components/uploadthing.tsx:40
+#: src/components/uploadthing.tsx:42
 msgid "This file type is not allowed."
 msgstr "Dieser Dateityp ist nicht erlaubt."
 
-#: src/components/uploadthing.tsx:43
+#: src/components/uploadthing.tsx:45
 msgid "You do not have permission to upload files."
 msgstr "Du hast keine Berechtigung, Dateien hochzuladen."
 
-#: src/components/uploadthing.tsx:48
+#: src/components/uploadthing.tsx:50
 msgid "An unknown error occurred."
 msgstr "Ein unbekannter Fehler ist aufgetreten."
 
 #. placeholder {0}: percentage.toFixed(2)
-#: src/components/uploadthing.tsx:65
+#: src/components/uploadthing.tsx:66
 msgid "Uploading {0}%"
-msgstr "Uploading {0}%"
+msgstr "Hochgeladen {0}%"
 
 #. placeholder {0}: parseUploadThingError(error)
-#: src/components/uploadthing.tsx:73
+#: src/components/uploadthing.tsx:74
 msgid "Upload failed: {0}"
-msgstr "Upload fehlgeschlagen: {0}"
+msgstr "Hochladen fehlgeschlagen: {0}"
 
-#: src/components/uploadthing.tsx:80
+#: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"
