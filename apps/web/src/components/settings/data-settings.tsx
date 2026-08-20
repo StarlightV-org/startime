@@ -11,7 +11,7 @@ import z from "zod";
 import { Input } from "../ui/input";
 import { useDisclosure } from "@mantine/hooks";
 import { TrashIcon, XIcon } from "lucide-react";
-import { uploadthingToast, useUploadThing } from "../uploadthing";
+import { useUploadthingToast, useUploadThing } from "../uploadthing";
 import type { API } from "~/trpc/server";
 import { formatDate } from "date-fns";
 import { api } from "~/trpc/react";
@@ -35,6 +35,7 @@ export default function DataManagement({
 	const [opened, { toggle }] = useDisclosure();
 	const confirmModal = useConfirmModal();
 	const { t } = useLingui();
+	const uploadthingToast = useUploadthingToast();
 
 	const [hasPendingImports, setHasPendingImports] = useState(initialImports?.pendingImports?.length > 0);
 	const [hasPendingExports, setHasPendingExports] = useState(initialExports?.pending?.length > 0);
