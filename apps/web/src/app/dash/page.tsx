@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { ActivityCalendar, BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
 import { getTimeRange, type BiggestUnit, type TimeRange } from "~/server/api/routers/overview";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { tryCatch } from "~/lib/utils";
 import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
@@ -15,7 +15,7 @@ import RefetchOverview, { ActivityIndicator, RefetchOverviewButton } from "../..
 import { Button } from "~/components/ui/button";
 import { withRedisCache } from "~/server/redis/cache";
 import { Trans } from "@lingui/react/macro";
-import { resolveLocale } from "~/i18n/locales";
+import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
@@ -30,7 +30,7 @@ export const loadSearchParams = createLoader(coordinatesSearchParams);
 export default async function DashPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const auth = await getAuth();
 	const cookieManager = await cookies();
-	await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang));
+	await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers())));
 	const { editor, workspace, language, platform } = await loadSearchParams(searchParams);
 
 	const timeRange = (cookieManager.get("startime_timeRange")?.value ?? "past30") as TimeRange;

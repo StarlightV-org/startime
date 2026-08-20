@@ -9,12 +9,14 @@ import { authClient } from "~/server/better-auth/client";
 import { GithubDark } from "../ui/svgs/githubDark";
 import { FieldError } from "../ui/field";
 import Link from "next/link";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 type SignInMethod = "github" | "passkey" | null;
 
 export function SignInForm() {
 	const [pending, setPending] = useState<SignInMethod>(null);
 	const [error, setError] = useState<string | null>(null);
+	const { t } = useLingui();
 
 	const signInWithGithub = async () => {
 		setPending("github");
@@ -26,14 +28,14 @@ export function SignInForm() {
 		});
 
 		if (result.error) {
-			setError(result.error.message ?? "GitHub sign-in could not be started.");
+			setError(result.error.message ?? t`GitHub sign-in could not be started.`);
 			setPending(null);
 		}
 	};
 
 	const signInWithPasskey = async () => {
 		if (!window.PublicKeyCredential) {
-			setError("Passkeys are not supported in this browser. Try GitHub instead.");
+			setError(t`Passkeys are not supported in this browser. Try GitHub instead.`);
 			return;
 		}
 
@@ -43,7 +45,7 @@ export function SignInForm() {
 		const result = await authClient.signIn.passkey();
 
 		if (result.error) {
-			setError(result.error.message ?? "Your passkey could not be verified.");
+			setError(result.error.message ?? t`Your passkey could not be verified.`);
 			setPending(null);
 			return;
 		}
@@ -54,13 +56,17 @@ export function SignInForm() {
 	return (
 		<>
 			<CardHeader className="items-center px-6 text-center">
-				<CardTitle className="text-2xl">Welcome back</CardTitle>
-				<CardDescription>Sign in to continue to your Startime workspace.</CardDescription>
+				<CardTitle className="text-2xl">
+					<Trans>Welcome</Trans>
+				</CardTitle>
+				<CardDescription>
+					<Trans>Sign in to view your dashboard.</Trans>
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="grid gap-3 px-6">
 				<Button className="w-full" disabled={pending !== null} onClick={signInWithGithub} size="lg" type="button">
 					{pending === "github" ? <LoaderCircle className="animate-spin" /> : <GithubDark />}
-					Continue with GitHub
+					<Trans>Continue with GitHub</Trans>
 				</Button>
 				<Button
 					className="w-full"
@@ -71,7 +77,7 @@ export function SignInForm() {
 					type="button"
 				>
 					{pending === "passkey" ? <LoaderCircle className="animate-spin" /> : <KeyRound />}
-					Continue with a passkey
+					<Trans>Continue with a passkey</Trans>
 				</Button>
 				{error && (
 					<p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
@@ -81,16 +87,18 @@ export function SignInForm() {
 			</CardContent>
 
 			<CardDescription className="text-center">
-				<span className="text-lg text-destructive">Signups are currently disabled.</span>
+				<span className="text-lg text-destructive">
+					<Trans>Signups are currently disabled.</Trans>
+				</span>
 				<br />
-				This site is currently in closed beta. Want to contribute?{" "}
+				<Trans>This site is currently in closed beta. Want to contribute?</Trans> <br />
 				<Link
 					href="https://starlightv.link/discord"
 					target="_blank"
 					rel="noopener noreferrer"
 					className="text-primary hover:underline"
 				>
-					Join our Discord
+					<Trans>Join our Discord</Trans>
 				</Link>
 			</CardDescription>
 			{/*<CardFooter className="justify-center px-6 text-center">

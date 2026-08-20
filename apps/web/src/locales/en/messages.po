@@ -46,6 +46,7 @@ msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If y
 msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 
 #: src/app/dash/page.tsx:155
+#: src/app/page.tsx:329
 #: src/components/overview/filter-view.tsx:12
 msgid "Editor"
 msgstr "Editor"
@@ -56,11 +57,13 @@ msgid "Workspace"
 msgstr "Workspace"
 
 #: src/app/dash/page.tsx:179
+#: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
 msgid "Language"
 msgstr "Language"
 
 #: src/app/dash/page.tsx:191
+#: src/app/page.tsx:356
 #: src/components/overview/filter-view.tsx:15
 msgid "Platform"
 msgstr "Platform"
@@ -72,6 +75,182 @@ msgstr "Something went wrong."
 #: src/app/global-error.tsx:26
 msgid "Try again"
 msgstr "Try again"
+
+#: src/app/page.tsx:47
+msgid "Respect your privacy"
+msgstr "Respect your privacy"
+
+#: src/app/page.tsx:48
+msgid "Only stores the necessary data. Filenames are hashed."
+msgstr "Only stores the necessary data. Filenames are hashed."
+
+#: src/app/page.tsx:52
+msgid "Join or create an organization"
+msgstr "Join or create an organization"
+
+#: src/app/page.tsx:53
+msgid "Track your time together with your friends / team"
+msgstr "Track your time together with your friends / team"
+
+#: src/app/page.tsx:57
+msgid "Import your data"
+msgstr "Import your data"
+
+#: src/app/page.tsx:58
+msgid "Import your existing time tracking data from other tools. Like, codetime.dev"
+msgstr "Import your existing time tracking data from other tools. Like, codetime.dev"
+
+#: src/app/page.tsx:71
+msgid "Fast and AI-powered code editor that makes you more productive."
+msgstr "Fast and AI-powered code editor that makes you more productive."
+
+#: src/app/page.tsx:78
+msgid "Note-taking and knowledge management app"
+msgstr "Note-taking and knowledge management app"
+
+#: src/app/page.tsx:85
+msgid "Game development engine"
+msgstr "Game development engine"
+
+#: src/app/page.tsx:92
+#: src/app/page.tsx:113
+#: src/app/page.tsx:120
+msgid "The popular code editor"
+msgstr "The popular code editor"
+
+#: src/app/page.tsx:99
+msgid "Fork of VS Code with AI-powered features"
+msgstr "Fork of VS Code with AI-powered features"
+
+#: src/app/page.tsx:106
+msgid "Built-in full-stack support ready for your next endeavor"
+msgstr "Built-in full-stack support ready for your next endeavor"
+
+#: src/app/page.tsx:128
+msgid "Missing an editor extension? Create a request on GitHub"
+msgstr "Missing an editor extension? Create a request on GitHub"
+
+#: src/app/page.tsx:136
+msgid "Not started"
+msgstr "Not started"
+
+#: src/app/page.tsx:137
+msgid "This editor extension is planned but not yet in development."
+msgstr "This editor extension is planned but not yet in development."
+
+#: src/app/page.tsx:141
+msgid "Started"
+msgstr "Started"
+
+#: src/app/page.tsx:142
+msgid "Development has begun for this editor extension."
+msgstr "Development has begun for this editor extension."
+
+#: src/app/page.tsx:146
+msgid "Completed"
+msgstr "Completed"
+
+#: src/app/page.tsx:147
+msgid "This editor extension is available to use."
+msgstr "This editor extension is available to use."
+
+#: src/app/page.tsx:152
+msgid "Easy setup"
+msgstr "Easy setup"
+
+#: src/app/page.tsx:152
+msgid "Free"
+msgstr "Free"
+
+#: src/app/page.tsx:152
+msgid "Open source"
+msgstr "Open source"
+
+#: src/app/page.tsx:175
+#: src/app/page.tsx:213
+msgid "Sign in"
+msgstr "Sign in"
+
+#: src/app/page.tsx:182
+#: src/app/page.tsx:221
+msgid "Open dashboard"
+msgstr "Open dashboard"
+
+#: src/app/page.tsx:196
+msgid "Track how you spend your time"
+msgstr "Track how you spend your time"
+
+#: src/app/page.tsx:199
+msgid "Visualize your coding time. <0/>"
+msgstr "Visualize your coding time. <0/>"
+
+#: src/app/page.tsx:202
+msgid "<0>We are currently in closed beta. Singups will be open soon.</0>"
+msgstr "<0>We are currently in closed beta. Singups will be open soon.</0>"
+
+#: src/app/page.tsx:286
+msgid "Designed for developers"
+msgstr "Designed for developers"
+
+#: src/app/page.tsx:289
+msgid "What we offer"
+msgstr "What we offer"
+
+#: src/app/page.tsx:312
+msgid "The last 90d"
+msgstr "The last 90d"
+
+#: src/app/page.tsx:315
+msgid "What our users are using"
+msgstr "What our users are using"
+
+#: src/app/page.tsx:376
+msgid "Editor Extensions"
+msgstr "Editor Extensions"
+
+#: src/app/page.tsx:379
+msgid "An extension ecosystem for all the editors you love."
+msgstr "An extension ecosystem for all the editors you love."
+
+#: src/components/auth/sign-in-form.tsx:31
+msgid "GitHub sign-in could not be started."
+msgstr "GitHub sign-in could not be started."
+
+#: src/components/auth/sign-in-form.tsx:38
+msgid "Passkeys are not supported in this browser. Try GitHub instead."
+msgstr "Passkeys are not supported in this browser. Try GitHub instead."
+
+#: src/components/auth/sign-in-form.tsx:48
+msgid "Your passkey could not be verified."
+msgstr "Your passkey could not be verified."
+
+#: src/components/auth/sign-in-form.tsx:60
+msgid "Welcome"
+msgstr "Welcome"
+
+#: src/components/auth/sign-in-form.tsx:63
+msgid "Sign in to view your dashboard."
+msgstr "Sign in to view your dashboard."
+
+#: src/components/auth/sign-in-form.tsx:69
+msgid "Continue with GitHub"
+msgstr "Continue with GitHub"
+
+#: src/components/auth/sign-in-form.tsx:80
+msgid "Continue with a passkey"
+msgstr "Continue with a passkey"
+
+#: src/components/auth/sign-in-form.tsx:91
+msgid "Signups are currently disabled."
+msgstr "Signups are currently disabled."
+
+#: src/components/auth/sign-in-form.tsx:94
+msgid "This site is currently in closed beta. Want to contribute?"
+msgstr "This site is currently in closed beta. Want to contribute?"
+
+#: src/components/auth/sign-in-form.tsx:101
+msgid "Join our Discord"
+msgstr "Join our Discord"
 
 #: src/components/overview/open-minimal.tsx:29
 msgid "Failed to open minimal view"
@@ -429,7 +608,3 @@ msgstr "Upload failed: {0}"
 #: src/components/uploadthing.tsx:78
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"
-
-#: src/lib/account-config.ts:46
-msgid "Select a valid IANA time zone."
-msgstr "Select a valid IANA time zone."

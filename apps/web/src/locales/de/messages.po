@@ -46,6 +46,7 @@ msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If y
 msgstr "<0>Berechnungen</0><1>Die Gesamtzeit zählt jede aktive Minute nur einmal. <2/>Wenn du innerhalb einer Minute zwischen Arbeitsbereich oder Sprache wechselt, wird die gleiche Minute für jede übereinstimmende Kategorie gezählt. <3/>So können Kategorietermine und Prozentsätze über 100% gehen.</1>"
 
 #: src/app/dash/page.tsx:155
+#: src/app/page.tsx:329
 #: src/components/overview/filter-view.tsx:12
 msgid "Editor"
 msgstr "Editor"
@@ -56,22 +57,200 @@ msgid "Workspace"
 msgstr "Arbeitsbereich"
 
 #: src/app/dash/page.tsx:179
+#: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
 msgid "Language"
 msgstr "Sprache"
 
 #: src/app/dash/page.tsx:191
+#: src/app/page.tsx:356
 #: src/components/overview/filter-view.tsx:15
 msgid "Platform"
 msgstr "Plattform"
 
 #: src/app/global-error.tsx:24
 msgid "Something went wrong."
-msgstr ""
+msgstr "Etwas ist schief gelaufen."
 
 #: src/app/global-error.tsx:26
 msgid "Try again"
-msgstr "Erneut versuchenS"
+msgstr "Erneut versuchen"
+
+#: src/app/page.tsx:47
+msgid "Respect your privacy"
+msgstr "Respektiere deine Privatsphäre"
+
+#: src/app/page.tsx:48
+msgid "Only stores the necessary data. Filenames are hashed."
+msgstr "Nur die notwendigen Daten werden gespeichert. Dateinamen werden gehasht."
+
+#: src/app/page.tsx:52
+msgid "Join or create an organization"
+msgstr "Beitritt oder Erstellung einer Organisation"
+
+#: src/app/page.tsx:53
+msgid "Track your time together with your friends / team"
+msgstr "Verfolge deine Zeit zusammen mit deinen Freunden / Team"
+
+#: src/app/page.tsx:57
+msgid "Import your data"
+msgstr "Importiere deine Daten"
+
+#: src/app/page.tsx:58
+msgid "Import your existing time tracking data from other tools. Like, codetime.dev"
+msgstr "Importiere deine bestehenden Zeitverfolgungsdaten von anderen Tools. Zum Beispiel codetime.dev"
+
+#: src/app/page.tsx:71
+msgid "Fast and AI-powered code editor that makes you more productive."
+msgstr "Schnell und KI-gestützer Code-Editor, der dich produktiver macht."
+
+#: src/app/page.tsx:78
+msgid "Note-taking and knowledge management app"
+msgstr "Notizen- und Wissensmanagement-App"
+
+#: src/app/page.tsx:85
+msgid "Game development engine"
+msgstr "Spielentwicklungseingine"
+
+#: src/app/page.tsx:92
+#: src/app/page.tsx:113
+#: src/app/page.tsx:120
+msgid "The popular code editor"
+msgstr "Der beliebte Code-Editor"
+
+#: src/app/page.tsx:99
+msgid "Fork of VS Code with AI-powered features"
+msgstr "Fork von VS Code mit KI-gestützten Funktionen"
+
+#: src/app/page.tsx:106
+msgid "Built-in full-stack support ready for your next endeavor"
+msgstr "Integrierter Full-Stack-Unterstützung für deine nächste Herausforderung"
+
+#: src/app/page.tsx:128
+msgid "Missing an editor extension? Create a request on GitHub"
+msgstr "Fehlt eine Editor-Erweiterung? Erstelle eine Anfrage auf GitHub"
+
+#: src/app/page.tsx:136
+msgid "Not started"
+msgstr "Nicht gestartet"
+
+#: src/app/page.tsx:137
+msgid "This editor extension is planned but not yet in development."
+msgstr "Diese Editor-Erweiterung ist geplant, aber noch nicht in Entwicklung."
+
+#: src/app/page.tsx:141
+msgid "Started"
+msgstr "Gestartet"
+
+#: src/app/page.tsx:142
+msgid "Development has begun for this editor extension."
+msgstr "Entwicklung für diese Editor-Erweiterung hat gestartet."
+
+#: src/app/page.tsx:146
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+#: src/app/page.tsx:147
+msgid "This editor extension is available to use."
+msgstr "Diese Editor-Erweiterung ist verfügbar zum Einsatz."
+
+#: src/app/page.tsx:152
+msgid "Easy setup"
+msgstr "Einfaches Setup"
+
+#: src/app/page.tsx:152
+msgid "Free"
+msgstr "Gratis"
+
+#: src/app/page.tsx:152
+msgid "Open source"
+msgstr "Open Source"
+
+#: src/app/page.tsx:175
+#: src/app/page.tsx:213
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: src/app/page.tsx:182
+#: src/app/page.tsx:221
+msgid "Open dashboard"
+msgstr "Dashboard öffnen"
+
+#: src/app/page.tsx:196
+msgid "Track how you spend your time"
+msgstr "Verfolge wie du deine Zeit nutzt"
+
+#: src/app/page.tsx:199
+msgid "Visualize your coding time. <0/>"
+msgstr "Visualisiere deine Programmierzeit. <0/>"
+
+#: src/app/page.tsx:202
+msgid "<0>We are currently in closed beta. Singups will be open soon.</0>"
+msgstr "<0>Wir sind aktuell in der geschlossenen Beta-Phase. Anmeldungen werden bald geöffnet.</0>"
+
+#: src/app/page.tsx:286
+msgid "Designed for developers"
+msgstr "Für Entwickler"
+
+#: src/app/page.tsx:289
+msgid "What we offer"
+msgstr "Was wir anbieten"
+
+#: src/app/page.tsx:312
+msgid "The last 90d"
+msgstr "Letzten 90 Tage"
+
+#: src/app/page.tsx:315
+msgid "What our users are using"
+msgstr "Was unsere Benutzer verwenden"
+
+#: src/app/page.tsx:376
+msgid "Editor Extensions"
+msgstr "Editor-Erweiterungen"
+
+#: src/app/page.tsx:379
+msgid "An extension ecosystem for all the editors you love."
+msgstr "Ein Erweiterungs-Ecosystem für alle Editoren, die ihr liebt."
+
+#: src/components/auth/sign-in-form.tsx:31
+msgid "GitHub sign-in could not be started."
+msgstr "GitHub-Anmeldung konnte nicht gestartet werden."
+
+#: src/components/auth/sign-in-form.tsx:38
+msgid "Passkeys are not supported in this browser. Try GitHub instead."
+msgstr "Passkeys werden in diesem Browser nicht unterstützt. Bitte versuche es mit GitHub anstelle eines Passkeys."
+
+#: src/components/auth/sign-in-form.tsx:48
+msgid "Your passkey could not be verified."
+msgstr "Dein Passkey konnte nicht überprüft werden."
+
+#: src/components/auth/sign-in-form.tsx:60
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: src/components/auth/sign-in-form.tsx:63
+msgid "Sign in to view your dashboard."
+msgstr "Melde dich an, um deinen Dashboard anzusehen."
+
+#: src/components/auth/sign-in-form.tsx:69
+msgid "Continue with GitHub"
+msgstr "Weiter mit GitHub"
+
+#: src/components/auth/sign-in-form.tsx:80
+msgid "Continue with a passkey"
+msgstr "Weiter mit deinem Passkey"
+
+#: src/components/auth/sign-in-form.tsx:91
+msgid "Signups are currently disabled."
+msgstr "Anmeldungen sind derzeit deaktiviert."
+
+#: src/components/auth/sign-in-form.tsx:94
+msgid "This site is currently in closed beta. Want to contribute?"
+msgstr "Diese Seite befindet sich in geschlossener Beta. Möchtest du mitmachen?"
+
+#: src/components/auth/sign-in-form.tsx:101
+msgid "Join our Discord"
+msgstr "Discord beitreten"
 
 #: src/components/overview/open-minimal.tsx:29
 msgid "Failed to open minimal view"
@@ -429,7 +608,3 @@ msgstr "Upload fehlgeschlagen: {0}"
 #: src/components/uploadthing.tsx:78
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"
-
-#: src/lib/account-config.ts:46
-msgid "Select a valid IANA time zone."
-msgstr "Wähle eine gültige IANA-Zeitzone aus."

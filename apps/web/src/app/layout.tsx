@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { Nunito } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
@@ -26,7 +26,7 @@ import { IdentifyComponent, OpenPanelComponent } from "@openpanel/nextjs";
 import { ENV } from "@startime/env";
 import Footer from "~/components/ui/footer";
 import { setRequestI18n } from "~/i18n/server";
-import { localeCookieName, resolveLocale } from "~/i18n/locales";
+import { fromHeader, localeCookieName, resolveLocale } from "~/i18n/locales";
 import { LinguiProvider } from "~/provider/lingui-provider";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,7 +46,7 @@ const nunito = Nunito({
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const [auth, cookieStore] = await Promise.all([getAuth(), cookies()]);
-	const locale = resolveLocale(auth.user?.accountConfig.regional.lang, cookieStore.get(localeCookieName)?.value);
+	const locale = resolveLocale(auth.user?.accountConfig.regional.lang, fromHeader(await headers()));
 	const i18n = await setRequestI18n(locale);
 
 	return (
@@ -100,5 +100,3 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		</html>
 	);
 }
-
-

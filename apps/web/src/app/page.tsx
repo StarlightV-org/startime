@@ -34,84 +34,90 @@ import { api } from "~/trpc/server";
 import { TopElement } from "~/components/overview";
 import { UnityDark } from "~/components/ui/svgs/unityDark";
 import { withRedisCache } from "~/server/redis/cache";
+import { msg, t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { setRequestI18n } from "~/i18n/server";
+import { fromHeader, resolveLocale } from "~/i18n/locales";
+import type { MessageDescriptor } from "@lingui/core";
+import { headers } from "next/headers";
 
 const features = [
 	{
 		icon: HatGlassesIcon,
-		title: "Respect your privacy",
-		description: "Only stores the necessary data. Filenames are hashed.",
+		title: msg`Respect your privacy`,
+		description: msg`Only stores the necessary data. Filenames are hashed.`,
 	},
 	{
 		icon: Users,
-		title: "Join or create an organization",
-		description: "Track your time together with your friends / team",
+		title: msg`Join or create an organization`,
+		description: msg`Track your time together with your friends / team`,
 	},
 	{
 		icon: ImportIcon,
-		title: "Import your data",
-		description: "Import your existing time tracking data from other tools. Like, codetime.dev",
+		title: msg`Import your data`,
+		description: msg`Import your existing time tracking data from other tools. Like, codetime.dev`,
 	},
 ];
 
 const extensions: Array<{
 	editor: string;
-	description: string;
+	description: MessageDescriptor;
 	url: string | undefined;
 	icon: React.ReactNode;
 	state?: "not-started" | "started" | "completed";
 }> = [
 	{
 		editor: "Zed",
-		description: "Fast and AI-powered code editor that makes you more productive.",
+		description: msg`Fast and AI-powered code editor that makes you more productive.`,
 		url: undefined,
 		icon: <ZedLogo className="size-10 text-white" />,
 		state: "completed",
 	},
 	{
 		editor: "Obsidian",
-		description: "Note-taking and knowledge management app",
+		description: msg`Note-taking and knowledge management app`,
 		url: undefined,
 		icon: <Obsidian className="size-10" />,
 		state: "started",
 	},
 	{
 		editor: "Unity",
-		description: "Game development engine",
+		description: msg`Game development engine`,
 		url: undefined,
 		icon: <UnityDark className="size-10" />,
 		state: "started",
 	},
 	{
 		editor: "VS Code",
-		description: "The popular code editor",
+		description: msg`The popular code editor`,
 		url: undefined,
 		icon: <Vscode className="size-10" />,
 		state: "not-started",
 	},
 	{
 		editor: "Cursor",
-		description: "Fork of VS Code with AI-powered features",
+		description: msg`Fork of VS Code with AI-powered features`,
 		url: undefined,
 		icon: <CursorLight className="size-10" />,
 		state: "not-started",
 	},
 	{
 		editor: "Visual Studio",
-		description: "Built-in full-stack support ready for your next endeavor",
+		description: msg`Built-in full-stack support ready for your next endeavor`,
 		url: undefined,
 		icon: <VisualStudio className="size-10" />,
 		state: "not-started",
 	},
 	{
 		editor: "Vim",
-		description: "The popular code editor",
+		description: msg`The popular code editor`,
 		url: undefined,
 		icon: <Vim className="size-10" />,
 		state: "not-started",
 	},
 	{
 		editor: "Neovim",
-		description: "The popular code editor",
+		description: msg`The popular code editor`,
 		url: undefined,
 		icon: <Neovim className="size-10" />,
 		state: "not-started",
@@ -119,36 +125,38 @@ const extensions: Array<{
 
 	{
 		editor: "More?",
-		description: "Missing an editor extension? Create a request on GitHub",
+		description: msg`Missing an editor extension? Create a request on GitHub`,
 		url: "https://github.com/StarlightV-org/startime",
 		icon: <PlusIcon className="size-10" />,
 	},
 ];
 
-const stateLabels: Record<string, { label: string; description: string; className: string }> = {
+const stateLabels: Record<string, { label: MessageDescriptor; description: MessageDescriptor; className: string }> = {
 	"not-started": {
-		label: "Not started",
-		description: "This editor extension is planned but not yet in development.",
+		label: msg`Not started`,
+		description: msg`This editor extension is planned but not yet in development.`,
 		className: "border-yellow-500/30 bg-yellow-500/15 text-yellow-400/90",
 	},
 	started: {
-		label: "Started",
-		description: "Development has begun for this editor extension.",
+		label: msg`Started`,
+		description: msg`Development has begun for this editor extension.`,
 		className: "border-blue-500/30 bg-blue-500/15 text-blue-400/90",
 	},
 	completed: {
-		label: "Completed",
-		description: "This editor extension is available to use.",
+		label: msg`Completed`,
+		description: msg`This editor extension is available to use.`,
 		className: "border-green-500/30 bg-green-500/15 text-green-400/90",
 	},
 };
 
-const benefits = ["Easy setup", "Free", "Open source"];
+const benefits = [msg`Easy setup`, msg`Free`, msg`Open source`];
 
 export default async function Home() {
 	const { user } = await getAuth();
-
+	await setRequestI18n(resolveLocale(fromHeader(await headers())));
 	const [top] = await Promise.all([withRedisCache("api:publicStats:getTop", 60 * 30, () => api.publicStats.getTop())]);
+
+	const { i18n } = useLingui();
 
 	return (
 		<main className="min-h-screen bg-background text-foreground">
@@ -164,14 +172,14 @@ export default async function Home() {
 						{!user ? (
 							<Button asChild variant="ghost">
 								<Link href="/auth/signin">
-									Sign in
+									<Trans>Sign in</Trans>
 									<ArrowRight data-icon="inline-end" aria-hidden="true" />
 								</Link>
 							</Button>
 						) : (
 							<Button asChild className="hidden sm:inline-flex">
 								<Link href="/dash">
-									Open dashboard
+									<Trans>Open dashboard</Trans>
 									<ArrowRight data-icon="inline-end" aria-hidden="true" />
 								</Link>
 							</Button>
@@ -185,17 +193,24 @@ export default async function Home() {
 					<div className="flex flex-col items-start gap-6">
 						<div className="flex flex-col gap-5">
 							<h1 className="font-heading text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-								Track how you spend your time
+								<Trans>Track how you spend your time</Trans>
 							</h1>
 							<p className="max-w-xl text-lg leading-8 text-muted-foreground">
-								Visualize your coding time. <br /> We are currently in closed beta. Singups will be open soon.
+								<Trans>
+									Visualize your coding time. <br />
+								</Trans>
+								<Trans>
+									<span className="text-sm text-nowrap text-muted-foreground">
+										We are currently in closed beta. Singups will be open soon.
+									</span>
+								</Trans>
 							</p>
 						</div>
 						<nav className="flex items-center gap-2" aria-label="Primary navigation">
 							{!user ? (
 								<Button asChild variant="ghost">
 									<Link href="/auth/signin">
-										Sign in
+										<Trans>Sign in</Trans>
 										<ArrowRight data-icon="inline-end" aria-hidden="true" />
 									</Link>
 								</Button>
@@ -203,7 +218,7 @@ export default async function Home() {
 								<div className="flex items-center gap-2 rounded-lg bg-accent">
 									<Button asChild className="hidden sm:inline-flex">
 										<Link href="/dash">
-											Open dashboard
+											<Trans>Open dashboard</Trans>
 											<ArrowRight data-icon="inline-end" aria-hidden="true" />
 										</Link>
 									</Button>
@@ -222,9 +237,9 @@ export default async function Home() {
 							aria-label="Startime benefits"
 						>
 							{benefits.map((benefit) => (
-								<li key={benefit} className="flex items-center gap-2">
+								<li key={i18n._(benefit)} className="flex items-center gap-2">
 									<Check className="text-primary" aria-hidden="true" />
-									{benefit}
+									{i18n._(benefit)}
 								</li>
 							))}
 						</ul>
@@ -267,20 +282,22 @@ export default async function Home() {
 			<section className="border-y border-border bg-muted/40">
 				<div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 lg:px-8">
 					<div className="flex max-w-2xl flex-col gap-3">
-						<p className="text-sm font-medium text-primary">Designed for momentum</p>
+						<p className="text-sm font-medium text-primary">
+							<Trans>Designed for developers</Trans>
+						</p>
 						<h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-							Less friction. More of what moves you forward.
+							<Trans>What we offer</Trans>
 						</h2>
 					</div>
 					<div className="grid gap-5 md:grid-cols-3">
 						{features.map(({ icon: Icon, title, description }) => (
-							<Card key={title}>
+							<Card key={i18n._(title)}>
 								<CardHeader className="gap-3">
 									<span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
 										<Icon aria-hidden="true" />
 									</span>
-									<CardTitle>{title}</CardTitle>
-									<CardDescription className="px-0">{description}</CardDescription>
+									<CardTitle>{i18n._(title)}</CardTitle>
+									<CardDescription className="px-0">{i18n._(description)}</CardDescription>
 								</CardHeader>
 								<CardContent />
 							</Card>
@@ -291,8 +308,12 @@ export default async function Home() {
 			<section className="border-y border-border">
 				<div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 lg:px-8">
 					<div className="flex max-w-2xl flex-col gap-3">
-						<p className="text-sm font-medium text-primary">The last 90d</p>
-						<h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">What our users are using</h2>
+						<p className="text-sm font-medium text-primary">
+							<Trans>The last 90d</Trans>
+						</p>
+						<h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+							<Trans>What our users are using</Trans>
+						</h2>
 					</div>
 					<div className="">
 						<Card>
@@ -304,7 +325,9 @@ export default async function Home() {
 									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
 										<div className="flex items-center gap-2">
 											<PencilIcon className="size-4" />
-											<h3 className="y text-sm">Editor</h3>
+											<h3 className="y text-sm">
+												<Trans>Editor</Trans>
+											</h3>
 										</div>
 										{top &&
 											Object.entries(top.editor)
@@ -315,7 +338,9 @@ export default async function Home() {
 									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
 										<div className="flex items-center gap-2">
 											<CodeXmlIcon className="size-4" />
-											<h3 className="y text-sm">Language</h3>
+											<h3 className="y text-sm">
+												<Trans>Language</Trans>
+											</h3>
 										</div>
 										{top &&
 											Object.entries(top.language)
@@ -327,7 +352,9 @@ export default async function Home() {
 									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
 										<div className="flex items-center gap-2">
 											<ComputerIcon className="size-4" />
-											<h3 className="y text-sm">Platform</h3>
+											<h3 className="y text-sm">
+												<Trans>Platform</Trans>
+											</h3>
 										</div>
 										{top &&
 											Object.entries(top.platform)
@@ -345,9 +372,11 @@ export default async function Home() {
 			<section className="border-y border-border bg-muted/40">
 				<div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-20 lg:px-8">
 					<div className="flex max-w-2xl flex-col gap-3">
-						<p className="text-sm font-medium text-primary">Editor Extensions</p>
+						<p className="text-sm font-medium text-primary">
+							<Trans>Editor Extensions</Trans>
+						</p>
 						<h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-							An extension ecosystem for all the editors you love.
+							<Trans>An extension ecosystem for all the editors you love.</Trans>
 						</h2>
 					</div>
 					<div className="grid gap-5 md:grid-cols-3">
@@ -362,15 +391,15 @@ export default async function Home() {
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<Badge variant="outline" className={cn(stateLabels[state]?.className, "cursor-help")}>
-																{stateLabels[state]?.label}
+																{i18n._(stateLabels[state]?.label!)}
 															</Badge>
 														</TooltipTrigger>
-														<TooltipContent>{stateLabels[state]?.description}</TooltipContent>
+														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
 											</span>
 											<CardTitle>{editor}</CardTitle>
-											<CardDescription className="p-0">{description}</CardDescription>
+											<CardDescription className="p-0">{i18n._(description!)}</CardDescription>
 										</CardHeader>
 									</Card>
 								);
@@ -392,15 +421,15 @@ export default async function Home() {
 													<Tooltip>
 														<TooltipTrigger asChild>
 															<Badge variant="outline" className={stateLabels[state]?.className}>
-																{stateLabels[state]?.label}
+																{i18n._(stateLabels[state]?.label!)}
 															</Badge>
 														</TooltipTrigger>
-														<TooltipContent>{stateLabels[state]?.description}</TooltipContent>
+														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
 											</span>
 											<CardTitle>{editor}</CardTitle>
-											<CardDescription className="p-0">{description}</CardDescription>
+											<CardDescription className="p-0">{i18n._(description!)}</CardDescription>
 										</CardHeader>
 									</Card>
 								</Link>
@@ -408,20 +437,6 @@ export default async function Home() {
 						})}
 					</div>
 				</div>
-			</section>
-
-			<section className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-20 text-center lg:px-8">
-				<p className="text-sm font-medium text-primary">Start where you are</p>
-				<h2 className="max-w-2xl font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-					Make room for the work and life that matter.
-				</h2>
-				<p className="max-w-xl text-muted-foreground">Your next focused day is closer than you think.</p>
-				<Button asChild size="lg">
-					<Link href="/dash">
-						Go to dashboard
-						<ArrowRight data-icon="inline-end" aria-hidden="true" />
-					</Link>
-				</Button>
 			</section>
 		</main>
 	);
