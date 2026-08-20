@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { t } from "@lingui/core/macro";
 
 import { AutoConfigSettings } from "./auto-config-settings";
 import {
@@ -22,10 +23,10 @@ export default function AccountSettings() {
 	const { mutate } = api.self.setConfigValue.useMutation({
 		onSuccess: () => {
 			router.refresh();
-			toast.success("Settings saved", { id: "account-settings" });
+			toast.success(t`Settings saved`, { id: "account-settings" });
 		},
 		onError: (error) => {
-			toast.error("Unable to save settings", { id: "account-settings", description: error.message });
+			toast.error(t`Unable to save settings`, { id: "account-settings", description: error.message });
 		},
 	});
 
@@ -34,12 +35,15 @@ export default function AccountSettings() {
 	};
 
 	const saveValue = (path: AccountConfigPath, value: unknown) => {
+		// if (path === "regional.lang" && (value === "en" || value === "de")) {
+		// 	document.cookie = `startime_locale=${value}; Path=/; Max-Age=31536000; SameSite=Lax`;
+		// }
 		setLocalValue(path, value);
 		const input = setAccountConfigValueSchema.safeParse({ path, value });
 		if (!input.success) {
-			toast.error("Unable to save settings", {
+			toast.error(t`Unable to save settings`, {
 				id: "account-settings",
-				description: "This setting is not supported by the server yet.",
+				description: t`This setting is not supported by the server yet.`,
 			});
 			return;
 		}

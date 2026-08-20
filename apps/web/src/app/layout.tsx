@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Nunito } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
@@ -24,6 +25,9 @@ import { VersionProvider } from "~/provider/version-provider";
 import { IdentifyComponent, OpenPanelComponent } from "@openpanel/nextjs";
 import { ENV } from "@startime/env";
 import Footer from "~/components/ui/footer";
+import { getI18nInstance } from "~/i18n/server";
+import { localeCookieName, resolveLocale } from "~/i18n/locales";
+import { LinguiProvider } from "~/provider/lingui-provider";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -41,54 +45,59 @@ const nunito = Nunito({
 });
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-	const auth = await getAuth();
+	const [auth, cookieStore] = await Promise.all([getAuth(), cookies()]);
+	const locale = resolveLocale(auth.user?.accountConfig.regional.lang, cookieStore.get(localeCookieName)?.value);
+	const i18n = await getI18nInstance(locale);
 
 	return (
-		<html lang="en" className={cn("dark", nunito.className)}>
+		<html lang={locale} className={cn("dark", nunito.className)}>
 			<head>
 				<meta name="darkreader-lock" />
 			</head>
 			<body className="dark @container/body">
 				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-				<SessionProvider initialSession={auth}>
-					<OpenPanelComponent
-						debug={ENV.NODE_ENV === "development"}
-						clientId={ENV.OPEN_PANEL_CLIENT_ID}
-						clientSecret={ENV.OPEN_PANEL_CLIENT_SECRET}
-						apiUrl={ENV.NEXT_PUBLIC_OPENPANEL_API_URL}
-						scriptUrl={"/script"}
-						trackAttributes
-						trackOutgoingLinks
-						trackScreenViews
-						profileId={auth?.user?.id}
-						strategy="afterInteractive"
-						disabled={ENV.OPEN_PANEL_DISABLED}
-					/>
-					<IdentifyComponent
-						profileId={auth?.user?.id}
-						avatar={auth?.user?.image ?? undefined}
-						firstName={auth?.user?.name}
-					/>
+				<LinguiProvider key={locale} locale={locale} messages={i18n.messages}>
+					<SessionProvider initialSession={auth}>
+						<OpenPanelComponent
+							debug={ENV.NODE_ENV === "development"}
+							clientId={ENV.OPEN_PANEL_CLIENT_ID}
+							clientSecret={ENV.OPEN_PANEL_CLIENT_SECRET}
+							apiUrl={ENV.NEXT_PUBLIC_OPENPANEL_API_URL}
+							scriptUrl={"/script"}
+							trackAttributes
+							trackOutgoingLinks
+							trackScreenViews
+							profileId={auth?.user?.id}
+							strategy="afterInteractive"
+							disabled={ENV.OPEN_PANEL_DISABLED}
+						/>
+						<IdentifyComponent
+							profileId={auth?.user?.id}
+							avatar={auth?.user?.image ?? undefined}
+							firstName={auth?.user?.name}
+						/>
 
-					<NuqsAdapter>
-						<TRPCReactProvider>
-							<HydrateClient>
-								<ConfirmModalProvider>
-									<TooltipProvider>
-										<TimeZoneSync />
-										<ReauthProvider />
-										<Toaster />
-										<VersionProvider />
-										<SyncConfigLocal />
-										<main className="relative z-1 mb-8 w-full flex-1 border-b-3 border-b-border bg-background">{children}</main>
-										<Footer />
-									</TooltipProvider>
-								</ConfirmModalProvider>
-							</HydrateClient>
-						</TRPCReactProvider>
-					</NuqsAdapter>
-				</SessionProvider>
+						<NuqsAdapter>
+							<TRPCReactProvider>
+								<HydrateClient>
+									<ConfirmModalProvider>
+										<TooltipProvider>
+											<TimeZoneSync />
+											<ReauthProvider />
+											<Toaster />
+											<VersionProvider />
+											<SyncConfigLocal />
+											<main className="relative z-1 mb-8 w-full flex-1 border-b-3 border-b-border bg-background">{children}</main>
+											<Footer />
+										</TooltipProvider>
+									</ConfirmModalProvider>
+								</HydrateClient>
+							</TRPCReactProvider>
+						</NuqsAdapter>
+					</SessionProvider>
+				</LinguiProvider>
 			</body>
 		</html>
 	);
 }
+
