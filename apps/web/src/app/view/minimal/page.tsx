@@ -33,7 +33,6 @@ export default async function MinimalPage() {
 
 	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity({ timeRange, biggestUnit }));
 	const regional = auth.user.accountConfig.regional;
-	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 	return (
 		<main className="flex h-svh items-center justify-center overflow-hidden bg-background" data-minimal-page>
 			<Card className="h-37.5 w-100">
@@ -57,11 +56,6 @@ export default async function MinimalPage() {
 						<div className="flex w-full flex-row items-center justify-between gap-2">
 							<TimeSelect timeRange={timeRange} />
 							<BiggestUnitSelect biggestUnit={biggestUnit} />
-							{/*{start && end && (
-								<p className="text-xs text-muted-foreground">
-									{formatDate(start, "yyyy-MM-dd")} - {formatDate(subSeconds(1, end), "yyyy-MM-dd")}
-								</p>
-							)}*/}
 						</div>
 					</CardDescription>
 				</CardContent>
