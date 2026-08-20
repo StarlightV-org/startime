@@ -14,6 +14,7 @@ import {
 } from "../ui/dropdown-menu";
 import { authClient } from "~/server/better-auth/client";
 import { useOpenPanel } from "@openpanel/nextjs";
+import { Trans } from "@lingui/react/macro";
 
 export default function AccountButton() {
 	const { user, session } = useSession();
@@ -40,10 +41,14 @@ export default function AccountButton() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" sideOffset={10}>
 				<DropdownMenuGroup>
-					<DropdownMenuLabel>Account</DropdownMenuLabel>
+					<DropdownMenuLabel>
+						<Trans>Account</Trans>
+					</DropdownMenuLabel>
 					<DropdownMenuItem asChild>
 						<Link href="/dash/settings">
-							<span>Settings</span>
+							<span>
+								<Trans>Settings</Trans>
+							</span>
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
@@ -55,7 +60,7 @@ export default function AccountButton() {
 						}}
 						className="text-destructive hover:bg-destructive/15! hover:text-destructive"
 					>
-						Logout
+						<Trans>Logout</Trans>
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 			</DropdownMenuContent>

@@ -204,6 +204,19 @@ msgstr "Editor-Erweiterungen"
 msgid "An extension ecosystem for all the editors you love."
 msgstr "Ein Erweiterungs-Ecosystem für alle Editoren, die ihr liebt."
 
+#: src/components/auth/account-button.tsx:45
+msgid "Account"
+msgstr "Konto"
+
+#: src/components/auth/account-button.tsx:50
+#: src/components/ui/header-bar.tsx:52
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/components/auth/account-button.tsx:63
+msgid "Logout"
+msgstr "Abmelden"
+
 #: src/components/auth/reauth-form.tsx:27
 msgid "Passkeys are not supported in this browser."
 msgstr "Passkeys werden in diesem Browser nicht unterstützt."
@@ -616,10 +629,6 @@ msgstr "Übersicht"
 #: src/components/ui/header-bar.tsx:46
 msgid "Your Organization"
 msgstr "Deine Organisation"
-
-#: src/components/ui/header-bar.tsx:52
-msgid "Settings"
-msgstr "Einstellungen"
 
 #: src/components/uploadthing.tsx:36
 msgid "You cant upload so many files at once."
