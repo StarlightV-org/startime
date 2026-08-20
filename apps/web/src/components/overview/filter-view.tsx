@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useEffect } from "react";
 import { Button } from "../ui/button";
+import { msg } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
 
 const filterLabels = {
-	editor: "Editor",
-	workspace: "Workspace",
-	language: "Language",
-	platform: "Platform",
+	editor: msg`Editor`,
+	workspace: msg`Workspace`,
+	language: msg`Language`,
+	platform: msg`Platform`,
 };
 
 export default function FilterView() {
@@ -54,12 +56,14 @@ function Badge({
 	val: string;
 	setState: (state: { [key: string]: string }) => void;
 }) {
+	const { i18n } = useLingui();
+
 	return (
 		<div className="inline-flex max-h-8 items-center rounded-lg border px-2 py-1">
 			<Button size="icon-xs" variant="ghost" onClick={() => setState({ [filter]: "" })}>
 				<XIcon className="inline size-4" />
 			</Button>
-			<span>{`${filterLabels[filter]}: ${val}`}</span>
+			<span>{`${i18n._(filterLabels[filter])}: ${val}`}</span>
 		</div>
 	);
 }

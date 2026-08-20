@@ -59,4 +59,3 @@ const config: NextConfig = {
 };
 
 export default withMDX(config);
-

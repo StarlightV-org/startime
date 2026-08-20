@@ -4,6 +4,7 @@ import type { UploadThingError } from "uploadthing/server";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
 import { Progress } from "./ui/progress";
+import { t } from "@lingui/core/macro";
 
 export const { useUploadThing, uploadFiles } = generateReactHelpers<OurFileRouter>();
 
@@ -59,7 +60,7 @@ export function uploadthingToast(
 	switch (type) {
 		case "PENDING": {
 			const percentage = second as number;
-			toast.loading(`Uploading ${percentage.toFixed(2)}%`, {
+			toast.loading(t`Uploading ${percentage.toFixed(2)}%`, {
 				id: "upload-progress",
 				description: <Progress value={percentage} className="w-full" />,
 			});
@@ -67,14 +68,14 @@ export function uploadthingToast(
 		}
 		case "ERROR": {
 			const error = second as UploadThingError;
-			toast.error(`Upload failed: ${parseUploadThingError(error)}`, {
+			toast.error(t`Upload failed: ${parseUploadThingError(error)}`, {
 				id: "upload-progress",
 				description: undefined,
 			});
 			return;
 		}
 		case "SUCCESS":
-			toast.success("Dateien erfolgreich hochgeladen", {
+			toast.success(t`Files uploaded successfully`, {
 				id: "upload-progress",
 				description: undefined,
 			});

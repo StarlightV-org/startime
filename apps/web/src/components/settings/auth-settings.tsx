@@ -24,8 +24,7 @@ import { api } from "~/trpc/react";
 import { isReauthRequired } from "~/lib/reauth-util";
 import { tryCatch } from "~/lib/utils";
 import { Spinner } from "../ui/spinner";
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 export default function AuthSettings({
 	passkeys,
@@ -36,6 +35,7 @@ export default function AuthSettings({
 	apiKeys: API["self"]["listApiKeys"];
 	promptForPasskey?: boolean;
 }) {
+	const { t } = useLingui();
 	const { user } = useSession();
 
 	const passkeyForm = useForm({
@@ -306,6 +306,7 @@ export default function AuthSettings({
 type Passkey = API["self"]["listPasskeys"][number];
 
 function PasskeyRow({ passkey }: { passkey: Passkey }) {
+	const { t } = useLingui();
 	const router = useRouter();
 	const confirmModal = useConfirmModal();
 
@@ -344,6 +345,7 @@ function PasskeyRow({ passkey }: { passkey: Passkey }) {
 type ApiKey = API["self"]["listApiKeys"][number];
 
 function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
+	const { t } = useLingui();
 	const confirmModal = useConfirmModal();
 	const router = useRouter();
 	const { mutateAsync: getApiKey, isPending } = api.self.getApiKey.useMutation();

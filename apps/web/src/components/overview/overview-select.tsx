@@ -5,23 +5,12 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-
-const timeRangeLabels: Record<TimeRange, string> = {
-	past1: "Last 24 hours",
-	past7: "Last 7 days",
-	past30: "Last 30 days",
-	past90: "Last 90 days",
-	past365: "Last 365 days",
-	thisDay: "Today",
-	thisWeek: "This week",
-	thisMonth: "This month",
-	thisYear: "This year",
-	allTime: "All Time",
-};
+import { Trans, useLingui } from "@lingui/react/macro";
 
 export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	const [value, setValue] = useState(timeRange);
 	const router = useRouter();
+	const { t } = useLingui();
 	// const utils = api.useUtils();
 
 	const handleChange = (value: TimeRange) => {
@@ -32,6 +21,19 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 		router.refresh();
 	};
 
+	const timeRangeLabels: Record<TimeRange, string> = {
+		past1: t`Last 24 hours`,
+		past7: t`Last 7 days`,
+		past30: t`Last 30 days`,
+		past90: t`Last 90 days`,
+		past365: t`Last 365 days`,
+		thisDay: t`Today`,
+		thisWeek: t`This week`,
+		thisMonth: t`This month`,
+		thisYear: t`This year`,
+		allTime: t`All Time`,
+	};
+
 	return (
 		<Select value={value} onValueChange={handleChange}>
 			<SelectTrigger>
@@ -40,34 +42,51 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 			<SelectContent position={"popper"}>
 				<SelectGroup>
 					<SelectLabel>Relative</SelectLabel>
-					<SelectItem value="past1">Last 24 hours</SelectItem>
-					<SelectItem value="past7">Last 7 days</SelectItem>
-					<SelectItem value="past30">Last 30 days</SelectItem>
-					<SelectItem value="past90">Last 90 days</SelectItem>
-					<SelectItem value="past365">Last 365 days</SelectItem>
+					<SelectItem value="past1">
+						<Trans>Last 24 hours</Trans>
+					</SelectItem>
+					<SelectItem value="past7">
+						<Trans>Last 7 days</Trans>
+					</SelectItem>
+					<SelectItem value="past30">
+						<Trans>Last 30 days</Trans>
+					</SelectItem>
+					<SelectItem value="past90">
+						<Trans>Last 90 days</Trans>
+					</SelectItem>
+					<SelectItem value="past365">
+						<Trans>Last 365 days</Trans>
+					</SelectItem>
 				</SelectGroup>
 				<SelectGroup>
-					<SelectLabel>Absolute</SelectLabel>
-					<SelectItem value="thisDay">Today</SelectItem>
-					<SelectItem value="thisWeek">This week</SelectItem>
-					<SelectItem value="thisMonth">This month</SelectItem>
-					<SelectItem value="thisYear">This year</SelectItem>
-					<SelectItem value="allTime">All Time</SelectItem>
+					<SelectLabel>
+						<Trans>Absolute</Trans>
+					</SelectLabel>
+					<SelectItem value="thisDay">
+						<Trans>Today</Trans>
+					</SelectItem>
+					<SelectItem value="thisWeek">
+						<Trans>This week</Trans>
+					</SelectItem>
+					<SelectItem value="thisMonth">
+						<Trans>This month</Trans>
+					</SelectItem>
+					<SelectItem value="thisYear">
+						<Trans>This year</Trans>
+					</SelectItem>
+					<SelectItem value="allTime">
+						<Trans>All Time</Trans>
+					</SelectItem>
 				</SelectGroup>
 			</SelectContent>
 		</Select>
 	);
 }
 
-const biggestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
-	hour: "Hour",
-	day: "Day",
-	week: "Week",
-};
-
 export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit }) {
 	const [value, setValue] = useState(biggestUnit);
 	const router = useRouter();
+	const { t } = useLingui();
 	// const utils = api.useUtils();
 
 	const handleChange = (value: NonNullable<BiggestUnit>) => {
@@ -78,6 +97,11 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 		// utils.overview.invalidate();
 	};
 
+	const biggestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
+		hour: t`Hour`,
+		day: t`Day`,
+		week: t`Week`,
+	};
 	return (
 		<Select value={value} onValueChange={handleChange}>
 			<SelectTrigger className="min-w-max">
@@ -85,10 +109,18 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 			</SelectTrigger>
 			<SelectContent position={"popper"}>
 				<SelectGroup>
-					<SelectLabel>Biggest Unit</SelectLabel>
-					<SelectItem value="hour">Hour</SelectItem>
-					<SelectItem value="day">Day</SelectItem>
-					<SelectItem value="week">Week</SelectItem>
+					<SelectLabel>
+						<Trans>Biggest Unit</Trans>
+					</SelectLabel>
+					<SelectItem value="hour">
+						<Trans>Hour</Trans>
+					</SelectItem>
+					<SelectItem value="day">
+						<Trans>Day</Trans>
+					</SelectItem>
+					<SelectItem value="week">
+						<Trans>Week</Trans>
+					</SelectItem>
 				</SelectGroup>
 			</SelectContent>
 		</Select>

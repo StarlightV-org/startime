@@ -13,93 +13,216 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. placeholder {0}: apiKey.name
-#: src/components/settings/auth-settings.tsx:402
-msgid "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
-msgstr "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
+#: src/app/dash/page.tsx:65
+msgid "Time Range"
+msgstr "Time Range"
 
-#: src/components/settings/auth-settings.tsx:233
-msgid "A API key is required to verify sensitive actions."
-msgstr "A API key is required to verify sensitive actions."
+#: src/app/dash/page.tsx:86
+msgid "Activity"
+msgstr "Activity"
 
-#: src/components/settings/auth-settings.tsx:126
-msgid "A passkey is required to verify sensitive actions."
-msgstr "A passkey is required to verify sensitive actions."
+#: src/app/dash/page.tsx:94
+msgid "Time/Total"
+msgstr "Time/Total"
 
-#: src/components/settings/auth-settings.tsx:220
-msgid "Actions"
-msgstr "Actions"
+#: src/app/dash/page.tsx:100
+msgid "Time/Today"
+msgstr "Time/Today"
 
-#: src/components/settings/auth-settings.tsx:373
-msgid "Api key copied to clipboard"
-msgstr "Api key copied to clipboard"
+#: src/app/dash/page.tsx:106
+msgid "Streak/Current"
+msgstr "Streak/Current"
+
+#: src/app/dash/page.tsx:112
+msgid "Streak/Max"
+msgstr "Streak/Max"
+
+#: src/app/dash/page.tsx:125
+msgid "Top"
+msgstr "Top"
+
+#: src/app/dash/page.tsx:137
+msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+
+#: src/app/dash/page.tsx:155
+#: src/components/overview/filter-view.tsx:12
+msgid "Editor"
+msgstr "Editor"
+
+#: src/app/dash/page.tsx:167
+#: src/components/overview/filter-view.tsx:13
+msgid "Workspace"
+msgstr "Workspace"
+
+#: src/app/dash/page.tsx:179
+#: src/components/overview/filter-view.tsx:14
+msgid "Language"
+msgstr "Language"
+
+#: src/app/dash/page.tsx:191
+#: src/components/overview/filter-view.tsx:15
+msgid "Platform"
+msgstr "Platform"
+
+#: src/app/global-error.tsx:24
+msgid "Something went wrong."
+msgstr "Something went wrong."
+
+#: src/app/global-error.tsx:26
+msgid "Try again"
+msgstr "Try again"
+
+#: src/components/overview/open-minimal.tsx:29
+msgid "Failed to open minimal view"
+msgstr "Failed to open minimal view"
+
+#: src/components/overview/open-minimal.tsx:30
+msgid "The popup could not be opened. Please check your browser settings."
+msgstr "The popup could not be opened. Please check your browser settings."
+
+#: src/components/overview/open-minimal.tsx:35
+msgid "Minimal View"
+msgstr "Minimal View"
+
+#: src/components/overview/overview-select.tsx:25
+#: src/components/overview/overview-select.tsx:46
+msgid "Last 24 hours"
+msgstr "Last 24 hours"
+
+#: src/components/overview/overview-select.tsx:26
+#: src/components/overview/overview-select.tsx:49
+msgid "Last 7 days"
+msgstr "Last 7 days"
+
+#: src/components/overview/overview-select.tsx:27
+#: src/components/overview/overview-select.tsx:52
+msgid "Last 30 days"
+msgstr "Last 30 days"
+
+#: src/components/overview/overview-select.tsx:28
+#: src/components/overview/overview-select.tsx:55
+msgid "Last 90 days"
+msgstr "Last 90 days"
+
+#: src/components/overview/overview-select.tsx:29
+#: src/components/overview/overview-select.tsx:58
+msgid "Last 365 days"
+msgstr "Last 365 days"
+
+#: src/components/overview/overview-select.tsx:30
+#: src/components/overview/overview-select.tsx:66
+msgid "Today"
+msgstr "Today"
+
+#: src/components/overview/overview-select.tsx:31
+#: src/components/overview/overview-select.tsx:69
+msgid "This week"
+msgstr "This week"
+
+#: src/components/overview/overview-select.tsx:32
+#: src/components/overview/overview-select.tsx:72
+msgid "This month"
+msgstr "This month"
+
+#: src/components/overview/overview-select.tsx:33
+#: src/components/overview/overview-select.tsx:75
+msgid "This year"
+msgstr "This year"
+
+#: src/components/overview/overview-select.tsx:34
+#: src/components/overview/overview-select.tsx:78
+msgid "All Time"
+msgstr "All Time"
+
+#: src/components/overview/overview-select.tsx:63
+msgid "Absolute"
+msgstr "Absolute"
+
+#: src/components/overview/overview-select.tsx:101
+#: src/components/overview/overview-select.tsx:116
+msgid "Hour"
+msgstr "Hour"
+
+#: src/components/overview/overview-select.tsx:102
+#: src/components/overview/overview-select.tsx:119
+msgid "Day"
+msgstr "Day"
+
+#: src/components/overview/overview-select.tsx:103
+#: src/components/overview/overview-select.tsx:122
+msgid "Week"
+msgstr "Week"
+
+#: src/components/overview/overview-select.tsx:113
+msgid "Biggest Unit"
+msgstr "Biggest Unit"
+
+#: src/components/settings/account-settings.tsx:27
+msgid "Settings saved"
+msgstr "Settings saved"
+
+#: src/components/settings/account-settings.tsx:30
+#: src/components/settings/account-settings.tsx:45
+msgid "Unable to save settings"
+msgstr "Unable to save settings"
+
+#: src/components/settings/account-settings.tsx:47
+msgid "This setting is not supported by the server yet."
+msgstr "This setting is not supported by the server yet."
+
+#: src/components/settings/auth-settings.tsx:47
+#: src/components/settings/auth-settings.tsx:50
+#: src/components/settings/auth-settings.tsx:61
+#: src/components/settings/auth-settings.tsx:64
+msgid "Name must be at least 3 characters"
+msgstr "Name must be at least 3 characters"
 
 #: src/components/settings/auth-settings.tsx:76
 msgid "Api key created successfully"
 msgstr "Api key created successfully"
 
-#: src/components/settings/auth-settings.tsx:424
-msgid "API key deleted"
-msgstr "API key deleted"
+#: src/components/settings/auth-settings.tsx:85
+msgid "Failed to create api key"
+msgstr "Failed to create api key"
 
-#. placeholder {0}: passkey.name
-#: src/components/settings/auth-settings.tsx:315
-msgid "Are you sure you want to delete the passkey \"{0}\"?"
-msgstr "Are you sure you want to delete the passkey \"{0}\"?"
-
-#: src/components/settings/auth-settings.tsx:153
-#: src/components/settings/auth-settings.tsx:260
-#: src/components/settings/auth-settings.tsx:447
-msgid "Cancel"
-msgstr "Cancel"
-
-#: src/components/settings/auth-settings.tsx:440
-#: src/components/settings/auth-settings.tsx:451
-msgid "Copy API key"
-msgstr "Copy API key"
-
-#: src/components/settings/auth-settings.tsx:174
-#: src/components/settings/auth-settings.tsx:271
-msgid "Create"
-msgstr "Create"
-
-#: src/components/settings/auth-settings.tsx:225
-#: src/components/settings/auth-settings.tsx:230
-msgid "Create Api Key"
-msgstr "Create Api Key"
-
-#: src/components/settings/auth-settings.tsx:123
-msgid "Create Passkey"
-msgstr "Create Passkey"
+#: src/components/settings/auth-settings.tsx:91
+msgid "Creating api key"
+msgstr "Creating api key"
 
 #: src/components/settings/auth-settings.tsx:110
 #: src/components/settings/auth-settings.tsx:215
 msgid "Created At"
 msgstr "Created At"
 
-#: src/components/settings/auth-settings.tsx:91
-msgid "Creating api key"
-msgstr "Creating api key"
+#: src/components/settings/auth-settings.tsx:123
+msgid "Create Passkey"
+msgstr "Create Passkey"
 
-#: src/components/settings/auth-settings.tsx:314
-msgid "Delete Passkey"
-msgstr "Delete Passkey"
+#: src/components/settings/auth-settings.tsx:126
+msgid "A passkey is required to verify sensitive actions."
+msgstr "A passkey is required to verify sensitive actions."
 
-#: src/components/settings/auth-settings.tsx:379
-msgid "Failed to copy api key"
-msgstr "Failed to copy api key"
+#: src/components/settings/auth-settings.tsx:153
+#: src/components/settings/auth-settings.tsx:260
+#: src/components/settings/auth-settings.tsx:449
+#: src/components/settings/data-settings.tsx:238
+#: src/components/ui/confirm-modal.tsx:185
+msgid "Cancel"
+msgstr "Cancel"
 
-#: src/components/settings/auth-settings.tsx:85
-msgid "Failed to create api key"
-msgstr "Failed to create api key"
+#: src/components/settings/auth-settings.tsx:169
+msgid "Passkey created successfully"
+msgstr "Passkey created successfully"
 
-#: src/components/settings/auth-settings.tsx:419
-msgid "Failed to delete API key: "
-msgstr "Failed to delete API key: "
+#: src/components/settings/auth-settings.tsx:174
+#: src/components/settings/auth-settings.tsx:271
+msgid "Create"
+msgstr "Create"
 
-#: src/components/settings/auth-settings.tsx:323
-msgid "Failed to delete passkey"
-msgstr "Failed to delete passkey"
+#: src/components/settings/auth-settings.tsx:195
+msgid "No Passkeys"
+msgstr "No Passkeys"
 
 #: src/components/settings/auth-settings.tsx:206
 msgid "Keys"
@@ -109,42 +232,204 @@ msgstr "Keys"
 msgid "Name"
 msgstr "Name"
 
-#: src/components/settings/auth-settings.tsx:47
-#: src/components/settings/auth-settings.tsx:50
-#: src/components/settings/auth-settings.tsx:61
-#: src/components/settings/auth-settings.tsx:64
-msgid "Name must be at least 3 characters"
-msgstr "Name must be at least 3 characters"
+#: src/components/settings/auth-settings.tsx:220
+msgid "Actions"
+msgstr "Actions"
+
+#: src/components/settings/auth-settings.tsx:225
+#: src/components/settings/auth-settings.tsx:230
+msgid "Create Api Key"
+msgstr "Create Api Key"
+
+#: src/components/settings/auth-settings.tsx:233
+msgid "A API key is required to verify sensitive actions."
+msgstr "A API key is required to verify sensitive actions."
 
 #: src/components/settings/auth-settings.tsx:292
 msgid "No Api Keys"
 msgstr "No Api Keys"
 
-#: src/components/settings/auth-settings.tsx:195
-msgid "No Passkeys"
-msgstr "No Passkeys"
+#: src/components/settings/auth-settings.tsx:315
+msgid "Delete Passkey"
+msgstr "Delete Passkey"
 
-#: src/components/settings/auth-settings.tsx:169
-msgid "Passkey created successfully"
-msgstr "Passkey created successfully"
+#. placeholder {0}: passkey.name
+#: src/components/settings/auth-settings.tsx:316
+msgid "Are you sure you want to delete the passkey \"{0}\"?"
+msgstr "Are you sure you want to delete the passkey \"{0}\"?"
 
-#: src/components/settings/auth-settings.tsx:327
+#: src/components/settings/auth-settings.tsx:324
+msgid "Failed to delete passkey"
+msgstr "Failed to delete passkey"
+
+#: src/components/settings/auth-settings.tsx:328
 msgid "Passkey deleted"
 msgstr "Passkey deleted"
 
-#: src/components/settings/account-settings.tsx:26
-msgid "Settings saved"
-msgstr "Settings saved"
+#: src/components/settings/auth-settings.tsx:375
+msgid "Api key copied to clipboard"
+msgstr "Api key copied to clipboard"
 
-#: src/components/settings/account-settings.tsx:46
-msgid "This setting is not supported by the server yet."
-msgstr "This setting is not supported by the server yet."
+#: src/components/settings/auth-settings.tsx:381
+msgid "Failed to copy api key"
+msgstr "Failed to copy api key"
 
-#: src/components/settings/account-settings.tsx:29
-#: src/components/settings/account-settings.tsx:44
-msgid "Unable to save settings"
-msgstr "Unable to save settings"
+#. placeholder {0}: apiKey.name
+#: src/components/settings/auth-settings.tsx:404
+msgid "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
+msgstr "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
 
-#: src/components/settings/auth-settings.tsx:443
+#: src/components/settings/auth-settings.tsx:421
+msgid "Failed to delete API key: "
+msgstr "Failed to delete API key: "
+
+#: src/components/settings/auth-settings.tsx:426
+msgid "API key deleted"
+msgstr "API key deleted"
+
+#: src/components/settings/auth-settings.tsx:442
+#: src/components/settings/auth-settings.tsx:453
+msgid "Copy API key"
+msgstr "Copy API key"
+
+#: src/components/settings/auth-settings.tsx:445
 msgid "You can copy this API key to your clipboard now."
 msgstr "You can copy this API key to your clipboard now."
+
+#: src/components/settings/data-settings.tsx:76
+msgid "File size must be less than 64MB"
+msgstr "File size must be less than 64MB"
+
+#: src/components/settings/data-settings.tsx:163
+msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
+msgstr "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
+
+#: src/components/settings/data-settings.tsx:175
+#: src/components/settings/data-settings.tsx:250
+msgid "Import"
+msgstr "Import"
+
+#: src/components/settings/data-settings.tsx:189
+msgid "Import CSV"
+msgstr "Import CSV"
+
+#: src/components/settings/data-settings.tsx:192
+msgid "Currently we support the CSV format form:"
+msgstr "Currently we support the CSV format form:"
+
+#: src/components/settings/data-settings.tsx:193
+msgid "<0/> - StarTime (this app)"
+msgstr "<0/> - StarTime (this app)"
+
+#: src/components/settings/data-settings.tsx:214
+msgid "Drop your CSV file here or click to select one.<0/>"
+msgstr "Drop your CSV file here or click to select one.<0/>"
+
+#. placeholder {0}: file!.name
+#: src/components/settings/data-settings.tsx:221
+msgid "Selected: {0}"
+msgstr "Selected: {0}"
+
+#: src/components/settings/data-settings.tsx:259
+msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
+msgstr "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
+
+#: src/components/settings/data-settings.tsx:293
+msgid "Are you sure you want to export your data? This may take a few minutes."
+msgstr "Are you sure you want to export your data? This may take a few minutes."
+
+#: src/components/settings/data-settings.tsx:296
+msgid "Export your data"
+msgstr "Export your data"
+
+#: src/components/settings/data-settings.tsx:315
+msgid "Pending imports"
+msgstr "Pending imports"
+
+#: src/components/settings/data-settings.tsx:330
+msgid "Past imports"
+msgstr "Past imports"
+
+#. placeholder {0}: imports.totalCount - 4
+#: src/components/settings/data-settings.tsx:340
+msgid "<0>{0} more...</0>"
+msgstr "<0>{0} more...</0>"
+
+#: src/components/settings/data-settings.tsx:383
+msgid "No file name available"
+msgstr "No file name available"
+
+#: src/components/settings/data-settings.tsx:391
+msgid "The file was deleted after the import was completed"
+msgstr "The file was deleted after the import was completed"
+
+#: src/components/settings/data-settings.tsx:392
+msgid "The file was deleted after the import failed"
+msgstr "The file was deleted after the import failed"
+
+#: src/components/settings/data-settings.tsx:396
+msgid "(deleted)"
+msgstr "(deleted)"
+
+#: src/components/settings/data-settings.tsx:402
+msgid "No message available"
+msgstr "No message available"
+
+#: src/components/settings/data-settings.tsx:405
+msgid "Updated"
+msgstr "Updated"
+
+#: src/components/settings/data-settings.tsx:405
+msgid "Created"
+msgstr "Created"
+
+#. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
+#: src/components/ui/confirm-modal.tsx:174
+msgid "Wait {remainingSeconds} {0}"
+msgstr "Wait {remainingSeconds} {0}"
+
+#: src/components/ui/confirm-modal.tsx:175
+msgid "second"
+msgstr "second"
+
+#: src/components/ui/confirm-modal.tsx:175
+msgid "seconds"
+msgstr "seconds"
+
+#: src/components/ui/confirm-modal.tsx:188
+msgid "Confirm"
+msgstr "Confirm"
+
+#: src/components/ui/footer.tsx:22
+msgid "Repository"
+msgstr "Repository"
+
+#: src/components/ui/header-bar.tsx:40
+msgid "Overview"
+msgstr "Overview"
+
+#: src/components/ui/header-bar.tsx:46
+msgid "Your Organization"
+msgstr "Your Organization"
+
+#: src/components/ui/header-bar.tsx:52
+msgid "Settings"
+msgstr "Settings"
+
+#. placeholder {0}: percentage.toFixed(2)
+#: src/components/uploadthing.tsx:63
+msgid "Uploading {0}%"
+msgstr "Uploading {0}%"
+
+#. placeholder {0}: parseUploadThingError(error)
+#: src/components/uploadthing.tsx:71
+msgid "Upload failed: {0}"
+msgstr "Upload failed: {0}"
+
+#: src/components/uploadthing.tsx:78
+msgid "Files uploaded successfully"
+msgstr "Files uploaded successfully"
+
+#: src/lib/account-config.ts:46
+msgid "Select a valid IANA time zone."
+msgstr "Select a valid IANA time zone."

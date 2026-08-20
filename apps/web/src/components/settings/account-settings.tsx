@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
 
 import { AutoConfigSettings } from "./auto-config-settings";
 import {
@@ -17,6 +17,7 @@ import { useSession } from "~/provider/session-provider";
 import { api } from "~/trpc/react";
 
 export default function AccountSettings() {
+	const { t } = useLingui();
 	const { user } = useSession();
 	const router = useRouter();
 	const [config, setConfig] = useState<AccountConfig>(() => getAccountConfig(user.accountConfig));
@@ -52,3 +53,5 @@ export default function AccountSettings() {
 
 	return <AutoConfigSettings config={config} onValueChange={setLocalValue} onValueCommit={saveValue} />;
 }
+
+

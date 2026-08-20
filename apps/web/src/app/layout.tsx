@@ -25,7 +25,7 @@ import { VersionProvider } from "~/provider/version-provider";
 import { IdentifyComponent, OpenPanelComponent } from "@openpanel/nextjs";
 import { ENV } from "@startime/env";
 import Footer from "~/components/ui/footer";
-import { getI18nInstance } from "~/i18n/server";
+import { setRequestI18n } from "~/i18n/server";
 import { localeCookieName, resolveLocale } from "~/i18n/locales";
 import { LinguiProvider } from "~/provider/lingui-provider";
 
@@ -47,7 +47,7 @@ const nunito = Nunito({
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 	const [auth, cookieStore] = await Promise.all([getAuth(), cookies()]);
 	const locale = resolveLocale(auth.user?.accountConfig.regional.lang, cookieStore.get(localeCookieName)?.value);
-	const i18n = await getI18nInstance(locale);
+	const i18n = await setRequestI18n(locale);
 
 	return (
 		<html lang={locale} className={cn("dark", nunito.className)}>
@@ -100,4 +100,5 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		</html>
 	);
 }
+
 

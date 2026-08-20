@@ -4,6 +4,7 @@ import { GithubDark } from "./svgs/githubDark";
 
 import { version } from "../../../package.json";
 import { Discord } from "./svgs/discord";
+import { Trans } from "@lingui/react/macro";
 
 export default function Footer() {
 	return (
@@ -18,7 +19,7 @@ export default function Footer() {
 				className="flex items-center gap-2 text-primary hover:underline"
 			>
 				<GithubDark className="inline size-4" />
-				Repository
+				<Trans>Repository</Trans>
 			</Link>
 			<Link href="https://starlightv.link/discord" className="flex items-center gap-2 text-primary hover:underline">
 				<Discord className="inline size-4" />

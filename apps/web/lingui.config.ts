@@ -7,7 +7,7 @@ export default defineConfig({
 	fallbackLocales: { default: "en" },
 
 	format: formatter({ lineNumbers: true }),
-
+	orderBy: "origin",
 	catalogs: [
 		{
 			include: ["<rootDir>/src"],
