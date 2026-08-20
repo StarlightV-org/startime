@@ -153,7 +153,7 @@ const benefits = [msg`Easy setup`, msg`Free`, msg`Open source`];
 
 export default async function Home() {
 	const { user } = await getAuth();
-	await setRequestI18n(resolveLocale(fromHeader(await headers())));
+	await setRequestI18n(resolveLocale(user?.accountConfig?.regional.lang, fromHeader(await headers())));
 	const [top] = await Promise.all([withRedisCache("api:publicStats:getTop", 60 * 30, () => api.publicStats.getTop())]);
 
 	const { i18n } = useLingui();

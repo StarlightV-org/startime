@@ -4,7 +4,7 @@ import type { UploadThingError } from "uploadthing/server";
 
 import type { OurFileRouter } from "~/app/api/uploadthing/core";
 import { Progress } from "./ui/progress";
-import { t } from "@lingui/core/macro";
+import { useLingui } from "@lingui/react/macro";
 
 export const { useUploadThing, uploadFiles } = generateReactHelpers<OurFileRouter>();
 
@@ -26,25 +26,26 @@ function uploadThingErrorCause(error: UploadThingError): {
 
 export function parseUploadThingError(error: UploadThingError): string {
 	const { message, errorCode, cause } = uploadThingErrorCause(error);
+	const { t } = useLingui();
+
 	if (message && !errorCode) {
 		return message;
 	}
 	switch (errorCode) {
 		case "FileCountMismatch":
-			return "You cant upload so many files at once.";
+			return t`You cant upload so many files at once.`;
 		case "FileSizeMismatch":
-			return "The file is too large.";
+			return t`The file is too large.`;
 		case "InvalidFileType":
-			return "This file type is not allowed.";
-		case "MAX_FILE_SIZE_REACHED":
-			return "The team has reached the maximum file size.";
+			return t`This file type is not allowed.`;
+
 		case "NOT_AUTHORIZED":
-			return "You do not have permission to upload files in this team.";
+			return t`You do not have permission to upload files.`;
 		default: {
 			if (cause && message) {
 				return cause;
 			}
-			return "Ein unbekannter Fehler ist aufgetreten";
+			return t`An unknown error occurred.`;
 		}
 	}
 }
@@ -57,6 +58,7 @@ export function uploadthingToast(
 	type: "PENDING" | "SUCCESS" | "ERROR" | "DISMISS",
 	second?: number | (UploadThingError | { message: string }),
 ): void {
+	const { t } = useLingui();
 	switch (type) {
 		case "PENDING": {
 			const percentage = second as number;

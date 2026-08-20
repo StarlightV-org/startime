@@ -68,14 +68,6 @@ msgstr "Sprache"
 msgid "Platform"
 msgstr "Plattform"
 
-#: src/app/global-error.tsx:24
-msgid "Something went wrong."
-msgstr "Etwas ist schief gelaufen."
-
-#: src/app/global-error.tsx:26
-msgid "Try again"
-msgstr "Erneut versuchen"
-
 #: src/app/page.tsx:47
 msgid "Respect your privacy"
 msgstr "Respektiere deine Privatsphäre"
@@ -251,6 +243,10 @@ msgstr "Diese Seite befindet sich in geschlossener Beta. Möchtest du mitmachen?
 #: src/components/auth/sign-in-form.tsx:101
 msgid "Join our Discord"
 msgstr "Discord beitreten"
+
+#: src/components/overview/client-overview.tsx:92
+msgid "Working on"
+msgstr "Arbeitet an"
 
 #: src/components/overview/open-minimal.tsx:29
 msgid "Failed to open minimal view"
@@ -595,16 +591,36 @@ msgstr "Deine Organisation"
 msgid "Settings"
 msgstr "Einstellungen"
 
+#: src/components/uploadthing.tsx:36
+msgid "You cant upload so many files at once."
+msgstr "Du kannst nicht so viele Dateien gleichzeitig hochladen."
+
+#: src/components/uploadthing.tsx:38
+msgid "The file is too large."
+msgstr "Die Datei ist zu groß."
+
+#: src/components/uploadthing.tsx:40
+msgid "This file type is not allowed."
+msgstr "Dieser Dateityp ist nicht erlaubt."
+
+#: src/components/uploadthing.tsx:43
+msgid "You do not have permission to upload files."
+msgstr "Du hast keine Berechtigung, Dateien hochzuladen."
+
+#: src/components/uploadthing.tsx:48
+msgid "An unknown error occurred."
+msgstr "Ein unbekannter Fehler ist aufgetreten."
+
 #. placeholder {0}: percentage.toFixed(2)
-#: src/components/uploadthing.tsx:63
+#: src/components/uploadthing.tsx:65
 msgid "Uploading {0}%"
 msgstr "Uploading {0}%"
 
 #. placeholder {0}: parseUploadThingError(error)
-#: src/components/uploadthing.tsx:71
+#: src/components/uploadthing.tsx:73
 msgid "Upload failed: {0}"
 msgstr "Upload fehlgeschlagen: {0}"
 
-#: src/components/uploadthing.tsx:78
+#: src/components/uploadthing.tsx:80
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"

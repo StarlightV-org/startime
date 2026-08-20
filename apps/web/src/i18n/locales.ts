@@ -15,7 +15,25 @@ export function resolveLocale(...candidates: unknown[]): Locale {
 }
 
 export function fromHeader(header: Headers): Locale {
-	const lang = header.get("Accept-Language");
-	Print.Debug(lang);
-	return lang?.split("-")[0] as Locale;
+	const acceptLanguage = header.get("Accept-Language");
+	Print.Debug(acceptLanguage);
+
+	const candidates = acceptLanguage
+		?.split(",")
+		.map((range, index) => {
+			const [language, ...parameters] = range.trim().split(";");
+			const qualityParameter = parameters.find((parameter) => parameter.trim().toLowerCase().startsWith("q="));
+			const quality = qualityParameter ? Number(qualityParameter.trim().slice(2)) : 1;
+
+			return {
+				locale: language?.trim().split("-")[0]?.toLowerCase(),
+				quality,
+				index,
+			};
+		})
+		.filter(({ locale, quality }) => locale && Number.isFinite(quality) && quality > 0 && quality <= 1)
+		.sort((a, b) => b.quality - a.quality || a.index - b.index)
+		.map(({ locale }) => locale);
+
+	return resolveLocale(...(candidates ?? []));
 }

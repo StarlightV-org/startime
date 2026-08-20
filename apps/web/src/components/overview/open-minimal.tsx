@@ -3,8 +3,7 @@
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { getCenteredPosition, toWindowFeatures } from "../ui/new-window";
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 const MINIMAL_VIEW_WIDTH = 400;
 const MINIMAL_VIEW_HEIGHT = 150;
@@ -12,6 +11,7 @@ const MINIMAL_VIEW_HEIGHT = 150;
 export default function OpenMinimal() {
 	const { left, top } = getCenteredPosition("screen", MINIMAL_VIEW_WIDTH, MINIMAL_VIEW_HEIGHT);
 	const url = typeof window !== "undefined" ? `${window.location.origin}/view/minimal` : "/view/minimal";
+	const { t } = useLingui();
 	return (
 		<Button
 			variant="outline"
