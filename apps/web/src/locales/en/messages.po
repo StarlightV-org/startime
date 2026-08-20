@@ -204,6 +204,44 @@ msgstr "Editor Extensions"
 msgid "An extension ecosystem for all the editors you love."
 msgstr "An extension ecosystem for all the editors you love."
 
+#: src/components/auth/reauth-form.tsx:27
+msgid "Passkeys are not supported in this browser."
+msgstr "Passkeys are not supported in this browser."
+
+#: src/components/auth/reauth-form.tsx:38
+#: src/components/auth/sign-in-form.tsx:48
+msgid "Your passkey could not be verified."
+msgstr "Your passkey could not be verified."
+
+#: src/components/auth/reauth-form.tsx:73
+msgid "Verify it's you"
+msgstr "Verify it's you"
+
+#: src/components/auth/reauth-form.tsx:76
+msgid "Use a passkey to continue with this sensitive action."
+msgstr "Use a passkey to continue with this sensitive action."
+
+#: src/components/auth/reauth-form.tsx:82
+#: src/components/auth/sign-in-form.tsx:80
+msgid "Continue with a passkey"
+msgstr "Continue with a passkey"
+
+#: src/components/auth/reauth-form.tsx:93
+msgid "Reauthentication is available only with a registered passkey."
+msgstr "Reauthentication is available only with a registered passkey."
+
+#: src/components/auth/sign-in-error.tsx:24
+msgid "Error"
+msgstr "Error"
+
+#: src/components/auth/sign-in-error.tsx:27
+msgid "An error occurred while signing in."
+msgstr "An error occurred while signing in."
+
+#: src/components/auth/sign-in-error.tsx:39
+msgid "Try Again"
+msgstr "Try Again"
+
 #: src/components/auth/sign-in-form.tsx:31
 msgid "GitHub sign-in could not be started."
 msgstr "GitHub sign-in could not be started."
@@ -211,10 +249,6 @@ msgstr "GitHub sign-in could not be started."
 #: src/components/auth/sign-in-form.tsx:38
 msgid "Passkeys are not supported in this browser. Try GitHub instead."
 msgstr "Passkeys are not supported in this browser. Try GitHub instead."
-
-#: src/components/auth/sign-in-form.tsx:48
-msgid "Your passkey could not be verified."
-msgstr "Your passkey could not be verified."
 
 #: src/components/auth/sign-in-form.tsx:60
 msgid "Welcome"
@@ -227,10 +261,6 @@ msgstr "Sign in to view your dashboard."
 #: src/components/auth/sign-in-form.tsx:69
 msgid "Continue with GitHub"
 msgstr "Continue with GitHub"
-
-#: src/components/auth/sign-in-form.tsx:80
-msgid "Continue with a passkey"
-msgstr "Continue with a passkey"
 
 #: src/components/auth/sign-in-form.tsx:91
 msgid "Signups are currently disabled."
