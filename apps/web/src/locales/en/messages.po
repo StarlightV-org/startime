@@ -424,7 +424,7 @@ msgstr "A passkey is required to verify sensitive actions."
 #: src/components/settings/auth-settings.tsx:153
 #: src/components/settings/auth-settings.tsx:260
 #: src/components/settings/auth-settings.tsx:449
-#: src/components/settings/data-settings.tsx:238
+#: src/components/settings/data-settings.tsx:239
 #: src/components/ui/confirm-modal.tsx:185
 msgid "Cancel"
 msgstr "Cancel"
@@ -514,90 +514,90 @@ msgstr "Copy API key"
 msgid "You can copy this API key to your clipboard now."
 msgstr "You can copy this API key to your clipboard now."
 
-#: src/components/settings/data-settings.tsx:76
+#: src/components/settings/data-settings.tsx:77
 msgid "File size must be less than 64MB"
 msgstr "File size must be less than 64MB"
 
-#: src/components/settings/data-settings.tsx:163
+#: src/components/settings/data-settings.tsx:164
 msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 msgstr "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 
-#: src/components/settings/data-settings.tsx:175
-#: src/components/settings/data-settings.tsx:250
+#: src/components/settings/data-settings.tsx:176
+#: src/components/settings/data-settings.tsx:251
 msgid "Import"
 msgstr "Import"
 
-#: src/components/settings/data-settings.tsx:189
+#: src/components/settings/data-settings.tsx:190
 msgid "Import CSV"
 msgstr "Import CSV"
 
-#: src/components/settings/data-settings.tsx:192
+#: src/components/settings/data-settings.tsx:193
 msgid "Currently we support the CSV format form:"
 msgstr "Currently we support the CSV format form:"
 
-#: src/components/settings/data-settings.tsx:193
+#: src/components/settings/data-settings.tsx:194
 msgid "<0/> - StarTime (this app)"
 msgstr "<0/> - StarTime (this app)"
 
-#: src/components/settings/data-settings.tsx:214
+#: src/components/settings/data-settings.tsx:215
 msgid "Drop your CSV file here or click to select one.<0/>"
 msgstr "Drop your CSV file here or click to select one.<0/>"
 
 #. placeholder {0}: file!.name
-#: src/components/settings/data-settings.tsx:221
+#: src/components/settings/data-settings.tsx:222
 msgid "Selected: {0}"
 msgstr "Selected: {0}"
 
-#: src/components/settings/data-settings.tsx:259
+#: src/components/settings/data-settings.tsx:260
 msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 msgstr "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 
-#: src/components/settings/data-settings.tsx:293
+#: src/components/settings/data-settings.tsx:294
 msgid "Are you sure you want to export your data? This may take a few minutes."
 msgstr "Are you sure you want to export your data? This may take a few minutes."
 
-#: src/components/settings/data-settings.tsx:296
+#: src/components/settings/data-settings.tsx:297
 msgid "Export your data"
 msgstr "Export your data"
 
-#: src/components/settings/data-settings.tsx:315
+#: src/components/settings/data-settings.tsx:316
 msgid "Pending imports"
 msgstr "Pending imports"
 
-#: src/components/settings/data-settings.tsx:330
+#: src/components/settings/data-settings.tsx:331
 msgid "Past imports"
 msgstr "Past imports"
 
 #. placeholder {0}: imports.totalCount - 4
-#: src/components/settings/data-settings.tsx:340
+#: src/components/settings/data-settings.tsx:341
 msgid "<0>{0} more...</0>"
 msgstr "<0>{0} more...</0>"
 
-#: src/components/settings/data-settings.tsx:383
+#: src/components/settings/data-settings.tsx:384
 msgid "No file name available"
 msgstr "No file name available"
 
-#: src/components/settings/data-settings.tsx:391
+#: src/components/settings/data-settings.tsx:392
 msgid "The file was deleted after the import was completed"
 msgstr "The file was deleted after the import was completed"
 
-#: src/components/settings/data-settings.tsx:392
+#: src/components/settings/data-settings.tsx:393
 msgid "The file was deleted after the import failed"
 msgstr "The file was deleted after the import failed"
 
-#: src/components/settings/data-settings.tsx:396
+#: src/components/settings/data-settings.tsx:397
 msgid "(deleted)"
 msgstr "(deleted)"
 
-#: src/components/settings/data-settings.tsx:402
+#: src/components/settings/data-settings.tsx:403
 msgid "No message available"
 msgstr "No message available"
 
-#: src/components/settings/data-settings.tsx:405
+#: src/components/settings/data-settings.tsx:406
 msgid "Updated"
 msgstr "Updated"
 
-#: src/components/settings/data-settings.tsx:405
+#: src/components/settings/data-settings.tsx:406
 msgid "Created"
 msgstr "Created"
 
@@ -630,36 +630,36 @@ msgstr "Overview"
 msgid "Your Organization"
 msgstr "Your Organization"
 
-#: src/components/uploadthing.tsx:36
+#: src/components/uploadthing.tsx:38
 msgid "You cant upload so many files at once."
 msgstr "You cant upload so many files at once."
 
-#: src/components/uploadthing.tsx:38
+#: src/components/uploadthing.tsx:40
 msgid "The file is too large."
 msgstr "The file is too large."
 
-#: src/components/uploadthing.tsx:40
+#: src/components/uploadthing.tsx:42
 msgid "This file type is not allowed."
 msgstr "This file type is not allowed."
 
-#: src/components/uploadthing.tsx:43
+#: src/components/uploadthing.tsx:45
 msgid "You do not have permission to upload files."
 msgstr "You do not have permission to upload files."
 
-#: src/components/uploadthing.tsx:48
+#: src/components/uploadthing.tsx:50
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
 
 #. placeholder {0}: percentage.toFixed(2)
-#: src/components/uploadthing.tsx:65
+#: src/components/uploadthing.tsx:66
 msgid "Uploading {0}%"
 msgstr "Uploading {0}%"
 
 #. placeholder {0}: parseUploadThingError(error)
-#: src/components/uploadthing.tsx:73
+#: src/components/uploadthing.tsx:74
 msgid "Upload failed: {0}"
 msgstr "Upload failed: {0}"
 
-#: src/components/uploadthing.tsx:80
+#: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"

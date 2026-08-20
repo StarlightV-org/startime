@@ -24,68 +24,72 @@ function uploadThingErrorCause(error: UploadThingError): {
 	return { message, errorCode, cause };
 }
 
-export function parseUploadThingError(error: UploadThingError): string {
-	const { message, errorCode, cause } = uploadThingErrorCause(error);
+export function useUploadthingToast() {
 	const { t } = useLingui();
 
-	if (message && !errorCode) {
-		return message;
-	}
-	switch (errorCode) {
-		case "FileCountMismatch":
-			return t`You cant upload so many files at once.`;
-		case "FileSizeMismatch":
-			return t`The file is too large.`;
-		case "InvalidFileType":
-			return t`This file type is not allowed.`;
+	function parseUploadThingError(error: UploadThingError): string {
+		const { message, errorCode, cause } = uploadThingErrorCause(error);
 
-		case "NOT_AUTHORIZED":
-			return t`You do not have permission to upload files.`;
-		default: {
-			if (cause && message) {
-				return cause;
+		if (message && !errorCode) {
+			return message;
+		}
+		switch (errorCode) {
+			case "FileCountMismatch":
+				return t`You cant upload so many files at once.`;
+			case "FileSizeMismatch":
+				return t`The file is too large.`;
+			case "InvalidFileType":
+				return t`This file type is not allowed.`;
+
+			case "NOT_AUTHORIZED":
+				return t`You do not have permission to upload files.`;
+			default: {
+				if (cause && message) {
+					return cause;
+				}
+				return t`An unknown error occurred.`;
 			}
-			return t`An unknown error occurred.`;
 		}
 	}
-}
 
-export function uploadthingToast(type: "PENDING", percentage: number): void;
-export function uploadthingToast(type: "ERROR", error: UploadThingError | { message: string }): void;
-export function uploadthingToast(type: "SUCCESS"): void;
-export function uploadthingToast(type: "DISMISS"): void;
-export function uploadthingToast(
-	type: "PENDING" | "SUCCESS" | "ERROR" | "DISMISS",
-	second?: number | (UploadThingError | { message: string }),
-): void {
-	const { t } = useLingui();
-	switch (type) {
-		case "PENDING": {
-			const percentage = second as number;
-			toast.loading(t`Uploading ${percentage.toFixed(2)}%`, {
-				id: "upload-progress",
-				description: <Progress value={percentage} className="w-full" />,
-			});
-			return;
+	function uploadthingToast(type: "PENDING", percentage: number): void;
+	function uploadthingToast(type: "ERROR", error: UploadThingError | { message: string }): void;
+	function uploadthingToast(type: "SUCCESS"): void;
+	function uploadthingToast(type: "DISMISS"): void;
+	function uploadthingToast(
+		type: "PENDING" | "SUCCESS" | "ERROR" | "DISMISS",
+		second?: number | (UploadThingError | { message: string }),
+	): void {
+		switch (type) {
+			case "PENDING": {
+				const percentage = second as number;
+				toast.loading(t`Uploading ${percentage.toFixed(2)}%`, {
+					id: "upload-progress",
+					description: <Progress value={percentage} className="w-full" />,
+				});
+				return;
+			}
+			case "ERROR": {
+				const error = second as UploadThingError;
+				toast.error(t`Upload failed: ${parseUploadThingError(error)}`, {
+					id: "upload-progress",
+					description: undefined,
+				});
+				return;
+			}
+			case "SUCCESS":
+				toast.success(t`Files uploaded successfully`, {
+					id: "upload-progress",
+					description: undefined,
+				});
+				return;
+			case "DISMISS":
+				toast.dismiss("upload-progress");
+				return;
+			default:
+				throw new Error(`Invalid uploadthing toast type: ${type}`);
 		}
-		case "ERROR": {
-			const error = second as UploadThingError;
-			toast.error(t`Upload failed: ${parseUploadThingError(error)}`, {
-				id: "upload-progress",
-				description: undefined,
-			});
-			return;
-		}
-		case "SUCCESS":
-			toast.success(t`Files uploaded successfully`, {
-				id: "upload-progress",
-				description: undefined,
-			});
-			return;
-		case "DISMISS":
-			toast.dismiss("upload-progress");
-			return;
-		default:
-			throw new Error(`Invalid uploadthing toast type: ${type}`);
 	}
+
+	return uploadthingToast;
 }
