@@ -1,3 +1,4 @@
+import { msg } from "@lingui/core/macro";
 import z, { globalRegistry } from "zod";
 
 import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
@@ -29,7 +30,7 @@ export const defaultAccountConfig = {
 	regional: {
 		timeZone: "UTC",
 		startOfWeek: "monday",
-		lang: "en-EN",
+		lang: "en",
 	},
 	privacy: {
 		publicProfile: false,
@@ -70,7 +71,7 @@ const startOfWeekSchema = z
 	);
 
 const langSchema = z
-	.enum(["en-EN", "de-DE"])
+	.enum(["en", "de"])
 	.optional()
 	.default(defaultAccountConfig.regional.lang)
 	.catch(defaultAccountConfig.regional.lang)
@@ -79,7 +80,7 @@ const langSchema = z
 			groupTitle: "Regional settings",
 			label: "Language",
 			description: "Preferred interface language.",
-			enumLabels: { "en-EN": "English", "de-DE": "Deutsch" },
+			enumLabels: { en: "English", de: "Deutsch" },
 		}),
 	);
 
@@ -91,7 +92,6 @@ const regionalSchema = z
 	.meta(
 		createMeta({
 			groupTitle: "Regional settings",
-			groupDescription: "Set the regional preferences used to display and group your activity.",
 		}),
 	);
 
@@ -386,12 +386,22 @@ export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
 		value: z.string().trim().refine(isValidTimeZone, "Select a valid IANA time zone."),
 	}),
 	z.object({ path: z.literal("regional.startOfWeek"), value: z.enum(["monday", "sunday"]) }),
-	z.object({ path: z.literal("regional.lang"), value: z.enum(["en-EN", "de-DE"]) }),
+	z.object({ path: z.literal("regional.lang"), value: z.enum(["en", "de"]) }),
 	z.object({ path: z.literal("privacy.publicProfile"), value: z.boolean() }),
 	z.object({ path: z.literal("ui.popupForReauth"), value: z.boolean() }),
 ]);
 
 export function checkAccountConfig(config: unknown): AccountConfig {
+	if (config && typeof config === "object") {
+		const accountConfig = config as { regional?: { lang?: unknown } };
+		const lang = accountConfig.regional?.lang;
+		if (lang === "en-EN" || lang === "de-DE") {
+			return accountConfigSchema.parse({
+				...accountConfig,
+				regional: { ...accountConfig.regional, lang: lang === "de-DE" ? "de" : "en" },
+			});
+		}
+	}
 	return accountConfigSchema.parse(config);
 }
 

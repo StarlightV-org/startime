@@ -9,6 +9,7 @@ import { Avatar, AvatarImage } from "./avatar";
 import { Separator } from "./separator";
 import { cn } from "~/lib/utils";
 import OpenMinimal from "../overview/open-minimal";
+import { Trans } from "@lingui/react/macro";
 
 export function HeaderBar({ showTabs = true, showUser = true }) {
 	const pathname = usePathname();
@@ -36,19 +37,19 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 								<TabsList className="h-8! space-x-2 py-0">
 									<TabsTrigger value="/dash" asChild>
 										<Link href="/dash" className="h-8! text-sm">
-											Overview
+											<Trans>Overview</Trans>
 										</Link>
 									</TabsTrigger>
 									{!!org?.id && (
 										<TabsTrigger value="/dash/org" asChild>
 											<Link href="/dash/org" className="h-8! text-sm">
-												Your Organization
+												<Trans>Your Organization</Trans>
 											</Link>
 										</TabsTrigger>
 									)}
 									<TabsTrigger value="/dash/settings" asChild>
 										<Link href="/dash/settings" className="h-8! text-sm">
-											Settings
+											<Trans>Settings</Trans>
 										</Link>
 									</TabsTrigger>
 								</TabsList>

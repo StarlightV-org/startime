@@ -25,6 +25,7 @@ import { Button } from "~/components/ui/button";
 import { differenceInSeconds } from "date-fns/fp";
 import { Spinner } from "~/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { Trans } from "@lingui/react/macro";
 
 const isActiveFn = (isActive: boolean) => (isActive ? 1000 * 30 : 1000 * 60 * 2);
 
@@ -88,11 +89,11 @@ export function ActivityIndicator({
 			<FileIcons language={lastEvent?.language ?? ""} />
 			<span> - </span>
 			<span className="text-sm text-muted-foreground">
-				Working on{" "}
+				<Trans>Working on</Trans>
 				<Button
 					inert={!interactive}
 					variant="link"
-					className="px-0.5 py-0 text-sm hover:no-underline"
+					className="py-0 pr-0 pl-1 text-sm hover:no-underline"
 					onClick={async () => {
 						await setWorkspace((prev) => (prev !== lastEvent?.project ? lastEvent?.project! : ""));
 						router.refresh();

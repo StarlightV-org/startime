@@ -24,6 +24,7 @@ import { api } from "~/trpc/react";
 import { isReauthRequired } from "~/lib/reauth-util";
 import { tryCatch } from "~/lib/utils";
 import { Spinner } from "../ui/spinner";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 export default function AuthSettings({
 	passkeys,
@@ -34,6 +35,7 @@ export default function AuthSettings({
 	apiKeys: API["self"]["listApiKeys"];
 	promptForPasskey?: boolean;
 }) {
+	const { t } = useLingui();
 	const { user } = useSession();
 
 	const passkeyForm = useForm({
@@ -42,10 +44,10 @@ export default function AuthSettings({
 		},
 		validators: {
 			onBlur: z.object({
-				name: z.string().min(3, "Name must be at least 3 characters"),
+				name: z.string().min(3, t`Name must be at least 3 characters`),
 			}),
 			onSubmit: z.object({
-				name: z.string().min(3, "Name must be at least 3 characters"),
+				name: z.string().min(3, t`Name must be at least 3 characters`),
 			}),
 		},
 	});
@@ -56,10 +58,10 @@ export default function AuthSettings({
 		},
 		validators: {
 			onBlur: z.object({
-				name: z.string().min(3, "Name must be at least 3 characters"),
+				name: z.string().min(3, t`Name must be at least 3 characters`),
 			}),
 			onSubmit: z.object({
-				name: z.string().min(3, "Name must be at least 3 characters"),
+				name: z.string().min(3, t`Name must be at least 3 characters`),
 			}),
 		},
 	});
@@ -71,7 +73,7 @@ export default function AuthSettings({
 	const { mutate: createApiKey } = api.self.createApiKey.useMutation({
 		onSuccess: () => {
 			toggleCreateApiKey();
-			toast.success("Api key created successfully", {
+			toast.success(t`Api key created successfully`, {
 				id: "create-api-key",
 				description: undefined,
 			});
@@ -80,13 +82,13 @@ export default function AuthSettings({
 		},
 		onError: (error) => {
 			if (isReauthRequired(error)) return;
-			toast.error("Failed to create api key", {
+			toast.error(t`Failed to create api key`, {
 				description: error.message,
 				id: "create-api-key",
 			});
 		},
 		onMutate: () => {
-			toast.loading("Creating api key", {
+			toast.loading(t`Creating api key`, {
 				id: "create-api-key",
 			});
 		},
@@ -104,7 +106,9 @@ export default function AuthSettings({
 					<TableHeader>
 						<TableRow className="hover:bg-card!">
 							<TableHead className="w-3/8">Name</TableHead>
-							<TableHead className="w-3/8">Created At</TableHead>
+							<TableHead className="w-3/8">
+								<Trans>Created At</Trans>
+							</TableHead>
 							<TableHead className="w-2/8">
 								<div className="flex items-center justify-end gap-2">
 									<span>Actions</span>
@@ -115,8 +119,12 @@ export default function AuthSettings({
 											</Button>
 										</DialogTrigger>
 										<DialogContent>
-											<DialogTitle>Create Passkey</DialogTitle>
-											<DialogDescription>A passkey is required to verify sensitive actions.</DialogDescription>
+											<DialogTitle>
+												<Trans>Create Passkey</Trans>
+											</DialogTitle>
+											<DialogDescription>
+												<Trans>A passkey is required to verify sensitive actions.</Trans>
+											</DialogDescription>
 											<passkeyForm.Field
 												name="name"
 												children={(field) => {
@@ -142,7 +150,7 @@ export default function AuthSettings({
 											/>
 											<DialogFooter>
 												<Button variant="outline" onClick={toggleCreatePasskey}>
-													Cancel
+													<Trans>Cancel</Trans>
 												</Button>
 												<Button
 													variant="default"
@@ -158,12 +166,12 @@ export default function AuthSettings({
 														}
 
 														toggleCreatePasskey();
-														toast.success("Passkey created successfully");
+														toast.success(t`Passkey created successfully`);
 														passkeyForm.reset();
 														router.refresh();
 													}}
 												>
-													Create
+													<Trans>Create</Trans>
 												</Button>
 											</DialogFooter>
 										</DialogContent>
@@ -183,7 +191,9 @@ export default function AuthSettings({
 											<EmptyMedia variant="icon">
 												<InfoIcon />
 											</EmptyMedia>
-											<EmptyTitle>No Passkeys</EmptyTitle>
+											<EmptyTitle>
+												<Trans>No Passkeys</Trans>
+											</EmptyTitle>
 										</EmptyHeader>
 									</Empty>
 								</TableCell>
@@ -192,24 +202,36 @@ export default function AuthSettings({
 					</TableBody>
 				</Table>
 				<Separator className="mt-4 mb-2" />
-				<h2 className="font-heading text-xl font-semibold tracking-tight text-balance">API Keys</h2>
+				<h2 className="font-heading text-xl font-semibold tracking-tight text-balance">
+					API <Trans>Keys</Trans>
+				</h2>
 				<Table>
 					<TableHeader>
 						<TableRow className="hover:bg-card!">
-							<TableHead className="w-3/8">Name</TableHead>
-							<TableHead className="w-3/8">Created At</TableHead>
+							<TableHead className="w-3/8">
+								<Trans>Name</Trans>
+							</TableHead>
+							<TableHead className="w-3/8">
+								<Trans>Created At</Trans>
+							</TableHead>
 							<TableHead className="w-2/8">
 								<div className="flex items-center justify-end gap-2">
-									<span>Actions</span>
+									<span>
+										<Trans>Actions</Trans>
+									</span>
 									<Dialog open={openCreateApiKey} onOpenChange={toggleCreateApiKey}>
 										<DialogTrigger asChild>
 											<Button size="sm" variant="outline">
-												Create Api Key
+												<Trans>Create Api Key</Trans>
 											</Button>
 										</DialogTrigger>
 										<DialogContent>
-											<DialogTitle>Create Api Key</DialogTitle>
-											<DialogDescription>An API key is required to verify sensitive actions.</DialogDescription>
+											<DialogTitle>
+												<Trans>Create Api Key</Trans>
+											</DialogTitle>
+											<DialogDescription>
+												<Trans>A API key is required to verify sensitive actions.</Trans>
+											</DialogDescription>
 											<apiKeyForm.Field
 												name="name"
 												children={(field) => {
@@ -235,7 +257,7 @@ export default function AuthSettings({
 											/>
 											<DialogFooter>
 												<Button variant="outline" onClick={toggleCreateApiKey}>
-													Cancel
+													<Trans>Cancel</Trans>
 												</Button>
 												<Button
 													variant="default"
@@ -246,7 +268,7 @@ export default function AuthSettings({
 														createApiKey({ name });
 													}}
 												>
-													Create
+													<Trans>Create</Trans>
 												</Button>
 											</DialogFooter>
 										</DialogContent>
@@ -266,7 +288,9 @@ export default function AuthSettings({
 											<EmptyMedia variant="icon">
 												<InfoIcon />
 											</EmptyMedia>
-											<EmptyTitle>No Api Keys</EmptyTitle>
+											<EmptyTitle>
+												<Trans>No Api Keys</Trans>
+											</EmptyTitle>
 										</EmptyHeader>
 									</Empty>
 								</TableCell>
@@ -282,13 +306,14 @@ export default function AuthSettings({
 type Passkey = API["self"]["listPasskeys"][number];
 
 function PasskeyRow({ passkey }: { passkey: Passkey }) {
+	const { t } = useLingui();
 	const router = useRouter();
 	const confirmModal = useConfirmModal();
 
 	const deletePasskey = async () => {
 		const confirmed = await confirmModal({
-			title: "Delete Passkey",
-			content: `Are you sure you want to delete the passkey "${passkey.name}"?`,
+			title: t`Delete Passkey`,
+			content: t`Are you sure you want to delete the passkey "${passkey.name!}"?`,
 			requiredValue: passkey.name ?? undefined,
 			delay: 2000,
 		});
@@ -296,11 +321,11 @@ function PasskeyRow({ passkey }: { passkey: Passkey }) {
 
 		const result = await authClient.passkey.deletePasskey({ id: passkey.id });
 		if (!result) {
-			toast.error("Failed to delete passkey");
+			toast.error(t`Failed to delete passkey`);
 			return;
 		}
 
-		toast.success("Passkey deleted");
+		toast.success(t`Passkey deleted`);
 		router.refresh();
 	};
 
@@ -320,6 +345,7 @@ function PasskeyRow({ passkey }: { passkey: Passkey }) {
 type ApiKey = API["self"]["listApiKeys"][number];
 
 function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
+	const { t } = useLingui();
 	const confirmModal = useConfirmModal();
 	const router = useRouter();
 	const { mutateAsync: getApiKey, isPending } = api.self.getApiKey.useMutation();
@@ -346,13 +372,13 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
 		try {
 			await navigator.clipboard.writeText(apiKeyToCopy);
 			setApiKeyToCopy(null);
-			toast.success("Api key copied to clipboard", {
+			toast.success(t`Api key copied to clipboard`, {
 				id: "get-api-key",
 				description: undefined,
 			});
 		} catch (error) {
 			Print.Warning("[API_KEY] Failed to copy", error);
-			toast.error("Failed to copy api key", {
+			toast.error(t`Failed to copy api key`, {
 				id: "get-api-key",
 			});
 		}
@@ -375,12 +401,14 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
 							const confirmed = await confirmModal({
 								title: "Delete API key",
 								content: (
-									<p>
-										Are you sure you want to delete the key: "{apiKey.name}"?
-										<br />
-										This action <strong className="text-destructive">cannot </strong> be undone and the API key will no longer
-										function.
-									</p>
+									<Trans>
+										<p>
+											Are you sure you want to delete the key: "{apiKey.name}"?
+											<br />
+											This action <strong className="text-destructive">cannot </strong> be undone and the API key will no longer
+											function.
+										</p>
+									</Trans>
 								),
 								confirmLabel: "Delete",
 								delay: 1000,
@@ -390,12 +418,12 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
 								const result = await tryCatch(deleteApiKey({ id: apiKey.id }));
 
 								if (result.error) {
-									toast.error("Failed to delete API key: ", {
+									toast.error(t`Failed to delete API key: `, {
 										id: apiKey.id,
 										description: result.error.message,
 									});
 								} else {
-									toast.success("API key deleted", {
+									toast.success(t`API key deleted`, {
 										id: apiKey.id,
 										description: undefined,
 									});
@@ -410,15 +438,19 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
 			</TableRow>
 			<Dialog open={apiKeyToCopy !== null} onOpenChange={(open) => !open && setApiKeyToCopy(null)}>
 				<DialogContent>
-					<DialogTitle>Copy API key</DialogTitle>
-					<DialogDescription>You can copy this API key to your clipboard now.</DialogDescription>
+					<DialogTitle>
+						<Trans>Copy API key</Trans>
+					</DialogTitle>
+					<DialogDescription>
+						<Trans>You can copy this API key to your clipboard now.</Trans>
+					</DialogDescription>
 					<DialogFooter>
 						<Button variant="outline" onClick={() => setApiKeyToCopy(null)}>
-							Cancel
+							<Trans>Cancel</Trans>
 						</Button>
 						<Button onClick={copyApiKey}>
 							<CopyIcon />
-							Copy API key
+							<Trans>Copy API key</Trans>
 						</Button>
 					</DialogFooter>
 				</DialogContent>

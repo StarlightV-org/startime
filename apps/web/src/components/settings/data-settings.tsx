@@ -22,7 +22,7 @@ import Link from "next/link";
 import { useConfirmModal } from "../ui/confirm-modal";
 import { cn } from "~/lib/utils";
 import { toast } from "sonner";
-
+import { Trans, useLingui } from "@lingui/react/macro";
 type ImportItem = NonNullable<NonNullable<API["self"]["listImports"]>["pendingImports"]>[number];
 
 export default function DataManagement({
@@ -34,6 +34,7 @@ export default function DataManagement({
 }) {
 	const [opened, { toggle }] = useDisclosure();
 	const confirmModal = useConfirmModal();
+	const { t } = useLingui();
 
 	const [hasPendingImports, setHasPendingImports] = useState(initialImports?.pendingImports?.length > 0);
 	const [hasPendingExports, setHasPendingExports] = useState(initialExports?.pending?.length > 0);
@@ -72,7 +73,7 @@ export default function DataManagement({
 			onChange: z.object({
 				file: z.instanceof(File).refine((value) => {
 					if (value.size > 64 * 1024 * 1024) {
-						return "File size must be less than 64MB";
+						return t`File size must be less than 64MB`;
 					}
 					return undefined;
 				}),
@@ -159,16 +160,20 @@ export default function DataManagement({
 			<CardContent className="flex w-full flex-col">
 				<div className="flex w-full flex-row justify-between space-x-4">
 					<div className="flex w-full flex-col flex-nowrap">
-						<p>
-							Import CSV file from other sources. <br />
-							<span className="text-xs text-muted-foreground">
-								You can only upload one file at a time and it can't be larger than 64MB.
-							</span>
-						</p>
+						<Trans>
+							<p>
+								Import CSV file from other sources. <br />
+								<span className="text-xs text-muted-foreground">
+									You can only upload one file at a time and it can't be larger than 64MB.
+								</span>
+							</p>
+						</Trans>
 
 						<Dialog open={opened} onOpenChange={toggle}>
 							<DialogTrigger asChild>
-								<Button className="mt-auto">Import</Button>
+								<Button className="mt-auto">
+									<Trans>Import</Trans>
+								</Button>
 							</DialogTrigger>
 							<DialogContent {...getRootProps()}>
 								{isDragActive && (
@@ -180,10 +185,14 @@ export default function DataManagement({
 										)}
 									</div>
 								)}
-								<DialogTitle>Import CSV</DialogTitle>
+								<DialogTitle>
+									<Trans>Import CSV</Trans>
+								</DialogTitle>
 								<p>
-									Currently we support the CSV format form:
-									<br /> - StarTime (this app)
+									<Trans>Currently we support the CSV format form:</Trans>
+									<Trans>
+										<br /> - StarTime (this app)
+									</Trans>
 									<br /> -{" "}
 									<Link
 										className="cursor-pointer text-sidebar-primary hover:underline"
@@ -202,12 +211,14 @@ export default function DataManagement({
 												className="cursor-pointer rounded-sm border p-2 text-center hover:bg-muted"
 												onClick={open}
 											>
-												Drop your CSV file here or click to select one.
-												<Input {...getInputProps()} />
+												<Trans>
+													Drop your CSV file here or click to select one.
+													<Input {...getInputProps()} />
+												</Trans>
 											</DialogDescription>
 										) : (
 											<DialogDescription className="flex items-center justify-center gap-2 rounded-sm border p-2 text-center">
-												Selected: {file!.name}
+												<Trans>Selected: {file!.name}</Trans>
 												<Button variant="outline" size="icon-xs" onClick={() => form.reset()}>
 													<XIcon className="size-4" />
 												</Button>
@@ -224,7 +235,7 @@ export default function DataManagement({
 											toggle();
 										}}
 									>
-										Cancel
+										<Trans>Cancel</Trans>
 									</Button>
 									<Button
 										disabled={form.state.values.file === null || isUploading}
@@ -236,7 +247,7 @@ export default function DataManagement({
 											startUpload([file]);
 										}}
 									>
-										Import
+										<Trans>Import</Trans>
 									</Button>
 								</DialogFooter>
 							</DialogContent>
@@ -245,10 +256,12 @@ export default function DataManagement({
 
 					<Separator orientation="vertical" />
 					<div className="flex w-full flex-col justify-end">
-						<p>
-							Export your data to a ZIP file. <br />
-							<span className="text-xs text-muted-foreground">Export all of your data, associated with your account.</span>
-						</p>
+						<Trans>
+							<p>
+								Export your data to a ZIP file. <br />
+								<span className="text-xs text-muted-foreground">Export all of your data, associated with your account.</span>
+							</p>
+						</Trans>
 						{recentUploadedExport ? (
 							<Button
 								className="mt-auto"
@@ -277,10 +290,10 @@ export default function DataManagement({
 								disabled={isPending}
 								onClick={async () => {
 									const result = await confirmModal({
-										content: "Are you sure you want to export your data? This may take a few minutes.",
+										content: t`Are you sure you want to export your data? This may take a few minutes.`,
 										closeOnClickOutside: true,
 										delay: 2000,
-										title: "Export your data",
+										title: t`Export your data`,
 									});
 									if (!result) return;
 									startExport();
@@ -299,7 +312,8 @@ export default function DataManagement({
 							{imports.pendingImports?.length > 0 && (
 								<section className="space-y-1.5">
 									<h3 className="flex items-center gap-1 text-sm font-medium">
-										Pending imports <Spinner className="size-3" />
+										<Trans>Pending imports</Trans>
+										<Spinner className="size-3" />
 									</h3>
 
 									<div className="">
@@ -312,7 +326,9 @@ export default function DataManagement({
 
 							{imports.otherImports?.length > 0 && (
 								<section className="w-full">
-									<h3 className="text-sm font-medium">Past imports</h3>
+									<h3 className="text-sm font-medium">
+										<Trans>Past imports</Trans>
+									</h3>
 
 									<div className="space-y-1.5">
 										{imports.otherImports.slice(0, 4).map((imp) => (
@@ -321,7 +337,9 @@ export default function DataManagement({
 									</div>
 
 									{imports.totalCount > 4 && (
-										<div className="mx-auto w-fit pt-1 text-sm text-muted-foreground">{imports.totalCount - 4} more...</div>
+										<Trans>
+											<div className="mx-auto w-fit pt-1 text-sm text-muted-foreground">{imports.totalCount - 4} more...</div>
+										</Trans>
 									)}
 								</section>
 							)}
@@ -356,29 +374,35 @@ function ImportRow({ imp }: { imp: ImportItem }) {
 		failed: "Failed",
 	};
 
+	const { t } = useLingui();
+
 	return (
 		<div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border px-2 py-1">
 			<div>
 				<p className="flex flex-row items-center gap-x-1 text-sm font-medium">
-					{imp.importFile?.fileName ?? imp.fileName ?? "No file name available"}
+					{imp.importFile?.fileName ?? imp.fileName ?? t`No file name available`}
 
 					<span className="text-xs text-muted-foreground">
 						{imp.importFile?.size && `${(imp.importFile.size / 1024 / 1024).toFixed(2)} MB`}
 					</span>
 					<span
-						title={`The file was deleted after the import${imp.status === "completed" ? " was completed" : " failed"}`}
+						title={
+							imp.status === "completed"
+								? t`The file was deleted after the import was completed`
+								: t`The file was deleted after the import failed`
+						}
 						className="cursor-help text-xs text-muted-foreground"
 					>
-						(deleted)
+						{!imp.importFile?.size ? t`(deleted)` : null}
 					</span>
 				</p>
 			</div>
 			<div className={`text-right text-sm font-semibold ${statusColor}`}>{eventImportLabels[imp.status]}</div>
 			<div>
-				<p className="text-sm text-muted-foreground">{imp.message ?? "No message available"}</p>
+				<p className="text-sm text-muted-foreground">{imp.message ?? t`No message available`}</p>
 			</div>
 			<div className="text-right text-xs text-muted-foreground">
-				{imp.updatedAt ? "Updated" : "Created"}: {formatDate(imp.updatedAt ?? imp.createdAt, "dd.MM.yyyy - HH:mm")}
+				{imp.updatedAt ? t`Updated` : t`Created`}: {formatDate(imp.updatedAt ?? imp.createdAt, "dd.MM.yyyy - HH:mm")}
 			</div>
 		</div>
 	);

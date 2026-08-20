@@ -3,6 +3,7 @@
  * for Docker builds.
  */
 import createMDX from "@next/mdx";
+import { linguiMacroSwcPlugin } from "@lingui/swc-plugin/options";
 import type { NextConfig } from "next";
 import "@startime/env";
 import "@startime/print";
@@ -24,6 +25,7 @@ const config: NextConfig = {
 	},
 	experimental: {
 		typedEnv: true,
+		swcPlugins: [linguiMacroSwcPlugin()],
 	},
 	skipTrailingSlashRedirect: true,
 	devIndicators: {

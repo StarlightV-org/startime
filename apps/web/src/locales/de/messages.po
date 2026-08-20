@@ -1,0 +1,665 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-20 11:46+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/app/dash/page.tsx:65
+msgid "Time Range"
+msgstr "Zeitraum"
+
+#: src/app/dash/page.tsx:86
+msgid "Activity"
+msgstr "Aktivität"
+
+#: src/app/dash/page.tsx:94
+msgid "Time/Total"
+msgstr "Zeit/Gesamt"
+
+#: src/app/dash/page.tsx:100
+msgid "Time/Today"
+msgstr "Zeit/Heute"
+
+#: src/app/dash/page.tsx:106
+msgid "Streak/Current"
+msgstr "Streak/Aktuell"
+
+#: src/app/dash/page.tsx:112
+msgid "Streak/Max"
+msgstr "Streak/Max"
+
+#: src/app/dash/page.tsx:125
+msgid "Top"
+msgstr "Top"
+
+#: src/app/dash/page.tsx:137
+msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+msgstr "<0>Berechnungen</0><1>Die Gesamtzeit zählt jede aktive Minute nur einmal. <2/>Wenn du innerhalb einer Minute zwischen Arbeitsbereich oder Sprache wechselt, wird die gleiche Minute für jede übereinstimmende Kategorie gezählt. <3/>So können Kategorietermine und Prozentsätze über 100% gehen.</1>"
+
+#: src/app/dash/page.tsx:155
+#: src/app/page.tsx:329
+#: src/components/overview/filter-view.tsx:12
+msgid "Editor"
+msgstr "Editor"
+
+#: src/app/dash/page.tsx:167
+#: src/components/overview/filter-view.tsx:13
+msgid "Workspace"
+msgstr "Arbeitsbereich"
+
+#: src/app/dash/page.tsx:179
+#: src/app/page.tsx:342
+#: src/components/overview/filter-view.tsx:14
+msgid "Language"
+msgstr "Sprache"
+
+#: src/app/dash/page.tsx:191
+#: src/app/page.tsx:356
+#: src/components/overview/filter-view.tsx:15
+msgid "Platform"
+msgstr "Plattform"
+
+#: src/app/page.tsx:47
+msgid "Respect your privacy"
+msgstr "Respektiere deine Privatsphäre"
+
+#: src/app/page.tsx:48
+msgid "Only stores the necessary data. Filenames are hashed."
+msgstr "Nur die notwendigen Daten werden gespeichert. Dateinamen werden gehasht."
+
+#: src/app/page.tsx:52
+msgid "Join or create an organization"
+msgstr "Beitritt oder Erstellung einer Organisation"
+
+#: src/app/page.tsx:53
+msgid "Track your time together with your friends / team"
+msgstr "Verfolge deine Zeit zusammen mit deinen Freunden / Team"
+
+#: src/app/page.tsx:57
+msgid "Import your data"
+msgstr "Importiere deine Daten"
+
+#: src/app/page.tsx:58
+msgid "Import your existing time tracking data from other tools. Like, codetime.dev"
+msgstr "Importiere deine bestehenden Zeitverfolgungsdaten von anderen Tools. Zum Beispiel codetime.dev"
+
+#: src/app/page.tsx:71
+msgid "Fast and AI-powered code editor that makes you more productive."
+msgstr "Schnell und KI-gestützer Code-Editor, der dich produktiver macht."
+
+#: src/app/page.tsx:78
+msgid "Note-taking and knowledge management app"
+msgstr "Notizen- und Wissensmanagement-App"
+
+#: src/app/page.tsx:85
+msgid "Game development engine"
+msgstr "Spielentwicklungseingine"
+
+#: src/app/page.tsx:92
+#: src/app/page.tsx:113
+#: src/app/page.tsx:120
+msgid "The popular code editor"
+msgstr "Der beliebte Code-Editor"
+
+#: src/app/page.tsx:99
+msgid "Fork of VS Code with AI-powered features"
+msgstr "Fork von VS Code mit KI-gestützten Funktionen"
+
+#: src/app/page.tsx:106
+msgid "Built-in full-stack support ready for your next endeavor"
+msgstr "Integrierter Full-Stack-Unterstützung für deine nächste Herausforderung"
+
+#: src/app/page.tsx:128
+msgid "Missing an editor extension? Create a request on GitHub"
+msgstr "Fehlt eine Editor-Erweiterung? Erstelle eine Anfrage auf GitHub"
+
+#: src/app/page.tsx:136
+msgid "Not started"
+msgstr "Nicht gestartet"
+
+#: src/app/page.tsx:137
+msgid "This editor extension is planned but not yet in development."
+msgstr "Diese Editor-Erweiterung ist geplant, aber noch nicht in Entwicklung."
+
+#: src/app/page.tsx:141
+msgid "Started"
+msgstr "Gestartet"
+
+#: src/app/page.tsx:142
+msgid "Development has begun for this editor extension."
+msgstr "Entwicklung für diese Editor-Erweiterung hat gestartet."
+
+#: src/app/page.tsx:146
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+#: src/app/page.tsx:147
+msgid "This editor extension is available to use."
+msgstr "Diese Editor-Erweiterung ist verfügbar zum Einsatz."
+
+#: src/app/page.tsx:152
+msgid "Easy setup"
+msgstr "Einfaches Setup"
+
+#: src/app/page.tsx:152
+msgid "Free"
+msgstr "Gratis"
+
+#: src/app/page.tsx:152
+msgid "Open source"
+msgstr "Open Source"
+
+#: src/app/page.tsx:175
+#: src/app/page.tsx:213
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: src/app/page.tsx:182
+#: src/app/page.tsx:221
+msgid "Open dashboard"
+msgstr "Dashboard öffnen"
+
+#: src/app/page.tsx:196
+msgid "Track how you spend your time"
+msgstr "Verfolge wie du deine Zeit nutzt"
+
+#: src/app/page.tsx:199
+msgid "Visualize your coding time. <0/>"
+msgstr "Visualisiere deine Programmierzeit. <0/>"
+
+#: src/app/page.tsx:202
+msgid "<0>We are currently in closed beta. Singups will be open soon.</0>"
+msgstr "<0>Wir sind aktuell in der geschlossenen Beta-Phase. Anmeldungen werden bald geöffnet.</0>"
+
+#: src/app/page.tsx:286
+msgid "Designed for developers"
+msgstr "Für Entwickler"
+
+#: src/app/page.tsx:289
+msgid "What we offer"
+msgstr "Was wir anbieten"
+
+#: src/app/page.tsx:312
+msgid "The last 90d"
+msgstr "Letzten 90 Tage"
+
+#: src/app/page.tsx:315
+msgid "What our users are using"
+msgstr "Was unsere Benutzer verwenden"
+
+#: src/app/page.tsx:376
+msgid "Editor Extensions"
+msgstr "Editor-Erweiterungen"
+
+#: src/app/page.tsx:379
+msgid "An extension ecosystem for all the editors you love."
+msgstr "Ein Erweiterungs-Ecosystem für alle Editoren, die ihr liebt."
+
+#: src/components/auth/account-button.tsx:45
+msgid "Account"
+msgstr "Konto"
+
+#: src/components/auth/account-button.tsx:50
+#: src/components/ui/header-bar.tsx:52
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/components/auth/account-button.tsx:63
+msgid "Logout"
+msgstr "Abmelden"
+
+#: src/components/auth/reauth-form.tsx:27
+msgid "Passkeys are not supported in this browser."
+msgstr "Passkeys werden in diesem Browser nicht unterstützt."
+
+#: src/components/auth/reauth-form.tsx:38
+#: src/components/auth/sign-in-form.tsx:48
+msgid "Your passkey could not be verified."
+msgstr "Dein Passkey konnte nicht überprüft werden."
+
+#: src/components/auth/reauth-form.tsx:73
+msgid "Verify it's you"
+msgstr "Überprüfe, dass du es bist"
+
+#: src/components/auth/reauth-form.tsx:76
+msgid "Use a passkey to continue with this sensitive action."
+msgstr "Verwende einen Passkey, um mit dieser sensiblen Aktion fortzufahren."
+
+#: src/components/auth/reauth-form.tsx:82
+#: src/components/auth/sign-in-form.tsx:80
+msgid "Continue with a passkey"
+msgstr "Weiter mit deinem Passkey"
+
+#: src/components/auth/reauth-form.tsx:93
+msgid "Reauthentication is available only with a registered passkey."
+msgstr "Die erneute Authentifizierung ist nur mit einem registrierten Passkey verfügbar."
+
+#: src/components/auth/sign-in-error.tsx:24
+msgid "Error"
+msgstr "Fehler"
+
+#: src/components/auth/sign-in-error.tsx:27
+msgid "An error occurred while signing in."
+msgstr "Ein Fehler ist beim Anmelden aufgetreten."
+
+#: src/components/auth/sign-in-error.tsx:39
+msgid "Try Again"
+msgstr "Erneut versuchen"
+
+#: src/components/auth/sign-in-form.tsx:31
+msgid "GitHub sign-in could not be started."
+msgstr "GitHub-Anmeldung konnte nicht gestartet werden."
+
+#: src/components/auth/sign-in-form.tsx:38
+msgid "Passkeys are not supported in this browser. Try GitHub instead."
+msgstr "Passkeys werden in diesem Browser nicht unterstützt. Bitte versuche es mit GitHub anstelle eines Passkeys."
+
+#: src/components/auth/sign-in-form.tsx:60
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: src/components/auth/sign-in-form.tsx:63
+msgid "Sign in to view your dashboard."
+msgstr "Melde dich an, um deinen Dashboard anzusehen."
+
+#: src/components/auth/sign-in-form.tsx:69
+msgid "Continue with GitHub"
+msgstr "Weiter mit GitHub"
+
+#: src/components/auth/sign-in-form.tsx:91
+msgid "Signups are currently disabled."
+msgstr "Anmeldungen sind derzeit deaktiviert."
+
+#: src/components/auth/sign-in-form.tsx:94
+msgid "This site is currently in closed beta. Want to contribute?"
+msgstr "Diese Seite befindet sich in geschlossener Beta. Möchtest du mitmachen?"
+
+#: src/components/auth/sign-in-form.tsx:101
+msgid "Join our Discord"
+msgstr "Discord beitreten"
+
+#: src/components/overview/client-overview.tsx:92
+msgid "Working on"
+msgstr "Arbeitet an"
+
+#: src/components/overview/open-minimal.tsx:29
+msgid "Failed to open minimal view"
+msgstr "Fehler beim Öffnen der minimalen Ansicht"
+
+#: src/components/overview/open-minimal.tsx:30
+msgid "The popup could not be opened. Please check your browser settings."
+msgstr "Das Popup konnte nicht geöffnet werden. Bitte überprüfen Sie Ihre Browser-Einstellungen."
+
+#: src/components/overview/open-minimal.tsx:35
+msgid "Minimal View"
+msgstr "Minimale Ansicht"
+
+#: src/components/overview/overview-select.tsx:25
+#: src/components/overview/overview-select.tsx:46
+msgid "Last 24 hours"
+msgstr "Letzten 24 Stunden"
+
+#: src/components/overview/overview-select.tsx:26
+#: src/components/overview/overview-select.tsx:49
+msgid "Last 7 days"
+msgstr "Letzten 7 Tage"
+
+#: src/components/overview/overview-select.tsx:27
+#: src/components/overview/overview-select.tsx:52
+msgid "Last 30 days"
+msgstr "Letzten 30 Tage"
+
+#: src/components/overview/overview-select.tsx:28
+#: src/components/overview/overview-select.tsx:55
+msgid "Last 90 days"
+msgstr "Letzten 90 Tage"
+
+#: src/components/overview/overview-select.tsx:29
+#: src/components/overview/overview-select.tsx:58
+msgid "Last 365 days"
+msgstr "Letzten 365 Tage"
+
+#: src/components/overview/overview-select.tsx:30
+#: src/components/overview/overview-select.tsx:66
+msgid "Today"
+msgstr "Heute"
+
+#: src/components/overview/overview-select.tsx:31
+#: src/components/overview/overview-select.tsx:69
+msgid "This week"
+msgstr "Diese Woche"
+
+#: src/components/overview/overview-select.tsx:32
+#: src/components/overview/overview-select.tsx:72
+msgid "This month"
+msgstr "Dieser Monat"
+
+#: src/components/overview/overview-select.tsx:33
+#: src/components/overview/overview-select.tsx:75
+msgid "This year"
+msgstr "Dieses Jahr"
+
+#: src/components/overview/overview-select.tsx:34
+#: src/components/overview/overview-select.tsx:78
+msgid "All Time"
+msgstr "Gesamte Zeit"
+
+#: src/components/overview/overview-select.tsx:63
+msgid "Absolute"
+msgstr "Absolut"
+
+#: src/components/overview/overview-select.tsx:101
+#: src/components/overview/overview-select.tsx:116
+msgid "Hour"
+msgstr "Stunde"
+
+#: src/components/overview/overview-select.tsx:102
+#: src/components/overview/overview-select.tsx:119
+msgid "Day"
+msgstr "Tag"
+
+#: src/components/overview/overview-select.tsx:103
+#: src/components/overview/overview-select.tsx:122
+msgid "Week"
+msgstr "Woche"
+
+#: src/components/overview/overview-select.tsx:113
+msgid "Biggest Unit"
+msgstr "Größter Einheit"
+
+#: src/components/settings/account-settings.tsx:27
+msgid "Settings saved"
+msgstr "Einstellungen gespeichert"
+
+#: src/components/settings/account-settings.tsx:30
+#: src/components/settings/account-settings.tsx:45
+msgid "Unable to save settings"
+msgstr "Einstellungen konnten nicht gespeichert werden"
+
+#: src/components/settings/account-settings.tsx:47
+msgid "This setting is not supported by the server yet."
+msgstr "Diese Einstellung wird vom Server noch nicht unterstützt."
+
+#: src/components/settings/auth-settings.tsx:47
+#: src/components/settings/auth-settings.tsx:50
+#: src/components/settings/auth-settings.tsx:61
+#: src/components/settings/auth-settings.tsx:64
+msgid "Name must be at least 3 characters"
+msgstr "Name muss mindestens 3 Zeichen lang sein"
+
+#: src/components/settings/auth-settings.tsx:76
+msgid "Api key created successfully"
+msgstr "API-Schlüssel erfolgreich erstellt"
+
+#: src/components/settings/auth-settings.tsx:85
+msgid "Failed to create api key"
+msgstr "Fehler beim Erstellen des API-Schlüssels"
+
+#: src/components/settings/auth-settings.tsx:91
+msgid "Creating api key"
+msgstr "API-Schlüssel wird erstellt"
+
+#: src/components/settings/auth-settings.tsx:110
+#: src/components/settings/auth-settings.tsx:215
+msgid "Created At"
+msgstr "Erstellt am"
+
+#: src/components/settings/auth-settings.tsx:123
+msgid "Create Passkey"
+msgstr "Passkey erstellen"
+
+#: src/components/settings/auth-settings.tsx:126
+msgid "A passkey is required to verify sensitive actions."
+msgstr "Ein Passkey ist erforderlich, um sensible Aktionen zu verifizieren."
+
+#: src/components/settings/auth-settings.tsx:153
+#: src/components/settings/auth-settings.tsx:260
+#: src/components/settings/auth-settings.tsx:449
+#: src/components/settings/data-settings.tsx:238
+#: src/components/ui/confirm-modal.tsx:185
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/components/settings/auth-settings.tsx:169
+msgid "Passkey created successfully"
+msgstr "Passkey erfolgreich erstellt"
+
+#: src/components/settings/auth-settings.tsx:174
+#: src/components/settings/auth-settings.tsx:271
+msgid "Create"
+msgstr "Erstellen"
+
+#: src/components/settings/auth-settings.tsx:195
+msgid "No Passkeys"
+msgstr "Keine Passkeys"
+
+#: src/components/settings/auth-settings.tsx:206
+msgid "Keys"
+msgstr "Schlüssel"
+
+#: src/components/settings/auth-settings.tsx:212
+msgid "Name"
+msgstr "Name"
+
+#: src/components/settings/auth-settings.tsx:220
+msgid "Actions"
+msgstr "Aktionen"
+
+#: src/components/settings/auth-settings.tsx:225
+#: src/components/settings/auth-settings.tsx:230
+msgid "Create Api Key"
+msgstr "API-Schlüssel erstellen"
+
+#: src/components/settings/auth-settings.tsx:233
+msgid "A API key is required to verify sensitive actions."
+msgstr "Ein API-Schlüssel ist erforderlich, um sensible Aktionen zu verifizieren."
+
+#: src/components/settings/auth-settings.tsx:292
+msgid "No Api Keys"
+msgstr "Keine API-Schlüssel"
+
+#: src/components/settings/auth-settings.tsx:315
+msgid "Delete Passkey"
+msgstr "Passkey löschen"
+
+#. placeholder {0}: passkey.name
+#: src/components/settings/auth-settings.tsx:316
+msgid "Are you sure you want to delete the passkey \"{0}\"?"
+msgstr "Sind Sie sicher, dass Sie den Passkey \"{0}\" löschen möchten?"
+
+#: src/components/settings/auth-settings.tsx:324
+msgid "Failed to delete passkey"
+msgstr "Fehler beim Löschen des Passkeys"
+
+#: src/components/settings/auth-settings.tsx:328
+msgid "Passkey deleted"
+msgstr "Passkey gelöscht"
+
+#: src/components/settings/auth-settings.tsx:375
+msgid "Api key copied to clipboard"
+msgstr "API-Schlüssel in die Zwischenablage kopiert"
+
+#: src/components/settings/auth-settings.tsx:381
+msgid "Failed to copy api key"
+msgstr "Fehler beim Kopieren des API-Schlüssels"
+
+#. placeholder {0}: apiKey.name
+#: src/components/settings/auth-settings.tsx:404
+msgid "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
+msgstr "<0>Bist du sicher das du den API-Schlüssel: \"{0}\" löschen möchtest?<1/>Diese Aktion <2> kann nicht </2>wieder rückgängig gemacht werden. Der API-Schlüssel wird nicht mehr funktionieren.</0>"
+
+#: src/components/settings/auth-settings.tsx:421
+msgid "Failed to delete API key: "
+msgstr "Fehler beim Löschen des API-Schlüssels: "
+
+#: src/components/settings/auth-settings.tsx:426
+msgid "API key deleted"
+msgstr "API-Schlüssel gelöscht"
+
+#: src/components/settings/auth-settings.tsx:442
+#: src/components/settings/auth-settings.tsx:453
+msgid "Copy API key"
+msgstr "API-Schlüssel kopieren"
+
+#: src/components/settings/auth-settings.tsx:445
+msgid "You can copy this API key to your clipboard now."
+msgstr "Sie können diesen API-Schlüssel in die Zwischenablage kopieren."
+
+#: src/components/settings/data-settings.tsx:76
+msgid "File size must be less than 64MB"
+msgstr "Die Dateigröße muss kleiner als 64MB sein"
+
+#: src/components/settings/data-settings.tsx:163
+msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
+msgstr "<0>Importiere eine CSV-Datei von anderen Quellen.<1/><2>Du kannst nur eine Datei hochladen und sie darf nicht größer als 64MB sein.</2></0>"
+
+#: src/components/settings/data-settings.tsx:175
+#: src/components/settings/data-settings.tsx:250
+msgid "Import"
+msgstr "Importieren"
+
+#: src/components/settings/data-settings.tsx:189
+msgid "Import CSV"
+msgstr "CSV Importieren"
+
+#: src/components/settings/data-settings.tsx:192
+msgid "Currently we support the CSV format form:"
+msgstr "Aktuell unterstützt wir den CSV-Formate von:"
+
+#: src/components/settings/data-settings.tsx:193
+msgid "<0/> - StarTime (this app)"
+msgstr "<0/> - StarTime (diese App)"
+
+#: src/components/settings/data-settings.tsx:214
+msgid "Drop your CSV file here or click to select one.<0/>"
+msgstr "Datei hier ablegen oder auswählen<0/>"
+
+#. placeholder {0}: file!.name
+#: src/components/settings/data-settings.tsx:221
+msgid "Selected: {0}"
+msgstr "Ausgewählt: {0}"
+
+#: src/components/settings/data-settings.tsx:259
+msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
+msgstr "<0>Exportiere deine Daten in eine ZIP-Datei.<1/><2>Exportiere alle Daten, die mit deinem Account verknüpft sind.</2></0>"
+
+#: src/components/settings/data-settings.tsx:293
+msgid "Are you sure you want to export your data? This may take a few minutes."
+msgstr "Bist du sicher, dass du deine Daten exportieren möchtest? Dies kann einige Minuten dauern."
+
+#: src/components/settings/data-settings.tsx:296
+msgid "Export your data"
+msgstr "Exportiere deine Daten"
+
+#: src/components/settings/data-settings.tsx:315
+msgid "Pending imports"
+msgstr "Ausstehende Imports"
+
+#: src/components/settings/data-settings.tsx:330
+msgid "Past imports"
+msgstr "Vergangene Imports"
+
+#. placeholder {0}: imports.totalCount - 4
+#: src/components/settings/data-settings.tsx:340
+msgid "<0>{0} more...</0>"
+msgstr "<0>{0} mehr...</0>"
+
+#: src/components/settings/data-settings.tsx:383
+msgid "No file name available"
+msgstr "Kein Dateiname verfügbar"
+
+#: src/components/settings/data-settings.tsx:391
+msgid "The file was deleted after the import was completed"
+msgstr "Die Datei wurde gelöscht, nach dem Import erfolgreich abgeschlossen wurde"
+
+#: src/components/settings/data-settings.tsx:392
+msgid "The file was deleted after the import failed"
+msgstr "Die Datei wurde gelöscht, nach dem Import fehlgeschlagen ist"
+
+#: src/components/settings/data-settings.tsx:396
+msgid "(deleted)"
+msgstr "(gelöscht)"
+
+#: src/components/settings/data-settings.tsx:402
+msgid "No message available"
+msgstr "Keine Nachricht verfügbar"
+
+#: src/components/settings/data-settings.tsx:405
+msgid "Updated"
+msgstr "Aktualisiert"
+
+#: src/components/settings/data-settings.tsx:405
+msgid "Created"
+msgstr "Erstellt"
+
+#. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
+#: src/components/ui/confirm-modal.tsx:174
+msgid "Wait {remainingSeconds} {0}"
+msgstr "Warte {remainingSeconds} {0}"
+
+#: src/components/ui/confirm-modal.tsx:175
+msgid "second"
+msgstr "Sekunde"
+
+#: src/components/ui/confirm-modal.tsx:175
+msgid "seconds"
+msgstr "Sekunden"
+
+#: src/components/ui/confirm-modal.tsx:188
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: src/components/ui/footer.tsx:22
+msgid "Repository"
+msgstr "Repository"
+
+#: src/components/ui/header-bar.tsx:40
+msgid "Overview"
+msgstr "Übersicht"
+
+#: src/components/ui/header-bar.tsx:46
+msgid "Your Organization"
+msgstr "Deine Organisation"
+
+#: src/components/uploadthing.tsx:36
+msgid "You cant upload so many files at once."
+msgstr "Du kannst nicht so viele Dateien gleichzeitig hochladen."
+
+#: src/components/uploadthing.tsx:38
+msgid "The file is too large."
+msgstr "Die Datei ist zu groß."
+
+#: src/components/uploadthing.tsx:40
+msgid "This file type is not allowed."
+msgstr "Dieser Dateityp ist nicht erlaubt."
+
+#: src/components/uploadthing.tsx:43
+msgid "You do not have permission to upload files."
+msgstr "Du hast keine Berechtigung, Dateien hochzuladen."
+
+#: src/components/uploadthing.tsx:48
+msgid "An unknown error occurred."
+msgstr "Ein unbekannter Fehler ist aufgetreten."
+
+#. placeholder {0}: percentage.toFixed(2)
+#: src/components/uploadthing.tsx:65
+msgid "Uploading {0}%"
+msgstr "Uploading {0}%"
+
+#. placeholder {0}: parseUploadThingError(error)
+#: src/components/uploadthing.tsx:73
+msgid "Upload failed: {0}"
+msgstr "Upload fehlgeschlagen: {0}"
+
+#: src/components/uploadthing.tsx:80
+msgid "Files uploaded successfully"
+msgstr "Dateien erfolgreich hochgeladen"

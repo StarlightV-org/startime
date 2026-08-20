@@ -6,6 +6,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { CopyButton } from "~/components/ui/copy-button";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 export interface ConfirmModalOptionsBase {
 	/** Content to display in the modal (ReactNode) */
@@ -51,6 +52,7 @@ export function useConfirmModal() {
 }
 
 export function ConfirmModalProvider({ children }: { children: ReactNode }) {
+	const { t } = useLingui();
 	const [state, setState] = useState<ConfirmModalState | null>(null);
 	const [inputValue, setInputValue] = useState("");
 	const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
@@ -128,12 +130,12 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 				<Dialog open={!!state} onOpenChange={handleOpenChange}>
 					<DialogContent
 						className="gap-1 sm:max-w-125"
-						// onPointerDownOutside={(e) => {
-						// 	if (!state.closeOnClickOutside) e.preventDefault();
-						// }}
-						// onFocusOutside={(e) => {
-						// 	if (!state.closeOnClickOutside) e.preventDefault();
-						// }}
+						onPointerDownOutside={(e) => {
+							if (!state.closeOnClickOutside) e.preventDefault();
+						}}
+						onFocusOutside={(e) => {
+							if (!state.closeOnClickOutside) e.preventDefault();
+						}}
 					>
 						<DialogHeader>
 							<DialogTitle>{state.title ?? "Bestätigung erforderlich"}</DialogTitle>
@@ -169,8 +171,9 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 								<div className="min-w-44 shrink-0 text-left text-sm text-muted-foreground">
 									{remainingSeconds != null && remainingSeconds > 0 && (
 										<span>
-											Wait {remainingSeconds} {remainingSeconds === 1 ? "second" : "seconds"}{" "}
-											{/*{state.requiredValue != null ? "bis zur Eingabe" : "bis zur Bestätigung"}*/}
+											<Trans>
+												Wait {remainingSeconds} {remainingSeconds === 1 ? t`second` : t`seconds`}
+											</Trans>
 										</span>
 									)}
 								</div>
@@ -179,10 +182,10 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 							)}
 							<div className="flex shrink-0 gap-2">
 								<Button variant="outline" onClick={handleCancel}>
-									Cancel
+									<Trans>Cancel</Trans>
 								</Button>
 								<Button variant={state.variant ?? "destructive"} onClick={handleConfirm} disabled={!isMatch || !canInteract}>
-									{state.confirmLabel ?? "Confirm"}
+									{state.confirmLabel ?? t`Confirm`}
 								</Button>
 							</div>
 						</DialogFooter>

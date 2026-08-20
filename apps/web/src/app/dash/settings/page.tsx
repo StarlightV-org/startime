@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
 import { AccountSettings, DataSettings, OrgSettings } from "~/components/settings";
 import AuthSettings from "~/components/settings/auth-settings";
-import { Card, CardContent } from "~/components/ui/card";
+import { fromHeader, resolveLocale } from "~/i18n/locales";
+import { setRequestI18n } from "~/i18n/server";
 import { tryCatch } from "~/lib/utils";
 import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
@@ -14,6 +16,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 			tryCatch(api.self.listPasskeys()),
 			tryCatch(api.self.listApiKeys()),
 			searchParams,
+			await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers()))),
 		]);
 
 	return (
