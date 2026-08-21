@@ -1,5 +1,6 @@
 import { TZDate } from "@date-fns/tz";
 import { addDays, addMonths, addWeeks, addYears, startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns";
+import { subHours } from "date-fns/fp";
 import { LucideAlignHorizontalJustifyCenter } from "lucide-react";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 
@@ -60,9 +61,9 @@ export function getTimeRange(
 	const nextDayStart = addDays(dayStart, 1);
 
 	switch (timeRange) {
-		// Last 1 local calendar day, including today.
+		// Rolling 24-hour window ending now.
 		case "past1":
-			return [toDate(dayStart), toDate(nextDayStart)];
+			return [toDate(subHours(24, zonedNow)), toDate(zonedNow)];
 		// Last 7 local calendar days, including today.
 		case "past7":
 			return [toDate(addDays(dayStart, -6)), toDate(nextDayStart)];
@@ -121,9 +122,4 @@ export function toTimeString(minutes: number, biggestUnit?: BiggestUnit): string
 	const fullHours = Math.floor(minutes / 60);
 	const remainingMinutes = minutes - fullHours * 60;
 	return [`${fullHours}h`, `${remainingMinutes}m`].filter((value) => value !== "0h" && value !== "0m").join(" ");
-}
-
-export function toDayString(days: number): string {
-	if (days === 1) return "1 day";
-	return `${days} days`;
 }

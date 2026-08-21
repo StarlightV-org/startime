@@ -16,6 +16,8 @@ import type { SessionType } from "better-auth";
 import { PASSKEY_REGISTRATION_REQUIRED_CAUSE, REAUTH_REQUIRED_CAUSE } from "~/lib/reauth-util";
 import { addSeconds } from "date-fns/fp";
 import { op } from "~/lib/op";
+import { setRequestI18n } from "~/i18n/server";
+import { fromHeader, resolveLocale } from "~/i18n/locales";
 
 /**
  * 1. CONTEXT
@@ -31,6 +33,7 @@ import { op } from "~/lib/op";
  */
 export const createTRPCContext = async (opts: { headers: Headers; source?: "http" | "server" }) => {
 	const { session, user, invitations, org } = await getAuth();
+	const i18n = await setRequestI18n(resolveLocale(user?.accountConfig?.regional.lang, fromHeader(opts.headers)));
 
 	return {
 		...opts,
@@ -41,6 +44,7 @@ export const createTRPCContext = async (opts: { headers: Headers; source?: "http
 		invitations,
 		org,
 		headers: opts.headers,
+		i18n,
 	};
 };
 

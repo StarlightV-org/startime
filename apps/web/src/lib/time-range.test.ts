@@ -2,6 +2,14 @@ import { describe, expect, test } from "bun:test";
 import { getTimeRange } from "./time-range";
 
 describe("getTimeRange", () => {
+	test("uses a rolling 24-hour window for past one day", () => {
+		const [start, end] = getTimeRange("past1", "Europe/Berlin", new Date("2026-03-29T12:00:00.000Z"));
+
+		expect(start?.toISOString()).toBe("2026-03-28T12:00:00.000Z");
+		expect(end?.toISOString()).toBe("2026-03-29T12:00:00.000Z");
+		expect(end!.getTime() - start!.getTime()).toBe(24 * 60 * 60 * 1000);
+	});
+
 	test("uses the 23-hour Berlin day at the start of daylight saving time", () => {
 		const [start, end] = getTimeRange("thisDay", "Europe/Berlin", new Date("2026-03-29T12:00:00.000Z"));
 

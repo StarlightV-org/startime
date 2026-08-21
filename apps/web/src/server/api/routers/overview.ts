@@ -1,9 +1,11 @@
 import { TZDate } from "@date-fns/tz";
+import type { I18n } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
 import { addDays, differenceInCalendarWeeks, format, getDay, startOfWeek } from "date-fns";
 import { eventLogs } from "@startime/db";
 import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
-import { getTimeRange, normalizeTimeZone, timeRangeValues, toDayString, toTimeString } from "~/lib/time-range";
+import { getTimeRange, normalizeTimeZone, timeRangeValues, toTimeString } from "~/lib/time-range";
 import { createTRPCRouter, protectedProcedure, serverOnlyMiddleware } from "~/server/api/trpc";
 import z from "zod";
 import type { API } from "~/trpc/server";
@@ -47,6 +49,11 @@ function getLocalDate(timeZone: string): string {
 	return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join(
 		"-",
 	);
+}
+
+function toDayString(days: number, i18n: I18n): string {
+	if (days === 1) return i18n._(msg`1 day`);
+	return i18n._(msg`${days} days`);
 }
 
 export type OverviewTopElement = API["overview"]["getTop"]["editor"]["p1"];
@@ -105,8 +112,8 @@ export const overviewRouter = createTRPCRouter({
 			return {
 				timeTotal: toTimeString(activity?.activeMinutes ?? 0, input.biggestUnit),
 				timeToday: toTimeString(activity?.activeMinutesToday ?? 0, input.biggestUnit),
-				currentStreak: toDayString(currentStreak),
-				allTimeStreak: toDayString(allTimeStreak),
+				currentStreak: toDayString(currentStreak, ctx.i18n),
+				allTimeStreak: toDayString(allTimeStreak, ctx.i18n),
 				lastEvent: lastEvent[0],
 			};
 		}),

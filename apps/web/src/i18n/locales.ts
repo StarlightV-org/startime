@@ -10,13 +10,11 @@ export function isLocale(value: unknown): value is Locale {
 }
 
 export function resolveLocale(...candidates: unknown[]): Locale {
-	Print.Debug("candidates", candidates);
 	return candidates.find(isLocale) ?? defaultLocale;
 }
 
 export function fromHeader(header: Headers): Locale {
 	const acceptLanguage = header.get("Accept-Language");
-	Print.Debug(acceptLanguage);
 
 	const candidates = acceptLanguage
 		?.split(",")

@@ -663,3 +663,11 @@ msgstr "Upload failed: {0}"
 #: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"
+
+#: src/server/api/routers/overview.ts:55
+msgid "1 day"
+msgstr "1 day"
+
+#: src/server/api/routers/overview.ts:56
+msgid "{days} days"
+msgstr "{days} days"
