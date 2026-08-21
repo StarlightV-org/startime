@@ -13,60 +13,67 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/app/dash/page.tsx:65
+#: src/app/dash/page.tsx:80
 msgid "Time Range"
 msgstr "Zeitraum"
 
-#: src/app/dash/page.tsx:86
+#: src/app/dash/page.tsx:101
+#: src/app/view/minimal/page.tsx:46
 msgid "Activity"
 msgstr "Aktivität"
 
-#: src/app/dash/page.tsx:94
+#: src/app/dash/page.tsx:109
+#: src/app/view/minimal/page.tsx:54
 msgid "Time/Total"
 msgstr "Zeit/Gesamt"
 
-#: src/app/dash/page.tsx:100
+#: src/app/dash/page.tsx:115
+#: src/app/view/minimal/page.tsx:61
 msgid "Time/Today"
 msgstr "Zeit/Heute"
 
-#: src/app/dash/page.tsx:106
+#: src/app/dash/page.tsx:121
 msgid "Streak/Current"
 msgstr "Streak/Aktuell"
 
-#: src/app/dash/page.tsx:112
+#: src/app/dash/page.tsx:127
 msgid "Streak/Max"
 msgstr "Streak/Max"
 
-#: src/app/dash/page.tsx:125
+#: src/app/dash/page.tsx:140
 msgid "Top"
 msgstr "Top"
 
-#: src/app/dash/page.tsx:137
+#: src/app/dash/page.tsx:152
 msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 msgstr "<0>Berechnungen</0><1>Die Gesamtzeit zählt jede aktive Minute nur einmal. <2/>Wenn du innerhalb einer Minute zwischen Arbeitsbereich oder Sprache wechselt, wird die gleiche Minute für jede übereinstimmende Kategorie gezählt. <3/>So können Kategorietermine und Prozentsätze über 100% gehen.</1>"
 
-#: src/app/dash/page.tsx:155
+#: src/app/dash/page.tsx:170
 #: src/app/page.tsx:329
 #: src/components/overview/filter-view.tsx:12
 msgid "Editor"
 msgstr "Editor"
 
-#: src/app/dash/page.tsx:167
+#: src/app/dash/page.tsx:182
 #: src/components/overview/filter-view.tsx:13
 msgid "Workspace"
 msgstr "Arbeitsbereich"
 
-#: src/app/dash/page.tsx:179
+#: src/app/dash/page.tsx:194
 #: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
 msgid "Language"
 msgstr "Sprache"
 
-#: src/app/dash/page.tsx:191
+#: src/app/dash/page.tsx:206
 #: src/app/page.tsx:356
 #: src/components/overview/filter-view.tsx:15
 msgid "Platform"
 msgstr "Plattform"
+
+#: src/app/dash/page.tsx:221
+msgid "Daily Coding Distribution"
+msgstr "Täglicher Programmierzeit Verteilung"
 
 #: src/app/page.tsx:47
 msgid "Respect your privacy"
