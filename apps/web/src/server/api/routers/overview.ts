@@ -234,4 +234,87 @@ export const overviewRouter = createTRPCRouter({
 				platform: rankedItems(events.map(({ platform, eventTime }) => ({ value: platform, eventTime }))),
 			};
 		}),
+
+	getDistribution: protectedProcedure
+		.use(serverOnlyMiddleware)
+		.input(z.object({ workspace: z.string().optional() }))
+		.query(async ({ ctx, input }) => {
+			const regional = ctx.user.accountConfig.regional;
+			const timeZone = normalizeTimeZone(regional.timeZone);
+			const [start, end] = getTimeRange("past7", timeZone, undefined, regional.startOfWeek);
+
+			if (!start || !end) {
+				throw new Error("Unable to determine the distribution range");
+			}
+
+			const localEventTime = sql`(${eventLogs.eventTime} at time zone ${timeZone})`;
+			const day = sql<string>`(${localEventTime})::date`;
+			const minuteOfDay = sql<number>`
+			(
+				extract(hour from ${localEventTime})::int * 60
+				+ extract(minute from ${localEventTime})::int
+			)
+		`.mapWith(Number);
+
+			const rows = await ctx.db
+				.select({
+					day,
+					minuteOfDay,
+					count: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
+				})
+				.from(eventLogs)
+				.where(
+					and(
+						eq(eventLogs.userId, ctx.user.id),
+						gte(eventLogs.eventTime, start),
+						lt(eventLogs.eventTime, end),
+						input.workspace ? eq(eventLogs.project, input.workspace) : undefined,
+					),
+				)
+
+				.groupBy(sql`1`, sql`2`)
+				.orderBy(sql`1`, sql`2`);
+
+			const counts = new Map(rows.map(({ day, minuteOfDay, count }) => [`${day}:${minuteOfDay}`, count]));
+
+			const firstDay = TZDate.tz(timeZone, start);
+			const smoothingWindow = 20;
+			const toDensity = (minutes: readonly number[]) =>
+				minutes.map((_, index) => {
+					const windowStart = Math.max(0, index - smoothingWindow);
+					const windowEnd = Math.min(minutes.length, index + smoothingWindow + 1);
+					const total = minutes.slice(windowStart, windowEnd).reduce((sum, count) => sum + count, 0);
+
+					return { minuteOfDay: index, density: total / (windowEnd - windowStart) };
+				});
+			const series = Array.from({ length: 7 }, (_, dayIndex) => {
+				const date = format(addDays(firstDay, dayIndex), "yyyy-MM-dd");
+				const minutes = Array.from({ length: 24 * 60 }, (_, minuteOfDay) => counts.get(`${date}:${minuteOfDay}`) ?? 0);
+
+				return { date, minutes };
+			});
+			const historicalDays = series.map(({ date, minutes }) => ({
+				date,
+				points: toDensity(minutes),
+			}));
+			const average = Array.from({ length: 24 * 60 }, (_, minuteOfDay) => {
+				const meanSquare =
+					historicalDays.reduce((sum, day) => sum + day.points[minuteOfDay]!.density ** 3, 0) / historicalDays.length;
+
+				return { minuteOfDay, density: Math.sqrt(meanSquare) };
+			});
+			const now = TZDate.tz(timeZone);
+
+			return {
+				hasActivity: rows.length > 0,
+				timeZone,
+				historicalDates: historicalDays.map(({ date }) => date),
+				historical: historicalDays.flatMap(({ date, points }) => points.map((point) => ({ ...point, date }))),
+				average,
+				currentTime: {
+					minuteOfDay: now.getHours() * 60 + now.getMinutes(),
+					label: format(now, "HH:mm"),
+				},
+			};
+		}),
 });

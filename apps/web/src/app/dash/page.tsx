@@ -3,7 +3,14 @@ import { subSeconds } from "date-fns/fp";
 import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, InfoIcon, PencilIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { ActivityCalendar, BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
+import {
+	ActivityCalendar,
+	BiggestUnitSelect,
+	DistributionChart,
+	Filter,
+	TimeSelect,
+	TopElement,
+} from "~/components/overview";
 import { getTimeRange, type BiggestUnit, type TimeRange } from "~/server/api/routers/overview";
 import { cookies, headers } from "next/headers";
 import { tryCatch } from "~/lib/utils";
@@ -41,19 +48,27 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	const { data: dailyActivity, error: dailyActivityError } = await tryCatch(
 		withRedisCache(`api:overview:getDailyActivity:${auth.user.id}`, 60 * 5, () => api.overview.getDailyActivity()),
 	);
+
+	const { data: distribution, error: distributionError } = await tryCatch(
+		api.overview.getDistribution({ workspace: workspace || undefined }),
+	);
+
 	// const { data: dailyActivity, error: dailyActivityError } = await tryCatch(api.overview.getDailyActivity());
 	const { data: top, error: topError } = await tryCatch(
 		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform }, biggestUnit }),
 	);
 
-	if (activityError || dailyActivityError || topError) {
+	if (activityError || dailyActivityError || distributionError || topError) {
 		activityError && Print.Error("[OVERVIEW]", "activityError", activityError);
 		dailyActivityError && Print.Error("[OVERVIEW]", "dailyActivityError", dailyActivityError);
+		distributionError && Print.Error("[OVERVIEW]", "distributionError", distributionError);
 		topError && Print.Error("[OVERVIEW]", "topError", topError);
 	}
 
 	const regional = auth.user.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
+
+	Print.Debug("[OVERVIEW]", "distribution", distribution?.historicalDates);
 
 	return (
 		<div>
@@ -199,8 +214,17 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 						</CardDescription>
 					</CardContent>
 				</Card>
+				<Card>
+					<CardContent>
+						<CardHeader className="flex items-center justify-between">
+							<CardTitle>
+								<Trans>Daily Coding Distribution</Trans>
+							</CardTitle>
+						</CardHeader>
+						{distribution && <DistributionChart data={distribution} />}
+					</CardContent>
+				</Card>
 				<RefetchOverview lastEvent={activity?.lastEvent} />
-				{/*<ClientOverview activity={activity!} top={top!} biggestUnit={biggestUnit} timeRange={timeRange} />*/}
 			</div>
 		</div>
 	);
