@@ -190,6 +190,7 @@ export const organizations = createTable("organizations", {
 	name: t.text("name").notNull(),
 	slug: t.text("slug").notNull().unique(),
 	logo: t.text("logo"),
+	public: t.boolean("public").default(false).notNull(),
 	createdAt: t.timestamp("created_at").notNull(),
 	metadata: t.text("metadata"),
 });

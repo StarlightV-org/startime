@@ -1,27 +1,27 @@
 "use client";
 
 import type { SessionType } from "better-auth";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import type { OrgType } from "better-auth";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 import { Fragment } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { authClient } from "~/server/better-auth/client";
-import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { useForm } from "@tanstack/react-form";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "./ui/field";
-import { Input } from "./ui/input";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 import z from "zod";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { api } from "~/trpc/react";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRole, useSession } from "~/provider/session-provider";
 import { TrashIcon } from "lucide-react";
-import { useConfirmModal } from "./ui/confirm-modal";
+import { useConfirmModal } from "../ui/confirm-modal";
 
 import { tryCatch } from "~/lib/utils";
 

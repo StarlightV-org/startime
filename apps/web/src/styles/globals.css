@@ -202,7 +202,7 @@
 
 	button:not(:disabled),
 	[role="button"]:not([aria-disabled="true"]) {
-		cursor: pointer !important;
+		cursor: pointer;
 	}
 	html:has([data-minimal-page]),
 	body:has([data-minimal-page]) {

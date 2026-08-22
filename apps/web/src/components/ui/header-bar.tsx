@@ -16,7 +16,7 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 	const { org } = useSession();
 
 	return (
-		<div className={cn("h-29.25", !showTabs && "h-20")}>
+		<div className={cn("mb-2 h-29.25", !showTabs && "h-20")}>
 			<header className="fixed top-0 left-1/2 z-50 flex h-fit w-[calc(100%-2.5rem)] max-w-240 -translate-x-1/2 flex-col rounded-b-xl bg-accent">
 				<div className={cn("flex items-center justify-between px-6 pt-3 pb-1", !showTabs && "pb-3")}>
 					<Link href="/" className="text-3xl text-white" prefetch={false}>

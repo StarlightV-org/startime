@@ -6,6 +6,16 @@ import { auth } from "~/server/better-auth";
 import { users, invitations, organizations, members } from "@startime/db";
 import { TRPCError } from "@trpc/server";
 import { op } from "~/lib/op";
+import { msg } from "@lingui/core/macro";
+
+const slugSchema = z
+	.string()
+	.min(5, msg`Slug must be at least 5 characters long`)
+	.max(20, msg`Slug must be at most 20 characters long`)
+	.regex(
+		/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
+		msg`Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.`,
+	);
 
 export const OrgConfig = {
 	maxMembers: 10,
@@ -234,6 +244,20 @@ const orgInvitesRouter = createTRPCRouter({
 		}),
 });
 
+const manageOrg = createTRPCRouter({
+	update: protectedProcedure
+		.input(
+			z.object({
+				name: z
+					.string()
+					.min(5, msg`Name must be at least 5 characters long`)
+					.max(30, msg`Name must be at most 30 characters long`),
+				slug: slugSchema,
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {}),
+});
+
 export const orgRouter = createTRPCRouter({
 	invites: orgInvitesRouter,
 	members: orgMembersRouter,
@@ -242,17 +266,13 @@ export const orgRouter = createTRPCRouter({
 			z.object({
 				name: z
 					.string()
-					.min(5, "Name must be at least 5 characters long")
-					.max(30, "Name must be at most 30 characters long"),
-				slug: z
+					.min(5, msg`Name must be at least 5 characters long`)
+					.max(30, msg`Name must be at most 30 characters long`),
+				slug: slugSchema,
+				logo: z
 					.string()
-					.min(5, "Slug must be at least 5 characters long")
-					.max(20, "Slug must be at most 20 characters long")
-					.regex(
-						/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
-						"Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.",
-					),
-				logo: z.string().min(5, "Logo must be at least 5 characters.").or(z.literal("")),
+					.min(5, msg`Logo must be at least 5 characters.`)
+					.or(z.literal("")),
 			}),
 		)
 		.use(trackMiddleware({ event: "org:create" }))
@@ -286,4 +306,6 @@ export const orgRouter = createTRPCRouter({
 
 			return data;
 		}),
+
+	manage: manageOrg,
 });

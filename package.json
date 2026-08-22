@@ -17,6 +17,7 @@
 		"web": "cd apps/web",
 		"dev": "bun --cwd apps/web dev",
 		"dev:im": "bun --cwd apps/importer dev",
+		"i18n": "bun --cwd apps/web i18n:clean",
 		"docker:build:app": "docker build -f Dockerfile.app -t nova-status-app:latest .",
 		"docker:build:migrate": "docker build -f Dockerfile.migrate -t nova-status-migrate:latest .",
 		"docker:build": "bun run docker:build:app && bun run docker:build:migrate"

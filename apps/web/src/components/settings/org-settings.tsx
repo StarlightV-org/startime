@@ -2,7 +2,7 @@
 
 import { authClient } from "~/server/better-auth/client";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardFooter } from "../ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
@@ -17,7 +17,12 @@ import { useSession } from "~/provider/session-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
 import { useConfirmModal } from "../ui/confirm-modal";
-import { tryCatch } from "~/lib/utils";
+import { cn, tryCatch } from "~/lib/utils";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { DoorOpenIcon, UserIcon } from "lucide-react";
+import { msg } from "@lingui/core/macro";
+import type { MessageDescriptor } from "@lingui/core";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export const normalizeSlug = (value: string) =>
 	value
@@ -29,11 +34,18 @@ export const normalizeSlug = (value: string) =>
 		.replace(/-+/g, "-")
 		.replace(/-$/, "");
 
-export default function DataManagement() {
+const roleLabels: Record<string, MessageDescriptor> = {
+	owner: msg`Owner`,
+	admin: msg`Admin`,
+	member: msg`Member`,
+};
+
+export default function OrgSettings() {
 	const { user, org, invitations } = useSession();
 
 	const [opened, { toggle }] = useDisclosure();
 	const router = useRouter();
+	const { t, i18n } = useLingui();
 
 	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
 
@@ -41,27 +53,33 @@ export default function DataManagement() {
 		onSuccess: () => {
 			router.refresh();
 			toggle();
-			toast.success("Organization created successfully.", { id: "create-org", description: undefined });
+			toast.success(t`Organization created successfully.`, { id: "create-org", description: undefined });
 		},
 		onMutate: () => {
-			toast.loading("Creating organization...", { id: "create-org", description: undefined });
+			toast.loading(t`Creating organization...`, { id: "create-org", description: undefined });
 		},
 		onError: (e) => {
-			toast.error("Failed to create organization.", { id: "create-org", description: e.message });
+			toast.error(t`Failed to create organization.`, { id: "create-org", description: i18n._(e.message) });
 		},
 	});
 
 	const orgSchema = z.object({
-		orgName: z.string().min(5, "Name must be at least 5 characters.").max(32, "Name must be at most 32 characters."),
+		orgName: z
+			.string()
+			.min(5, t`Name must be at least 5 characters.`)
+			.max(32, t`Name must be at most 32 characters.`),
 		slug: z
 			.string()
-			.min(5, "Slug must be at least 5 characters.")
-			.max(32, "Slug must be at most 32 characters.")
+			.min(5, t`Slug must be at least 5 characters.`)
+			.max(32, t`Slug must be at most 32 characters.`)
 			.regex(
 				/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
-				"Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.",
+				t`Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.`,
 			),
-		logo: z.string().min(5, "Logo must be at least 5 characters.").or(z.literal("")),
+		logo: z
+			.string()
+			.min(5, t`Logo must be at least 5 characters.`)
+			.or(z.literal("")),
 	});
 
 	const confirmModal = useConfirmModal();
@@ -90,22 +108,14 @@ export default function DataManagement() {
 		},
 	});
 
+	const ownerCount = org?.members?.filter((m) => m.role === "owner").length ?? 1;
+	// If the user is not an owner, or there is more than one owner, they can leave the organization.
+	const canLeave = org?.membership?.role !== "owner" || ownerCount > 1;
+
 	if (!user.organizationId)
 		return (
 			<Card>
 				<CardContent>No active organization</CardContent>
-				{/*<Button
-					onClick={async () => {
-						const { data, error } = await authClient.organization.setActive({
-							organizationSlug: "starlightv",
-						});
-						Print.Debug(data, error);
-						router.refresh();
-					}}
-				>
-					Create Organization
-				</Button>*/}
-
 				{!!invitations?.length && (
 					<CardDescription className="space-y-2 px-4">
 						<span className="text-sm text-muted-foreground">Pending invitations: {invitations.length}</span>
@@ -267,11 +277,79 @@ export default function DataManagement() {
 			</Card>
 		);
 
-	// Print.Debug(activeOrganization);
+	Print.Debug(org);
 
 	return (
 		<Card>
-			<CardContent></CardContent>
+			<CardHeader>
+				<CardTitle>
+					<Trans>Your Organization</Trans>
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="flex items-center justify-between gap-2">
+				<div className="flex flex-row items-center gap-2">
+					<Avatar size="lg">
+						<AvatarImage src={org?.logo!} alt={org?.name} />
+						<AvatarFallback>
+							<span>{org?.name?.slice(0, 2).toUpperCase()}</span>
+						</AvatarFallback>
+					</Avatar>
+					<h1 className="text-2xl">{org?.name}</h1>
+					<div className="flex items-center gap-2">
+						<Trans>Role: </Trans>
+						{i18n._(roleLabels[org?.membership?.role!]!)}
+					</div>
+				</div>
+
+				<div className="flex items-center gap-2">
+					<span
+						className="flex items-center gap-1"
+						title={(org?.members.length ?? 0) > 1 ? t`${org?.members.length} members` : t`${org?.members.length} member`}
+					>
+						{org?.members?.length ?? 0}
+						<UserIcon className="size-4" />
+					</span>
+					<div>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<Button
+									// disabled={!canLeave}
+									variant="outline"
+									className={!canLeave ? "cursor-not-allowed opacity-50 active:not-aria-[haspopup]:translate-y-0" : ""}
+									onClick={async () => {
+										if (!canLeave) {
+											return;
+										}
+										const result = await confirmModal({
+											content: t`Are you sure you want to leave this organization?`,
+											title: t`Leave Organization`,
+											confirmLabel: t`Leave`,
+										});
+										if (!result) {
+											return;
+										}
+										toast.loading("Leaving organization...", { id: "leave-org", description: undefined, duration: 5000 });
+									}}
+								>
+									<DoorOpenIcon className="size-4" />
+									<Trans>Leave</Trans>
+								</Button>
+							</TooltipTrigger>
+							<TooltipContent className="text-center">
+								{canLeave ? null : (
+									<span>
+										<Trans>
+											You cannot leave this organization.
+											<br />
+											Transfer ownership to another member or delete it.
+										</Trans>
+									</span>
+								)}
+							</TooltipContent>
+						</Tooltip>
+					</div>
+				</div>
+			</CardContent>
 		</Card>
 	);
 }

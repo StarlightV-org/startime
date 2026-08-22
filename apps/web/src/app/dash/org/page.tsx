@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { MemberList } from "~/components/org-components";
+import EditOrg from "~/components/org/edit-org";
+import { MemberList } from "~/components/org/org-components";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { getAuth } from "~/server/better-auth";
@@ -12,7 +13,7 @@ export default async function OrgPage() {
 	return (
 		<div className="flex flex-col gap-5">
 			<Card className="w-full">
-				<CardContent>
+				<CardContent className="flex items-center justify-between gap-5">
 					<div className="flex items-center gap-5 align-baseline">
 						<Avatar size="lg">
 							<AvatarImage src={org?.logo!} alt={org?.name} />
@@ -22,6 +23,7 @@ export default async function OrgPage() {
 						</Avatar>
 						<h1 className="text-2xl">{org?.name}</h1>
 					</div>
+					<EditOrg org={org} />
 				</CardContent>
 			</Card>
 			<Card className="w-full">

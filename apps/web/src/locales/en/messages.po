@@ -608,6 +608,92 @@ msgstr "Updated"
 msgid "Created"
 msgstr "Created"
 
+#: src/components/settings/org-settings.tsx:38
+msgid "Owner"
+msgstr "Owner"
+
+#: src/components/settings/org-settings.tsx:39
+msgid "Admin"
+msgstr "Admin"
+
+#: src/components/settings/org-settings.tsx:40
+msgid "Member"
+msgstr "Member"
+
+#: src/components/settings/org-settings.tsx:56
+msgid "Organization created successfully."
+msgstr "Organization created successfully."
+
+#: src/components/settings/org-settings.tsx:59
+msgid "Creating organization..."
+msgstr "Creating organization..."
+
+#: src/components/settings/org-settings.tsx:62
+msgid "Failed to create organization."
+msgstr "Failed to create organization."
+
+#: src/components/settings/org-settings.tsx:69
+msgid "Name must be at least 5 characters."
+msgstr "Name must be at least 5 characters."
+
+#: src/components/settings/org-settings.tsx:70
+msgid "Name must be at most 32 characters."
+msgstr "Name must be at most 32 characters."
+
+#: src/components/settings/org-settings.tsx:73
+msgid "Slug must be at least 5 characters."
+msgstr "Slug must be at least 5 characters."
+
+#: src/components/settings/org-settings.tsx:74
+msgid "Slug must be at most 32 characters."
+msgstr "Slug must be at most 32 characters."
+
+#: src/components/settings/org-settings.tsx:77
+#: src/server/api/routers/org.ts:17
+msgid "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
+msgstr "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
+
+#: src/components/settings/org-settings.tsx:81
+#: src/server/api/routers/org.ts:274
+msgid "Logo must be at least 5 characters."
+msgstr "Logo must be at least 5 characters."
+
+#: src/components/settings/org-settings.tsx:286
+#: src/components/ui/header-bar.tsx:46
+msgid "Your Organization"
+msgstr "Your Organization"
+
+#: src/components/settings/org-settings.tsx:299
+msgid "Role: "
+msgstr "Role: "
+
+#. placeholder {0}: org?.members.length
+#: src/components/settings/org-settings.tsx:307
+msgid "{0} members"
+msgstr "{0} members"
+
+#. placeholder {0}: org?.members.length
+#: src/components/settings/org-settings.tsx:307
+msgid "{0} member"
+msgstr "{0} member"
+
+#: src/components/settings/org-settings.tsx:324
+msgid "Are you sure you want to leave this organization?"
+msgstr "Are you sure you want to leave this organization?"
+
+#: src/components/settings/org-settings.tsx:325
+msgid "Leave Organization"
+msgstr "Leave Organization"
+
+#: src/components/settings/org-settings.tsx:326
+#: src/components/settings/org-settings.tsx:335
+msgid "Leave"
+msgstr "Leave"
+
+#: src/components/settings/org-settings.tsx:341
+msgid "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
+msgstr "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
+
 #. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
 #: src/components/ui/confirm-modal.tsx:174
 msgid "Wait {remainingSeconds} {0}"
@@ -632,10 +718,6 @@ msgstr "Repository"
 #: src/components/ui/header-bar.tsx:40
 msgid "Overview"
 msgstr "Overview"
-
-#: src/components/ui/header-bar.tsx:46
-msgid "Your Organization"
-msgstr "Your Organization"
 
 #: src/components/uploadthing.tsx:38
 msgid "You cant upload so many files at once."
@@ -670,6 +752,24 @@ msgstr "Upload failed: {0}"
 #: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"
+
+#: src/server/api/routers/org.ts:13
+msgid "Slug must be at least 5 characters long"
+msgstr "Slug must be at least 5 characters long"
+
+#: src/server/api/routers/org.ts:14
+msgid "Slug must be at most 20 characters long"
+msgstr "Slug must be at most 20 characters long"
+
+#: src/server/api/routers/org.ts:253
+#: src/server/api/routers/org.ts:269
+msgid "Name must be at least 5 characters long"
+msgstr "Name must be at least 5 characters long"
+
+#: src/server/api/routers/org.ts:254
+#: src/server/api/routers/org.ts:270
+msgid "Name must be at most 30 characters long"
+msgstr "Name must be at most 30 characters long"
 
 #: src/server/api/routers/overview.ts:55
 msgid "1 day"

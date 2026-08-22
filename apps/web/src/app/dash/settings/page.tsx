@@ -21,7 +21,6 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 
 	return (
 		<div>
-			<h1 className="p-4 text-2xl">Settings</h1>
 			<div className="flex flex-col gap-4">
 				<OrgSettings />
 				<AccountSettings />
