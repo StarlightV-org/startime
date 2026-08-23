@@ -30,7 +30,9 @@ export const users = createTable("users", {
 	image: t.text("image"),
 	createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 	updatedAt: t.timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-	organizationId: t.text("organization_id").references(() => organizations.id),
+	organizationId: t
+		.text("organization_id")
+		.references(() => organizations.id, { onDelete: "set null", onUpdate: "cascade" }),
 
 	/** User-owned settings, parsed and defaulted by the web application's account config schema. */
 	accountConfig: t.jsonb("account_config").$type<unknown>().notNull().default({}),

@@ -8,7 +8,7 @@ import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useDisclosure } from "@mantine/hooks";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -19,10 +19,11 @@ import { formatDate, formatDistanceToNowStrict } from "date-fns";
 import { useConfirmModal } from "../ui/confirm-modal";
 import { cn, tryCatch } from "~/lib/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { DoorOpenIcon, UserIcon } from "lucide-react";
+import { CheckIcon, DoorOpenIcon, UserIcon, XIcon } from "lucide-react";
 import { msg } from "@lingui/core/macro";
 import type { MessageDescriptor } from "@lingui/core";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Spinner } from "../ui/spinner";
 
 export const normalizeSlug = (value: string) =>
 	value
@@ -48,6 +49,19 @@ export default function OrgSettings() {
 	const { t, i18n } = useLingui();
 
 	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
+
+	const {
+		mutate: isSlugTaken,
+		mutateAsync: checkSlugTaken,
+		isPending: isCheckingSlug,
+		data: isSlugTakenResult,
+	} = api.org.isSlugTaken.useMutation({
+		onSuccess: (isTaken) => {
+			if (isTaken) {
+				form.setErrorMap({ onSubmit: { fields: { slug: t`This slug is already taken. Please choose a different one.` } } });
+			}
+		},
+	});
 
 	const { mutate } = api.org.create.useMutation({
 		onSuccess: () => {
@@ -100,6 +114,11 @@ export default function OrgSettings() {
 		},
 
 		onSubmit: async ({ value }) => {
+			if (await checkSlugTaken({ slug: value.slug })) {
+				form.setErrorMap({ onSubmit: { fields: { slug: t`This slug is already taken. Please choose a different one.` } } });
+				return;
+			}
+
 			mutate({
 				name: value.orgName,
 				slug: value.slug,
@@ -115,21 +134,27 @@ export default function OrgSettings() {
 	if (!user.organizationId)
 		return (
 			<Card>
-				<CardContent>No active organization</CardContent>
+				<CardContent>
+					<Trans>No active organization</Trans>
+				</CardContent>
 				{!!invitations?.length && (
 					<CardDescription className="space-y-2 px-4">
-						<span className="text-sm text-muted-foreground">Pending invitations: {invitations.length}</span>
+						<span className="text-sm text-muted-foreground">
+							<Trans>Pending invitations: {invitations.length}</Trans>
+						</span>
 
 						{invitations.map((invitation) => (
 							<div className="flex justify-between" key={invitation.id}>
 								<div className="flex items-center space-x-2">
 									<Avatar size="sm">
 										<AvatarImage src={invitation.organization.logo!} alt={invitation.user.name} />
-										<AvatarFallback>{invitation.organization.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+										<AvatarFallback visible={!!invitation.organization.logo}>
+											{invitation.organization.name.slice(0, 2).toUpperCase()}
+										</AvatarFallback>
 									</Avatar>
 									<span className="text-md">{invitation.organization.name}</span>
 									<span className="text-md">
-										{"Created: "}
+										<Trans>Created At</Trans>
 										{formatDate(invitation.organization.createdAt, "dd.MM.yyyy")}
 										{" - "}
 										{formatDistanceToNowStrict(invitation.organization.createdAt, {
@@ -140,24 +165,24 @@ export default function OrgSettings() {
 								<Button
 									onClick={async () => {
 										const result = await confirmModal({
-											content: "Are you sure you want to accept this invitation?",
-											title: `Accept invitation to ${invitation.organization.name}`,
+											content: t`Are you sure you want to accept this invitation?`,
+											title: t`Accept invitation to ${invitation.organization.name}`,
 											confirmLabel: "Accept",
 										});
 										if (result) {
-											toast.loading("Accepting invitation...", { id: "accept-invitation", description: undefined });
+											toast.loading(t`Accepting invitation...`, { id: "accept-invitation", description: undefined });
 											const { data, error } = await tryCatch(acceptInvite({ invitationId: invitation.id }));
 											if (data) {
-												toast.success("Invitation accepted.", { id: "accept-invitation" });
+												toast.success(t`Invitation accepted.`, { id: "accept-invitation" });
 												router.refresh();
 											}
 											if (error) {
-												toast.error("Failed to accept invitation.", { id: "accept-invitation", description: error.message });
+												toast.error(t`Failed to accept invitation.`, { id: "accept-invitation", description: error.message });
 											}
 										}
 									}}
 								>
-									Accept
+									<Trans>Accept</Trans>
 								</Button>
 							</div>
 						))}
@@ -168,7 +193,9 @@ export default function OrgSettings() {
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
 						<DialogTrigger asChild>
-							<Button>Create Organization</Button>
+							<Button>
+								<Trans>Create Organization</Trans>
+							</Button>
 						</DialogTrigger>
 						<DialogContent>
 							<form
@@ -186,7 +213,9 @@ export default function OrgSettings() {
 											const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 											return (
 												<Field data-invalid={isInvalid}>
-													<FieldLabel htmlFor={field.name}>Organization Name</FieldLabel>
+													<FieldLabel htmlFor={field.name}>
+														<Trans>Organization Name</Trans>
+													</FieldLabel>
 													<Input
 														id={field.name}
 														name={field.name}
@@ -214,16 +243,33 @@ export default function OrgSettings() {
 											return (
 												<Field data-invalid={isInvalid}>
 													<FieldLabel htmlFor={field.name}>Slug</FieldLabel>
-													<Input
-														id={field.name}
-														name={field.name}
-														value={field.state.value}
-														onBlur={field.handleBlur}
-														onChange={(e) => field.handleChange(normalizeSlug(e.target.value))}
-														aria-invalid={isInvalid}
-														placeholder="starlight"
-														autoComplete="off"
-													/>
+													<InputGroup>
+														<InputGroupInput
+															id={field.name}
+															name={field.name}
+															value={field.state.value}
+															onBlur={(event) => {
+																field.handleBlur();
+																isSlugTaken({ slug: normalizeSlug(event.target.value) });
+															}}
+															onChange={(event) => field.handleChange(normalizeSlug(event.target.value))}
+															aria-invalid={isInvalid}
+															placeholder="starlight"
+															autoComplete="off"
+														/>
+														<InputGroupAddon align="inline-end">
+															{isCheckingSlug ? (
+																<Spinner />
+															) : isSlugTakenResult === undefined || !isSlugTakenResult ? (
+																<CheckIcon className="text-green-500" />
+															) : (
+																<XIcon className="text-red-500" />
+															)}
+														</InputGroupAddon>
+													</InputGroup>
+													{isSlugTakenResult && (
+														<FieldError errors={[{ message: t`This slug is already taken. Please choose a different one.` }]} />
+													)}
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
 												</Field>
 											);
@@ -241,7 +287,7 @@ export default function OrgSettings() {
 														name={field.name}
 														value={field.state.value}
 														onBlur={field.handleBlur}
-														onChange={(e) => field.handleChange(normalizeSlug(e.target.value))}
+														onChange={(e) => field.handleChange(e.target.value)}
 														aria-invalid={isInvalid}
 														placeholder="https://your-organization-logo.com"
 														autoComplete="off"
@@ -254,7 +300,9 @@ export default function OrgSettings() {
 								</FieldGroup>
 							</form>
 
-							<span className="text-sm text-muted-foreground">You can only create one organization per account.</span>
+							<span className="text-sm text-muted-foreground">
+								<Trans>You can only create one organization per account.</Trans>
+							</span>
 
 							<DialogFooter>
 								<form.Subscribe
@@ -262,10 +310,10 @@ export default function OrgSettings() {
 									children={([canSubmit, isSubmitting]) => (
 										<>
 											<Button variant="outline" disabled={isSubmitting} onClick={() => form.reset()}>
-												Cancel
+												<Trans>Cancel</Trans>
 											</Button>
 											<Button disabled={!canSubmit || isSubmitting} type="submit" form="create-org-form">
-												Create
+												<Trans>Create</Trans>
 											</Button>
 										</>
 									)}
@@ -290,7 +338,7 @@ export default function OrgSettings() {
 				<div className="flex flex-row items-center gap-2">
 					<Avatar size="lg">
 						<AvatarImage src={org?.logo!} alt={org?.name} />
-						<AvatarFallback>
+						<AvatarFallback visible={!org?.logo}>
 							<span>{org?.name?.slice(0, 2).toUpperCase()}</span>
 						</AvatarFallback>
 					</Avatar>
@@ -313,7 +361,6 @@ export default function OrgSettings() {
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button
-									// disabled={!canLeave}
 									variant="outline"
 									className={!canLeave ? "cursor-not-allowed opacity-50 active:not-aria-[haspopup]:translate-y-0" : ""}
 									onClick={async () => {

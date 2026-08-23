@@ -294,6 +294,134 @@ msgstr "Diese Seite befindet sich in geschlossener Beta. Möchtest du mitmachen?
 msgid "Join our Discord"
 msgstr "Discord beitreten"
 
+#: src/components/org/edit-org.tsx:35
+msgid "Organization updated successfully."
+msgstr "Organisation erfolgreich aktualisiert."
+
+#: src/components/org/edit-org.tsx:38
+msgid "Updating organization..."
+msgstr "Organisation wird aktualisiert..."
+
+#: src/components/org/edit-org.tsx:41
+msgid "Failed to update organization."
+msgstr "Organisation konnte nicht aktualisiert werden."
+
+#: src/components/org/edit-org.tsx:49
+msgid "Organization deleted successfully."
+msgstr "Organisation erfolgreich gelöscht."
+
+#: src/components/org/edit-org.tsx:52
+msgid "Deleting organization..."
+msgstr "Organisation wird gelöscht..."
+
+#: src/components/org/edit-org.tsx:55
+msgid "Failed to delete organization."
+msgstr "Organisation konnte nicht gelöscht werden."
+
+#: src/components/org/edit-org.tsx:62
+#: src/components/settings/org-settings.tsx:83
+#: src/server/api/routers/org.ts:308
+#: src/server/api/routers/org.ts:416
+msgid "Name must be at least 5 characters."
+msgstr "Name muss mindestens 5 Zeichen lang sein."
+
+#: src/components/org/edit-org.tsx:63
+#: src/components/settings/org-settings.tsx:84
+#: src/server/api/routers/org.ts:309
+#: src/server/api/routers/org.ts:417
+msgid "Name must be at most 32 characters."
+msgstr "Name darf maximal 32 Zeichen lang sein."
+
+#: src/components/org/edit-org.tsx:66
+#: src/components/settings/org-settings.tsx:87
+#: src/server/api/routers/org.ts:14
+msgid "Slug must be at least 5 characters."
+msgstr "Slug muss mindestens 5 Zeichen lang sein."
+
+#: src/components/org/edit-org.tsx:67
+#: src/components/settings/org-settings.tsx:88
+#: src/server/api/routers/org.ts:15
+msgid "Slug must be at most 32 characters."
+msgstr "Slug darf maximal 32 Zeichen lang sein."
+
+#: src/components/org/edit-org.tsx:70
+#: src/components/settings/org-settings.tsx:91
+#: src/server/api/routers/org.ts:18
+msgid "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
+msgstr "Slug muss mit einer Kleinbuchstaben beginnen und nur Kleinbuchstaben, Zahlen und ein einzelner Bindestrich enthalten."
+
+#: src/components/org/edit-org.tsx:74
+#: src/components/settings/org-settings.tsx:95
+#: src/server/api/routers/org.ts:313
+#: src/server/api/routers/org.ts:421
+msgid "Logo must be at least 5 characters."
+msgstr "Logo muss mindestens 5 Zeichen lang sein."
+
+#: src/components/org/edit-org.tsx:93
+msgid "Update Slug"
+msgstr "Slug aktualisieren"
+
+#: src/components/org/edit-org.tsx:96
+msgid "Are you sure you want to update the slug for this organization? <0/>This will change the URL to this organization's page."
+msgstr "Bist du sicher, dass du den Slug für diese Organisation aktualisieren möchtest? <0/>Dies wird die URL dieser Organisation's Seite ändern."
+
+#: src/components/org/edit-org.tsx:124
+#: src/components/org/edit-org.tsx:212
+#: src/components/settings/org-settings.tsx:61
+#: src/components/settings/org-settings.tsx:118
+#: src/components/settings/org-settings.tsx:271
+msgid "This slug is already taken. Please choose a different one."
+msgstr "Dieser Slug ist bereits vergeben. Bitte wähle einen anderen."
+
+#: src/components/org/edit-org.tsx:134
+#: src/components/org/edit-org.tsx:139
+msgid "Edit Org"
+msgstr "Organisation bearbeiten"
+
+#: src/components/org/edit-org.tsx:156
+#: src/components/settings/org-settings.tsx:217
+msgid "Organization Name"
+msgstr "Organisationsname"
+
+#: src/components/org/edit-org.tsx:209
+msgid "The URL slug for the organization."
+msgstr "Der URL-Slug für die Organisation."
+
+#: src/components/org/edit-org.tsx:237
+msgid "Logo URL of your organization."
+msgstr "Logo-URL deiner Organisation."
+
+#: src/components/org/edit-org.tsx:253
+msgid "Can the organization be seen by other users? Project names will be hidden."
+msgstr "Kann die Organisation von anderen Benutzern gesehen werden? Projektnamen werden ausgeblendet."
+
+#: src/components/org/edit-org.tsx:277
+msgid "Are you sure you want to delete this organization? <0/><1><2><3>All members will be removed.</3></2><4><5>Other configurations will be deleted.</5></4><6><7>This action cannot be undone.</7></6></1>"
+msgstr "Bist du sicher, dass du diese Organisation löschen möchtest? <0/><1><2><3>Alle Mitglieder werden entfernt.</3></2><4><5>Andere Konfigurationen werden gelöscht.</5></4><6><7>Diese Aktion kann nicht rückgängig gemacht werden.</7></6></1>"
+
+#. placeholder {0}: org.name
+#: src/components/org/edit-org.tsx:292
+msgid "Delete Organization: {0}?"
+msgstr "Löschen die Organisation: {0}?"
+
+#: src/components/org/edit-org.tsx:299
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/components/org/edit-org.tsx:313
+#: src/components/settings/auth-settings.tsx:153
+#: src/components/settings/auth-settings.tsx:260
+#: src/components/settings/auth-settings.tsx:449
+#: src/components/settings/data-settings.tsx:239
+#: src/components/settings/org-settings.tsx:313
+#: src/components/ui/confirm-modal.tsx:185
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/components/org/edit-org.tsx:316
+msgid "Update"
+msgstr "Aktualisieren"
+
 #: src/components/overview/client-overview.tsx:92
 msgid "Working on"
 msgstr "Arbeitet an"
@@ -417,6 +545,7 @@ msgstr "API-Schlüssel wird erstellt"
 
 #: src/components/settings/auth-settings.tsx:110
 #: src/components/settings/auth-settings.tsx:215
+#: src/components/settings/org-settings.tsx:157
 msgid "Created At"
 msgstr "Erstellt am"
 
@@ -428,20 +557,13 @@ msgstr "Passkey erstellen"
 msgid "A passkey is required to verify sensitive actions."
 msgstr "Ein Passkey ist erforderlich, um sensible Aktionen zu verifizieren."
 
-#: src/components/settings/auth-settings.tsx:153
-#: src/components/settings/auth-settings.tsx:260
-#: src/components/settings/auth-settings.tsx:449
-#: src/components/settings/data-settings.tsx:239
-#: src/components/ui/confirm-modal.tsx:185
-msgid "Cancel"
-msgstr "Abbrechen"
-
 #: src/components/settings/auth-settings.tsx:169
 msgid "Passkey created successfully"
 msgstr "Passkey erfolgreich erstellt"
 
 #: src/components/settings/auth-settings.tsx:174
 #: src/components/settings/auth-settings.tsx:271
+#: src/components/settings/org-settings.tsx:316
 msgid "Create"
 msgstr "Erstellen"
 
@@ -608,89 +730,105 @@ msgstr "Aktualisiert"
 msgid "Created"
 msgstr "Erstellt"
 
-#: src/components/settings/org-settings.tsx:38
+#: src/components/settings/org-settings.tsx:39
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: src/components/settings/org-settings.tsx:39
+#: src/components/settings/org-settings.tsx:40
 msgid "Admin"
 msgstr "Admin"
 
-#: src/components/settings/org-settings.tsx:40
+#: src/components/settings/org-settings.tsx:41
 msgid "Member"
 msgstr "Mitglied"
 
-#: src/components/settings/org-settings.tsx:56
+#: src/components/settings/org-settings.tsx:70
 msgid "Organization created successfully."
 msgstr "Organisation erfolgreich erstellt."
 
-#: src/components/settings/org-settings.tsx:59
+#: src/components/settings/org-settings.tsx:73
 msgid "Creating organization..."
 msgstr "Organisation wird erstellt..."
 
-#: src/components/settings/org-settings.tsx:62
+#: src/components/settings/org-settings.tsx:76
 msgid "Failed to create organization."
 msgstr "Organisation konnte nicht erstellt werden."
 
-#: src/components/settings/org-settings.tsx:69
-msgid "Name must be at least 5 characters."
-msgstr "Name muss mindestens 5 Zeichen lang sein."
+#: src/components/settings/org-settings.tsx:138
+msgid "No active organization"
+msgstr "Keine aktive Organisation"
 
-#: src/components/settings/org-settings.tsx:70
-msgid "Name must be at most 32 characters."
-msgstr "Name darf maximal 32 Zeichen lang sein."
+#. placeholder {0}: invitations.length
+#: src/components/settings/org-settings.tsx:143
+msgid "Pending invitations: {0}"
+msgstr "Ausstehende Einladungen: {0}"
 
-#: src/components/settings/org-settings.tsx:73
-msgid "Slug must be at least 5 characters."
-msgstr "Slug muss mindestens 5 Zeichen lang sein."
+#: src/components/settings/org-settings.tsx:168
+msgid "Are you sure you want to accept this invitation?"
+msgstr "Bist du sicher, dass du diese Einladung akzeptieren möchtest?"
 
-#: src/components/settings/org-settings.tsx:74
-msgid "Slug must be at most 32 characters."
-msgstr "Slug darf maximal 32 Zeichen lang sein."
+#. placeholder {0}: invitation.organization.name
+#: src/components/settings/org-settings.tsx:169
+msgid "Accept invitation to {0}"
+msgstr "Einladung annehmen für {0}"
 
-#: src/components/settings/org-settings.tsx:77
-#: src/server/api/routers/org.ts:17
-msgid "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
-msgstr "Slug muss mit einer Kleinbuchstaben beginnen und nur Kleinbuchstaben, Zahlen und ein einzelner Bindestrich enthalten."
+#: src/components/settings/org-settings.tsx:173
+msgid "Accepting invitation..."
+msgstr "Einladung wird angenommen..."
 
-#: src/components/settings/org-settings.tsx:81
-#: src/server/api/routers/org.ts:274
-msgid "Logo must be at least 5 characters."
-msgstr "Logo muss mindestens 5 Zeichen lang sein."
+#: src/components/settings/org-settings.tsx:176
+msgid "Invitation accepted."
+msgstr "Einladung wurde angenommen."
 
-#: src/components/settings/org-settings.tsx:286
+#: src/components/settings/org-settings.tsx:180
+msgid "Failed to accept invitation."
+msgstr "Einladung konnte nicht angenommen werden."
+
+#: src/components/settings/org-settings.tsx:185
+msgid "Accept"
+msgstr "Akzeptieren"
+
+#: src/components/settings/org-settings.tsx:197
+msgid "Create Organization"
+msgstr "Organisation erstellen"
+
+#: src/components/settings/org-settings.tsx:304
+msgid "You can only create one organization per account."
+msgstr "Du kannst nur eine Organisation pro Account erstellen."
+
+#: src/components/settings/org-settings.tsx:334
 #: src/components/ui/header-bar.tsx:46
 msgid "Your Organization"
 msgstr "Deine Organisation"
 
-#: src/components/settings/org-settings.tsx:299
+#: src/components/settings/org-settings.tsx:347
 msgid "Role: "
 msgstr "Rolle: "
 
 #. placeholder {0}: org?.members.length
-#: src/components/settings/org-settings.tsx:307
+#: src/components/settings/org-settings.tsx:355
 msgid "{0} members"
 msgstr "{0} Mitglieder"
 
 #. placeholder {0}: org?.members.length
-#: src/components/settings/org-settings.tsx:307
+#: src/components/settings/org-settings.tsx:355
 msgid "{0} member"
 msgstr "{0} Mitglied"
 
-#: src/components/settings/org-settings.tsx:324
+#: src/components/settings/org-settings.tsx:371
 msgid "Are you sure you want to leave this organization?"
 msgstr "Bist du sicher, dass du diese Organisation verlassen möchtest?"
 
-#: src/components/settings/org-settings.tsx:325
+#: src/components/settings/org-settings.tsx:372
 msgid "Leave Organization"
 msgstr "Organisation verlassen"
 
-#: src/components/settings/org-settings.tsx:326
-#: src/components/settings/org-settings.tsx:335
+#: src/components/settings/org-settings.tsx:373
+#: src/components/settings/org-settings.tsx:382
 msgid "Leave"
 msgstr "Verlassen"
 
-#: src/components/settings/org-settings.tsx:341
+#: src/components/settings/org-settings.tsx:388
 msgid "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
 msgstr "Du kannst diese Organisation nicht verlassen.<0/>Übertrage sie an ein anderes Mitglied oder lösche sie."
 
@@ -752,24 +890,6 @@ msgstr "Hochladen fehlgeschlagen: {0}"
 #: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"
-
-#: src/server/api/routers/org.ts:13
-msgid "Slug must be at least 5 characters long"
-msgstr ""
-
-#: src/server/api/routers/org.ts:14
-msgid "Slug must be at most 20 characters long"
-msgstr ""
-
-#: src/server/api/routers/org.ts:253
-#: src/server/api/routers/org.ts:269
-msgid "Name must be at least 5 characters long"
-msgstr ""
-
-#: src/server/api/routers/org.ts:254
-#: src/server/api/routers/org.ts:270
-msgid "Name must be at most 30 characters long"
-msgstr ""
 
 #: src/server/api/routers/overview.ts:55
 msgid "1 day"
