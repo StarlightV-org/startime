@@ -108,25 +108,25 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 									<h3 className="text-sm text-sidebar-primary">
 										<Trans>Time/Total</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.timeTotal ?? "—"}</p>
+									<p className="text-xl text-primary-foreground">{activity?.timeTotal ?? "�"}</p>
 								</div>
 								<div className="col-span-1 flex flex-col px-4">
 									<h3 className="text-sm text-sidebar-primary">
 										<Trans>Time/Today</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.timeToday ?? "—"}</p>
+									<p className="text-xl text-primary-foreground">{activity?.timeToday ?? "�"}</p>
 								</div>
 								<div className="col-span-1 flex flex-col px-4">
 									<h3 className="text-sm text-sidebar-primary">
 										<Trans>Streak/Current</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.currentStreak ?? "—"}</p>
+									<p className="text-xl text-primary-foreground">{activity?.currentStreak ?? "�"}</p>
 								</div>
 								<div className="col-span-1 flex flex-col pl-4">
 									<h3 className="text-sm text-sidebar-primary">
 										<Trans>Streak/Max</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.allTimeStreak ?? "—"}</p>
+									<p className="text-xl text-primary-foreground">{activity?.allTimeStreak ?? "�"}</p>
 								</div>
 							</div>
 							<ActivityCalendar dailyActivity={dailyActivity ?? []} startOfWeek={regional.startOfWeek} />
@@ -143,11 +143,13 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 								<RefetchOverviewButton />
 
 								<Dialog>
-									<DialogTrigger asChild>
-										<Button variant="ghost" size="icon-sm">
-											<InfoIcon className="size-4 cursor-pointer" />
-										</Button>
-									</DialogTrigger>
+									<DialogTrigger
+										render={
+											<Button variant="ghost" size="icon-sm">
+												<InfoIcon className="size-4 cursor-pointer" />
+											</Button>
+										}
+									/>
 									<DialogContent>
 										<Trans>
 											<DialogTitle>Calculations</DialogTitle>

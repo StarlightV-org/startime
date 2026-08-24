@@ -113,11 +113,11 @@ export default function AuthSettings({
 								<div className="flex items-center justify-end gap-2">
 									<span>Actions</span>
 									<Dialog open={openedCreatePasskey} onOpenChange={toggleCreatePasskey}>
-										<DialogTrigger asChild>
+										<DialogTrigger render={
 											<Button size="sm" variant="outline">
 												Create Passkey
 											</Button>
-										</DialogTrigger>
+										}/>
 										<DialogContent>
 											<DialogTitle>
 												<Trans>Create Passkey</Trans>
@@ -220,11 +220,11 @@ export default function AuthSettings({
 										<Trans>Actions</Trans>
 									</span>
 									<Dialog open={openCreateApiKey} onOpenChange={toggleCreateApiKey}>
-										<DialogTrigger asChild>
+										<DialogTrigger render={
 											<Button size="sm" variant="outline">
 												<Trans>Create Api Key</Trans>
 											</Button>
-										</DialogTrigger>
+										}/>
 										<DialogContent>
 											<DialogTitle>
 												<Trans>Create Api Key</Trans>
@@ -458,3 +458,4 @@ function ApiKeyRow({ apiKey }: { apiKey: ApiKey }) {
 		</>
 	);
 }
+

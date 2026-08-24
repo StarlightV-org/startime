@@ -171,11 +171,11 @@ export default function DataManagement({
 						</Trans>
 
 						<Dialog open={opened} onOpenChange={toggle}>
-							<DialogTrigger asChild>
+							<DialogTrigger render={
 								<Button className="mt-auto">
 									<Trans>Import</Trans>
 								</Button>
-							</DialogTrigger>
+							}/>
 							<DialogContent {...getRootProps()}>
 								{isDragActive && (
 									<div className="absolute inset-0 z-10 flex h-full w-full items-center justify-center bg-popover/50">
@@ -270,8 +270,7 @@ export default function DataManagement({
 								onMouseEnter={() => {
 									if (!isLoadingExportUrl && !exportUrl) getExportUrl();
 								}}
-								asChild
-							>
+							 render={
 								<a
 									href={exportUrl ?? ""}
 									download
@@ -282,7 +281,7 @@ export default function DataManagement({
 								>
 									Download
 								</a>
-							</Button>
+							}/>
 						) : latestPendingExport ? (
 							<p className="mt-auto text-sm text-muted-foreground">Latest: {latestPendingExport.message}</p>
 						) : (
@@ -408,3 +407,4 @@ function ImportRow({ imp }: { imp: ImportItem }) {
 		</div>
 	);
 }
+

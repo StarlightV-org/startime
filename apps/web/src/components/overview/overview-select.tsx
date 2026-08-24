@@ -39,7 +39,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 			<SelectTrigger>
 				<SelectValue fallback={timeRangeLabels[value]} />
 			</SelectTrigger>
-			<SelectContent position={"popper"}>
+			<SelectContent>
 				<SelectGroup>
 					<SelectLabel>Relative</SelectLabel>
 					<SelectItem value="past1">
@@ -126,3 +126,5 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 		</Select>
 	);
 }
+
+

@@ -25,21 +25,23 @@ export default async function NotFound() {
 							size="lg"
 							variant="outline"
 							type="button"
-							asChild
-						>
-							{session?.id ? (
-								<Link href="/dash">
-									<ArrowLeft /> Back to Dashboard
-								</Link>
-							) : (
-								<Link href="/">
-									<ArrowLeft /> Back to Homepage
-								</Link>
-							)}
-						</Button>
+							render={
+								session?.id ? (
+									<Link href="/dash">
+										<ArrowLeft /> Back to Dashboard
+									</Link>
+								) : (
+									<Link href="/">
+										<ArrowLeft /> Back to Homepage
+									</Link>
+								)
+							}
+						/>
 					</CardContent>
 				</Card>
 			</div>
 		</main>
 	);
 }
+
+

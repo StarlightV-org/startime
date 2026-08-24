@@ -57,7 +57,7 @@ function AutoConfigField({
 					<Select
 						value={String(Boolean(value))}
 						disabled={disabled}
-						onValueChange={(nextValue) => onValueCommit(field.path, nextValue === "true")}
+						onValueChange={(nextValue: string | null) => onValueCommit(field.path, nextValue === "true")}
 					>
 						<SelectTrigger id={id} className="w-full">
 							<SelectValue fallback={booleanLabel(Boolean(value), field.configuredDefault)} />
@@ -72,7 +72,7 @@ function AutoConfigField({
 					<Select
 						value={String(value ?? "")}
 						disabled={disabled}
-						onValueChange={(nextValue) => onValueCommit(field.path, nextValue)}
+						onValueChange={(nextValue: string | null) => onValueCommit(field.path, nextValue)}
 					>
 						<SelectTrigger id={id} className="w-full">
 							<SelectValue fallback={field.enumLabels[String(value)] ?? String(value)} />
@@ -158,3 +158,6 @@ export function AutoConfigSettings({ config, disabled, onValueChange, onValueCom
 		</Card>
 	));
 }
+
+
+

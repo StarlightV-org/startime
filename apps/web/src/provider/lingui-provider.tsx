@@ -21,3 +21,5 @@ export function LinguiProvider({ children, locale, messages }: Props) {
 
 	return <I18nProvider i18n={i18n}>{children}</I18nProvider>;
 }
+
+
