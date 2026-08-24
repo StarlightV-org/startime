@@ -196,6 +196,11 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	/* Radix locks scrolling for dialogs and selects. Its scrollbar margin shifts centered layouts in browsers that retain the scrollbar. */
+	body[data-scroll-locked] {
+		margin-right: 0 !important;
+	}
 	html {
 		@apply font-sans;
 	}

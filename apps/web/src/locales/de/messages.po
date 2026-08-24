@@ -407,7 +407,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: src/components/org/edit-org.tsx:312
-#: src/components/org/org-components.tsx:339
+#: src/components/org/org-components.tsx:320
 #: src/components/settings/auth-settings.tsx:153
 #: src/components/settings/auth-settings.tsx:260
 #: src/components/settings/auth-settings.tsx:449
@@ -421,62 +421,62 @@ msgstr "Abbrechen"
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: src/components/org/org-components.tsx:156
+#: src/components/org/org-components.tsx:137
 msgid "Change role"
 msgstr "Rolle ändern"
 
 #. placeholder {0}: member.user.name
-#: src/components/org/org-components.tsx:158
+#: src/components/org/org-components.tsx:140
 msgid "<0>Are you sure you want to change the role of \"{0}\" to <1>owner</1>?<2/>They will be able to do everything, including changing <3>your role</3>.</0>"
 msgstr "<0>Bist du sicher, dass du die Rolle von \"{0}\" auf <1>Eigentümer</1> ändern möchtest?<2/>Eigentümer können alles tun, einschließlich der Änderung <3>Deiner Rolle</3>.</0>"
 
 #. placeholder {0}: member.user.name
-#: src/components/org/org-components.tsx:195
+#: src/components/org/org-components.tsx:176
 msgid "<0>Are you sure you want to kick \"{0}\"? <1/>this action cannot be undone.</0>"
 msgstr "<0>Bist du sicher, dass du den Mitglied \"{0}\" kicken möchtest? <1/>Diese Aktion kann nicht rückgängig gemacht werden.</0>"
 
-#: src/components/org/org-components.tsx:202
+#: src/components/org/org-components.tsx:183
 msgid "Kick Member"
 msgstr "Mitglied kicken"
 
 #. placeholder {0}: member.user.name
-#: src/components/org/org-components.tsx:204
+#: src/components/org/org-components.tsx:185
 msgid "Kick \"{0}\""
 msgstr "\"{0}\" kicken"
 
-#: src/components/org/org-components.tsx:209
+#: src/components/org/org-components.tsx:190
 msgid "Kicking member"
 msgstr "Mitglied wird gekickt..."
 
-#: src/components/org/org-components.tsx:216
+#: src/components/org/org-components.tsx:197
 msgid "Failed to kick member"
 msgstr "Fehler beim Kicken des Mitglieds"
 
-#: src/components/org/org-components.tsx:223
+#: src/components/org/org-components.tsx:204
 msgid "Member kicked"
 msgstr "Mitglied gekickt"
 
-#: src/components/org/org-components.tsx:248
+#: src/components/org/org-components.tsx:229
 msgid "Member invited successfully"
 msgstr "Mitglied erfolgreich eingeladen"
 
-#: src/components/org/org-components.tsx:254
+#: src/components/org/org-components.tsx:235
 msgid "Failed to invite member"
 msgstr "Fehler beim Einladen des Mitglieds"
 
-#: src/components/org/org-components.tsx:260
+#: src/components/org/org-components.tsx:241
 msgid "Inviting member..."
 msgstr "Mitglied wird eingeladen..."
 
-#: src/components/org/org-components.tsx:285
+#: src/components/org/org-components.tsx:266
 msgid "Invite Member"
 msgstr "Mitglied einladen"
 
-#: src/components/org/org-components.tsx:315
+#: src/components/org/org-components.tsx:296
 msgid "Email of the user you want to invite. <0/> They will be invited with the role \"Member\"."
 msgstr "E-Mail-Adresse des Benutzers, den du einladen möchtest. <0/>Er wird mit der Rolle \"Mitglied\" eingeladen."
 
-#: src/components/org/org-components.tsx:342
+#: src/components/org/org-components.tsx:323
 msgid "Invite"
 msgstr "Einladen"
 

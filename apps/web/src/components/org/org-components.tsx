@@ -101,26 +101,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 	});
 	const { t, i18n } = useLingui();
 
-	const { mutateAsync: kickMember } = api.org.members.kickMember.useMutation({
-		// onSuccess: () => {
-		// 	router.refresh();
-		// 	toast.success("Member removed", {
-		// 		description: `Member ${member.user.name} has been removed from the organization`,
-		// 		id: `remove-member-${member.id}`,
-		// 	});
-		// },
-		// onError: (e) => {
-		// 	toast.error("Failed to remove member", {
-		// 		id: `remove-member-${member.id}`,
-		// 		description: e.message,
-		// 	});
-		// },
-		// onMutate: () => {
-		// 	toast.loading("Removing member", {
-		// 		id: `remove-member-${member.id}`,
-		// 	});
-		// },
-	});
+	const { mutateAsync: kickMember } = api.org.members.kickMember.useMutation();
 
 	const canEditMember =
 		(checkRole("owner") && user.id !== member.userId) ||
@@ -131,7 +112,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 			<div className="flex items-center space-x-2">
 				<Avatar size="sm">
 					<AvatarImage src={member.user.image!} alt={member.user.name} />
-					<AvatarFallback>{member.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+					<AvatarFallback visible={!member.user.image}>{member.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
 				</Avatar>
 				<span className="text-md">{member.user.name}</span>
 				<span className="text-md">
@@ -174,11 +155,10 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 						}}
 					>
 						<SelectTrigger className="w-full max-w-40">
-							<SelectValue fallback={i18n._(member.role)} placeholder="Select a role" />
+							<SelectValue fallback={i18n._(roleLabels[member.role!]!)} placeholder="Select a role" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
-								{/*{checkRole("owner") && <SelectItem value="owner">Owner</SelectItem>}*/}
 								<SelectItem value="owner" disabled={!checkRole("owner")}>
 									{i18n._(roleLabels.owner!)}
 								</SelectItem>
