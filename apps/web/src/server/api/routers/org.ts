@@ -24,24 +24,12 @@ export const OrgConfig = {
 	invitationExpiresIn: 24 * 60 * 60 * 1000, // 1 day
 };
 
-const roleRank = {
-	member: 1,
-	admin: 2,
-	owner: 3,
-} as const;
-
-type OrganizationRole = keyof typeof roleRank;
-
 function requireOrganizationManager<T extends { organizationId: string | null; role: string | null }>(
 	user: T,
 ): asserts user is T & { organizationId: string; role: "admin" | "owner" } {
 	if (!user.organizationId || (user.role !== "admin" && user.role !== "owner")) {
 		throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
 	}
-}
-
-function canManageMember(actorRole: OrganizationRole, targetRole: OrganizationRole) {
-	return roleRank[actorRole] > roleRank[targetRole];
 }
 
 const orgMembersRouter = createTRPCRouter({
@@ -66,7 +54,11 @@ const orgMembersRouter = createTRPCRouter({
 				throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 			}
 
-			if (!canManageMember(ctx.user.role, member.role) || roleRank[role] >= roleRank[ctx.user.role]) {
+			const isEditingSelf = userId === ctx.user.id;
+			const adminEditingOwner = ctx.user.role === "admin" && member.role === "owner";
+			const adminAssigningOwner = ctx.user.role === "admin" && role === "owner";
+
+			if (isEditingSelf || adminEditingOwner || adminAssigningOwner) {
 				throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
 			}
 
@@ -76,6 +68,56 @@ const orgMembersRouter = createTRPCRouter({
 				.where(and(eq(members.userId, userId), eq(members.organizationId, ctx.user.organizationId)));
 
 			return { success: true, newRole: role };
+		}),
+
+	leave: protectedProcedure
+		.use(trackMiddleware({ event: "org:member:leave", addInput: false }))
+		.mutation(async ({ ctx }) => {
+			if (!ctx.user.organizationId) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Organization membership not found" });
+			}
+
+			await ctx.db.transaction(async (tx) => {
+				await tx.execute(
+					sql`SELECT 1 FROM ${organizations} WHERE ${organizations.id} = ${ctx.user.organizationId} FOR UPDATE`,
+				);
+
+				const membership = await tx.query.members.findFirst({
+					where: and(eq(members.userId, ctx.user.id), eq(members.organizationId, ctx.user.organizationId)),
+					columns: { role: true },
+				});
+
+				if (!membership) {
+					throw new TRPCError({ code: "NOT_FOUND", message: "Organization membership not found" });
+				}
+
+				if (membership.role === "owner") {
+					const ownerCount =
+						(
+							await tx
+								.select({ ownerCount: count() })
+								.from(members)
+								.where(and(eq(members.organizationId, ctx.user.organizationId), eq(members.role, "owner")))
+						)[0]?.ownerCount ?? 0;
+
+					if (ownerCount <= 1) {
+						throw new TRPCError({
+							code: "FORBIDDEN",
+							message: "Transfer ownership or delete the organization before leaving",
+						});
+					}
+				}
+
+				await tx
+					.delete(members)
+					.where(and(eq(members.userId, ctx.user.id), eq(members.organizationId, ctx.user.organizationId)));
+				await tx
+					.update(users)
+					.set({ organizationId: null })
+					.where(and(eq(users.id, ctx.user.id), eq(users.organizationId, ctx.user.organizationId)));
+			});
+
+			return { success: true };
 		}),
 
 	kickMember: protectedProcedure
@@ -98,7 +140,7 @@ const orgMembersRouter = createTRPCRouter({
 				throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 			}
 
-			if (!canManageMember(ctx.user.role, member.role)) {
+			if (userId === ctx.user.id || (ctx.user.role === "admin" && member.role === "owner")) {
 				throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
 			}
 

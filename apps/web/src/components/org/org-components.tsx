@@ -24,8 +24,12 @@ import { TrashIcon } from "lucide-react";
 import { useConfirmModal } from "../ui/confirm-modal";
 
 import { tryCatch } from "~/lib/utils";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { roleLabels } from "../settings/org-settings";
 
 export function MemberList({ org }: { org: SessionType["org"] }) {
+	const checkRole = useRole();
+
 	if (!org) return null;
 	if (!org.members) return null;
 	if (org.members.length === 0) return null;
@@ -35,7 +39,7 @@ export function MemberList({ org }: { org: SessionType["org"] }) {
 			<CardContent>
 				<div className="flex items-center justify-between pb-2">
 					<h1 className="text-2xl">Members</h1>
-					<InviteMember />
+					{checkRole("admin") && <InviteMember />}
 				</div>
 				{org.members.map((member, i) => {
 					return (
@@ -95,6 +99,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 			});
 		},
 	});
+	const { t, i18n } = useLingui();
 
 	const { mutateAsync: kickMember } = api.org.members.kickMember.useMutation({
 		// onSuccess: () => {
@@ -117,6 +122,10 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 		// },
 	});
 
+	const canEditMember =
+		(checkRole("owner") && user.id !== member.userId) ||
+		(checkRole("admin") && user.id !== member.userId && member.role !== "owner");
+
 	return (
 		<div className="flex items-center justify-between space-x-2 rounded-md p-1 hover:bg-card-foreground/10">
 			<div className="flex items-center space-x-2">
@@ -133,60 +142,86 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 					})}
 				</span>
 			</div>
-			{checkRole("admin") ? (
+			{canEditMember ? (
 				<div className="flex w-1/3 items-center justify-end gap-2">
 					<Select
 						value={member.role}
 						defaultValue={member.role}
 						onValueChange={async (value) => {
+							if (value === member.role) return;
+
+							if (value === "owner") {
+								if (!checkRole("owner")) return;
+								const confirmed = await confirmModal({
+									title: t`Change role`,
+									closeOnClickOutside: true,
+									content: (
+										<Trans>
+											<p>
+												Are you sure you want to change the role of "{member.user.name}" to{" "}
+												<strong className="text-destructive">owner</strong>?
+												<br />
+												They will be able to do everything, including changing{" "}
+												<strong className="text-destructive">your role</strong>.
+											</p>
+										</Trans>
+									),
+								});
+								if (!confirmed) return;
+							}
+
 							updateRole({ role: value as "owner" | "admin" | "member", userId: member.userId });
 						}}
 					>
-						<SelectTrigger className="w-full max-w-40" disabled={user.id === member.userId}>
-							<SelectValue fallback={member.role.charAt(0).toUpperCase() + member.role.slice(1)} placeholder="Select a role" />
+						<SelectTrigger className="w-full max-w-40">
+							<SelectValue fallback={i18n._(member.role)} placeholder="Select a role" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectGroup>
-								{checkRole("owner") && <SelectItem value="owner">Owner</SelectItem>}
-								<SelectItem value="admin">Admin</SelectItem>
-								<SelectItem value="member">Member</SelectItem>
+								{/*{checkRole("owner") && <SelectItem value="owner">Owner</SelectItem>}*/}
+								<SelectItem value="owner" disabled={!checkRole("owner")}>
+									{i18n._(roleLabels.owner!)}
+								</SelectItem>
+								<SelectItem value="admin">{i18n._(roleLabels.admin!)}</SelectItem>
+								<SelectItem value="member">{i18n._(roleLabels.member!)}</SelectItem>
 							</SelectGroup>
 						</SelectContent>
 					</Select>
 					<Button
 						className="aspect-square size-8"
-						disabled={user.id === member.userId}
 						variant="destructive"
 						onClick={async () => {
 							const result = await confirmModal({
 								content: (
-									<div>
-										Are you sure you want to kick "{member.user.name}"? <br />
-										this action cannot be undone.
-									</div>
+									<Trans>
+										<div>
+											Are you sure you want to kick "{member.user.name}"? <br />
+											this action cannot be undone.
+										</div>
+									</Trans>
 								),
-								title: "Kick Member",
+								title: t`Kick Member`,
 								closeOnClickOutside: true,
-								confirmLabel: `Kick "${member.user.name}"`,
+								confirmLabel: t`Kick "${member.user.name}"`,
 								delay: 2000,
 							});
 
 							if (!result) return;
-							toast.loading("Kicking member", {
+							toast.loading(t`Kicking member`, {
 								id: "kick-member",
 							});
 
 							const { data, error } = await tryCatch(kickMember({ userId: member.userId }));
 
 							if (error) {
-								toast.error("Failed to kick member", {
+								toast.error(t`Failed to kick member`, {
 									id: "kick-member",
 									description: error.message,
 								});
 								return;
 							}
 
-							toast.success("Member kicked", {
+							toast.success(t`Member kicked`, {
 								id: "kick-member",
 								description: undefined,
 							});
@@ -204,24 +239,26 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 export function InviteMember() {
 	const [open, { toggle }] = useDisclosure();
 	const router = useRouter();
+	const { t } = useLingui();
+
 	const { mutate } = api.org.invites.createInvite.useMutation({
 		onSuccess: () => {
 			form.reset();
 			router.refresh();
 			toggle();
-			toast.success("Member invited successfully", {
+			toast.success(t`Member invited successfully`, {
 				id: "invite-member",
 				description: undefined,
 			});
 		},
 		onError: (e) => {
-			toast.error("Failed to invite member", {
+			toast.error(t`Failed to invite member`, {
 				id: "invite-member",
 				description: e.message,
 			});
 		},
 		onMutate: () => {
-			toast.loading("Inviting member...", {
+			toast.loading(t`Inviting member...`, {
 				id: "invite-member",
 				description: undefined,
 			});
@@ -245,7 +282,9 @@ export function InviteMember() {
 	return (
 		<Dialog open={open} onOpenChange={toggle}>
 			<DialogTrigger asChild>
-				<Button variant="secondary">Invite Member</Button>
+				<Button variant="secondary">
+					<Trans>Invite Member</Trans>
+				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<form
@@ -274,7 +313,9 @@ export function InviteMember() {
 											autoComplete="off"
 										/>
 										<FieldDescription>
-											Email of the user you want to invite. <br /> They will be invited with the role "Member".
+											<Trans>
+												Email of the user you want to invite. <br /> They will be invited with the role "Member".
+											</Trans>
 										</FieldDescription>
 										{isInvalid && <FieldError errors={field.state.meta.errors} />}
 									</Field>
@@ -296,10 +337,10 @@ export function InviteMember() {
 										form.reset();
 									}}
 								>
-									Cancel
+									<Trans>Cancel</Trans>
 								</Button>
 								<Button disabled={!canSubmit || isSubmitting} type="submit" form="invite-member-form">
-									Create
+									<Trans>Invite</Trans>
 								</Button>
 							</>
 						)}

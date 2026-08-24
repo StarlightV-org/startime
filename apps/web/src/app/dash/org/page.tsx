@@ -23,7 +23,7 @@ export default async function OrgPage() {
 						</Avatar>
 						<h1 className="text-2xl">{org?.name}</h1>
 					</div>
-					<EditOrg org={org} />
+					{(org.membership?.role === "admin" || org.membership?.role === "owner") && <EditOrg org={org} />}
 				</CardContent>
 			</Card>
 			<Card className="w-full">

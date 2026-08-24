@@ -18,7 +18,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
 import { Spinner } from "../ui/spinner";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { cn } from "~/lib/utils";
+import { useState } from "react";
 
 export default function EditOrg({ org }: { org: OrgType }) {
 	const { t } = useLingui();
@@ -27,6 +27,7 @@ export default function EditOrg({ org }: { org: OrgType }) {
 	const router = useRouter();
 
 	const isOwner = org.membership?.role === "owner";
+	const [slugCheck, setSlugCheck] = useState<{ slug: string; isTaken: boolean }>();
 
 	const { mutate: updateOrg } = api.org.manage.update.useMutation({
 		onSuccess: () => {
@@ -114,17 +115,7 @@ export default function EditOrg({ org }: { org: OrgType }) {
 		},
 	});
 
-	const {
-		mutate: isSlugTaken,
-		isPending,
-		data: isTaken,
-	} = api.org.isSlugTaken.useMutation({
-		onSuccess: (isTaken) => {
-			if (isTaken) {
-				form.setErrorMap({ onSubmit: { fields: { slug: t`This slug is already taken. Please choose a different one.` } } });
-			}
-		},
-	});
+	const { mutateAsync: checkSlugTaken, isPending } = api.org.isSlugTaken.useMutation();
 
 	return (
 		<Dialog open={opened} onOpenChange={toggle}>
@@ -186,9 +177,17 @@ export default function EditOrg({ org }: { org: OrgType }) {
 												value={field.state.value}
 												onBlur={(e) => {
 													field.handleBlur();
-													isSlugTaken({ slug: normalizeSlug(e.target.value), orgId: org.id });
+													const slug = normalizeSlug(e.target.value);
+													void checkSlugTaken({ slug, orgId: org.id })
+														.then((isTaken) => {
+															if (form.state.values.slug === slug) setSlugCheck({ slug, isTaken });
+														})
+														.catch(() => undefined);
 												}}
-												onChange={(e) => field.handleChange(normalizeSlug(e.target.value))}
+												onChange={(e) => {
+													setSlugCheck(undefined);
+													field.handleChange(normalizeSlug(e.target.value));
+												}}
 												aria-invalid={isInvalid}
 												placeholder="Startime"
 												autoComplete="off"
@@ -196,9 +195,7 @@ export default function EditOrg({ org }: { org: OrgType }) {
 											<InputGroupAddon align="inline-end">
 												{isPending ? (
 													<Spinner />
-												) : isTaken === undefined ? (
-													<CheckIcon className="text-green-500" />
-												) : !isTaken ? (
+												) : slugCheck?.slug !== field.state.value || !slugCheck.isTaken ? (
 													<CheckIcon className="text-green-500" />
 												) : (
 													<XIcon className="text-red-500" />
@@ -208,7 +205,7 @@ export default function EditOrg({ org }: { org: OrgType }) {
 										<FieldDescription>
 											<Trans>The URL slug for the organization.</Trans>
 										</FieldDescription>
-										{isTaken && (
+										{slugCheck?.slug === field.state.value && slugCheck.isTaken && (
 											<FieldError errors={[{ message: t`This slug is already taken. Please choose a different one.` }]} />
 										)}
 										{isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -267,37 +264,39 @@ export default function EditOrg({ org }: { org: OrgType }) {
 					</FieldGroup>
 				</form>
 				<DialogFooter>
-					<div className={cn("flex w-full justify-between", { "justify-end": !isOwner })}>
-						<Button
-							variant="destructive"
-							onClick={async () => {
-								if (!org.id) return;
-								const confirmed = await confirmModal({
-									content: (
-										<Trans>
-											Are you sure you want to delete this organization? <br />
-											<ul className="list-disc pt-4 pl-4 text-sm text-destructive">
-												<li>
-													<span>All members will be removed.</span>
-												</li>
-												<li>
-													<span>Other configurations will be deleted.</span>
-												</li>
-												<li>
-													<strong>This action cannot be undone.</strong>
-												</li>
-											</ul>
-										</Trans>
-									),
-									title: t`Delete Organization: ${org.name}?`,
-									requiredValue: org.slug,
-									delay: 5 * 1000,
-								});
-								if (confirmed) deleteOrg({ orgId: org.id, confirm: confirmed });
-							}}
-						>
-							<Trans>Delete</Trans>
-						</Button>
+					<div className="flex w-full justify-between">
+						{isOwner && (
+							<Button
+								variant="destructive"
+								onClick={async () => {
+									if (!org.id) return;
+									const confirmed = await confirmModal({
+										content: (
+											<Trans>
+												Are you sure you want to delete this organization? <br />
+												<ul className="list-disc pt-4 pl-4 text-sm text-destructive">
+													<li>
+														<span>All members will be removed.</span>
+													</li>
+													<li>
+														<span>Other configurations will be deleted.</span>
+													</li>
+													<li>
+														<strong>This action cannot be undone.</strong>
+													</li>
+												</ul>
+											</Trans>
+										),
+										title: t`Delete Organization: ${org.name}?`,
+										requiredValue: org.slug,
+										delay: 5 * 1000,
+									});
+									if (confirmed) deleteOrg({ orgId: org.id, confirm: confirmed });
+								}}
+							>
+								<Trans>Delete</Trans>
+							</Button>
+						)}
 						<form.Subscribe
 							selector={(state) => [state.canSubmit, state.isSubmitting]}
 							children={([canSubmit, isSubmitting]) => (

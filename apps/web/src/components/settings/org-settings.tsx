@@ -17,13 +17,14 @@ import { useSession } from "~/provider/session-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
 import { useConfirmModal } from "../ui/confirm-modal";
-import { cn, tryCatch } from "~/lib/utils";
+import { tryCatch } from "~/lib/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { CheckIcon, DoorOpenIcon, UserIcon, XIcon } from "lucide-react";
 import { msg } from "@lingui/core/macro";
 import type { MessageDescriptor } from "@lingui/core";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Spinner } from "../ui/spinner";
+import { useState } from "react";
 
 export const normalizeSlug = (value: string) =>
 	value
@@ -35,7 +36,7 @@ export const normalizeSlug = (value: string) =>
 		.replace(/-+/g, "-")
 		.replace(/-$/, "");
 
-const roleLabels: Record<string, MessageDescriptor> = {
+export const roleLabels: Record<string, MessageDescriptor> = {
 	owner: msg`Owner`,
 	admin: msg`Admin`,
 	member: msg`Member`,
@@ -49,19 +50,10 @@ export default function OrgSettings() {
 	const { t, i18n } = useLingui();
 
 	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
+	const { mutateAsync: leaveOrganization } = api.org.members.leave.useMutation();
+	const [slugCheck, setSlugCheck] = useState<{ slug: string; isTaken: boolean }>();
 
-	const {
-		mutate: isSlugTaken,
-		mutateAsync: checkSlugTaken,
-		isPending: isCheckingSlug,
-		data: isSlugTakenResult,
-	} = api.org.isSlugTaken.useMutation({
-		onSuccess: (isTaken) => {
-			if (isTaken) {
-				form.setErrorMap({ onSubmit: { fields: { slug: t`This slug is already taken. Please choose a different one.` } } });
-			}
-		},
-	});
+	const { mutateAsync: checkSlugTaken, isPending: isCheckingSlug } = api.org.isSlugTaken.useMutation();
 
 	const { mutate } = api.org.create.useMutation({
 		onSuccess: () => {
@@ -148,7 +140,7 @@ export default function OrgSettings() {
 								<div className="flex items-center space-x-2">
 									<Avatar size="sm">
 										<AvatarImage src={invitation.organization.logo!} alt={invitation.user.name} />
-										<AvatarFallback visible={!!invitation.organization.logo}>
+										<AvatarFallback visible={!invitation.organization.logo}>
 											{invitation.organization.name.slice(0, 2).toUpperCase()}
 										</AvatarFallback>
 									</Avatar>
@@ -250,9 +242,17 @@ export default function OrgSettings() {
 															value={field.state.value}
 															onBlur={(event) => {
 																field.handleBlur();
-																isSlugTaken({ slug: normalizeSlug(event.target.value) });
+																const slug = normalizeSlug(event.target.value);
+																void checkSlugTaken({ slug })
+																	.then((isTaken) => {
+																		if (form.state.values.slug === slug) setSlugCheck({ slug, isTaken });
+																	})
+																	.catch(() => undefined);
 															}}
-															onChange={(event) => field.handleChange(normalizeSlug(event.target.value))}
+															onChange={(event) => {
+																setSlugCheck(undefined);
+																field.handleChange(normalizeSlug(event.target.value));
+															}}
 															aria-invalid={isInvalid}
 															placeholder="starlight"
 															autoComplete="off"
@@ -260,14 +260,14 @@ export default function OrgSettings() {
 														<InputGroupAddon align="inline-end">
 															{isCheckingSlug ? (
 																<Spinner />
-															) : isSlugTakenResult === undefined || !isSlugTakenResult ? (
+															) : slugCheck?.slug !== field.state.value || !slugCheck.isTaken ? (
 																<CheckIcon className="text-green-500" />
 															) : (
 																<XIcon className="text-red-500" />
 															)}
 														</InputGroupAddon>
 													</InputGroup>
-													{isSlugTakenResult && (
+													{slugCheck?.slug === field.state.value && slugCheck.isTaken && (
 														<FieldError errors={[{ message: t`This slug is already taken. Please choose a different one.` }]} />
 													)}
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
@@ -375,14 +375,21 @@ export default function OrgSettings() {
 										if (!result) {
 											return;
 										}
-										toast.loading("Leaving organization...", { id: "leave-org", description: undefined, duration: 5000 });
+										toast.loading(t`Leaving organization...`, { id: "leave-org", description: undefined });
+										const { error } = await tryCatch(leaveOrganization());
+										if (error) {
+											toast.error(t`Failed to leave organization.`, { id: "leave-org", description: error.message });
+											return;
+										}
+										toast.success(t`You left the organization.`, { id: "leave-org" });
+										router.refresh();
 									}}
 								>
 									<DoorOpenIcon className="size-4" />
 									<Trans>Leave</Trans>
 								</Button>
 							</TooltipTrigger>
-							<TooltipContent className="text-center">
+							<TooltipContent className="text-center" hidden={canLeave}>
 								{canLeave ? null : (
 									<span>
 										<Trans>
