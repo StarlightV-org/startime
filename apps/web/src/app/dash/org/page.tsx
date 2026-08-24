@@ -35,3 +35,5 @@ export default async function OrgPage() {
 		</div>
 	);
 }
+
+

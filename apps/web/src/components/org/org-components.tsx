@@ -261,11 +261,9 @@ export function InviteMember() {
 
 	return (
 		<Dialog open={open} onOpenChange={toggle}>
-			<DialogTrigger asChild>
-				<Button variant="secondary">
-					<Trans>Invite Member</Trans>
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger render={
+				<Button variant="secondary">Invite Member</Button>
+			}/>
 			<DialogContent>
 				<form
 					id="invite-member-form"

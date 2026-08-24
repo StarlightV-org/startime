@@ -132,3 +132,5 @@ export default function DistributionChart({ data }: { data: DistributionData }) 
 		/>
 	);
 }
+
+

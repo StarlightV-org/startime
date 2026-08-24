@@ -35,3 +35,5 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
 		</div>
 	);
 }
+
+

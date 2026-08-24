@@ -127,16 +127,8 @@ export function ConfirmModalProvider({ children }: { children: ReactNode }) {
 		<ConfirmModalContext.Provider value={confirmAction}>
 			{children}
 			{state && (
-				<Dialog open={!!state} onOpenChange={handleOpenChange}>
-					<DialogContent
-						className="gap-1 sm:max-w-125"
-						onPointerDownOutside={(e) => {
-							if (!state.closeOnClickOutside) e.preventDefault();
-						}}
-						onFocusOutside={(e) => {
-							if (!state.closeOnClickOutside) e.preventDefault();
-						}}
-					>
+				<Dialog open={!!state} onOpenChange={handleOpenChange} closeOnOutsideClick={state.closeOnClickOutside}>
+					<DialogContent className="gap-1 sm:max-w-125">
 						<DialogHeader>
 							<DialogTitle>{state.title ?? "Bestätigung erforderlich"}</DialogTitle>
 						</DialogHeader>

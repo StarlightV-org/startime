@@ -184,11 +184,11 @@ export default function OrgSettings() {
 				{/*<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>*/}
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
-						<DialogTrigger asChild>
-							<Button>
-								<Trans>Create Organization</Trans>
-							</Button>
-						</DialogTrigger>
+						<DialogTrigger render={
+						<Button>
+							<Trans>Create Organization</Trans>
+						</Button>
+						}/>
 						<DialogContent>
 							<form
 								id="create-org-form"
