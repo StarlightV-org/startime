@@ -170,19 +170,19 @@ export default async function Home() {
 					</div>
 					<nav className="flex items-center gap-2" aria-label="Primary navigation">
 						{!user ? (
-							<Button asChild variant="ghost">
+							<Button variant="ghost" render={
 								<Link href="/auth/signin">
 									<Trans>Sign in</Trans>
 									<ArrowRight data-icon="inline-end" aria-hidden="true" />
 								</Link>
-							</Button>
+							}/>
 						) : (
-							<Button asChild className="hidden sm:inline-flex">
+							<Button className="hidden sm:inline-flex" render={
 								<Link href="/dash">
 									<Trans>Open dashboard</Trans>
 									<ArrowRight data-icon="inline-end" aria-hidden="true" />
 								</Link>
-							</Button>
+							}/>
 						)}
 					</nav>
 				</div>
@@ -208,20 +208,20 @@ export default async function Home() {
 						</div>
 						<nav className="flex items-center gap-2" aria-label="Primary navigation">
 							{!user ? (
-								<Button asChild variant="ghost">
+								<Button variant="ghost" render={
 									<Link href="/auth/signin">
 										<Trans>Sign in</Trans>
 										<ArrowRight data-icon="inline-end" aria-hidden="true" />
 									</Link>
-								</Button>
+								}/>
 							) : (
 								<div className="flex items-center gap-2 rounded-lg bg-accent">
-									<Button asChild className="hidden sm:inline-flex">
+									<Button className="hidden sm:inline-flex" render={
 										<Link href="/dash">
 											<Trans>Open dashboard</Trans>
 											<ArrowRight data-icon="inline-end" aria-hidden="true" />
 										</Link>
-									</Button>
+									}/>
 									<div className="flex items-center gap-2 pr-2">
 										<span className="text-sm">{user.name}</span>
 										<Avatar size="sm">
@@ -389,11 +389,11 @@ export default async function Home() {
 												{icon}
 												{state !== undefined && (
 													<Tooltip>
-														<TooltipTrigger asChild>
+														<TooltipTrigger render={
 															<Badge variant="outline" className={cn(stateLabels[state]?.className, "cursor-help")}>
 																{i18n._(stateLabels[state]?.label!)}
 															</Badge>
-														</TooltipTrigger>
+														}/>
 														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
@@ -419,11 +419,11 @@ export default async function Home() {
 												{icon}
 												{state !== undefined && (
 													<Tooltip>
-														<TooltipTrigger asChild>
+														<TooltipTrigger render={
 															<Badge variant="outline" className={stateLabels[state]?.className}>
 																{i18n._(stateLabels[state]?.label!)}
 															</Badge>
-														</TooltipTrigger>
+														}/>
 														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
@@ -441,3 +441,4 @@ export default async function Home() {
 		</main>
 	);
 }
+

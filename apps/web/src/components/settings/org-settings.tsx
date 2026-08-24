@@ -157,9 +157,9 @@ export default function DataManagement() {
 				{/*<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>*/}
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
-						<DialogTrigger asChild>
+						<DialogTrigger render={
 							<Button>Create Organization</Button>
-						</DialogTrigger>
+						}/>
 						<DialogContent>
 							<form
 								id="create-org-form"
@@ -275,3 +275,4 @@ export default function DataManagement() {
 		</Card>
 	);
 }
+

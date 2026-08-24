@@ -1,1 +1,2 @@
-Use the Context7 MCP for resolving and reading packages
+- Use the Context7 MCP for resolving and reading packages
+- Prefer Tools over shell commands

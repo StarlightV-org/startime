@@ -74,3 +74,5 @@ export default async function MinimalPage() {
 		</main>
 	);
 }
+
+

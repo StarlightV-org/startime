@@ -61,3 +61,5 @@ export function EditorIcon({ editor, className = defaultClassName }: { editor: s
 
 	return <Icon className={className} />;
 }
+
+

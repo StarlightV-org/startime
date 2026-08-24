@@ -35,23 +35,32 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 						<div className="flex items-center justify-between gap-2 px-6 py-2">
 							<Tabs value={pathname} className="h-8! py-0">
 								<TabsList className="h-8! space-x-2 py-0">
-									<TabsTrigger value="/dash" asChild>
-										<Link href="/dash" className="h-8! text-sm">
-											<Trans>Overview</Trans>
-										</Link>
-									</TabsTrigger>
-									{!!org?.id && (
-										<TabsTrigger value="/dash/org" asChild>
-											<Link href="/dash/org" className="h-8! text-sm">
-												<Trans>Your Organization</Trans>
+									<TabsTrigger
+										value="/dash"
+										render={
+											<Link href="/dash" className="h-8! text-sm">
+												<Trans>Overview</Trans>
 											</Link>
-										</TabsTrigger>
+										}
+									/>
+									{!!org?.id && (
+										<TabsTrigger
+											value="/dash/org"
+											render={
+												<Link href="/dash/org" className="h-8! text-sm">
+													<Trans>Your Organization</Trans>
+												</Link>
+											}
+										/>
 									)}
-									<TabsTrigger value="/dash/settings" asChild>
-										<Link href="/dash/settings" className="h-8! text-sm">
-											<Trans>Settings</Trans>
-										</Link>
-									</TabsTrigger>
+									<TabsTrigger
+										value="/dash/settings"
+										render={
+											<Link href="/dash/settings" className="h-8! text-sm">
+												<Trans>Settings</Trans>
+											</Link>
+										}
+									/>
 								</TabsList>
 							</Tabs>
 							<OpenMinimal />

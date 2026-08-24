@@ -8,3 +8,5 @@ export function FileIcons({ language, className }: { language: string; className
 
 	return <img src={iconSrc} alt={language} className={cn("size-4 rounded-full", className)} />;
 }
+
+

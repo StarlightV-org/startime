@@ -138,7 +138,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 					<Select
 						value={member.role}
 						defaultValue={member.role}
-						onValueChange={async (value) => {
+						onValueChange={async (value: string | null) => {
 							updateRole({ role: value as "owner" | "admin" | "member", userId: member.userId });
 						}}
 					>
@@ -244,9 +244,9 @@ export function InviteMember() {
 
 	return (
 		<Dialog open={open} onOpenChange={toggle}>
-			<DialogTrigger asChild>
+			<DialogTrigger render={
 				<Button variant="secondary">Invite Member</Button>
-			</DialogTrigger>
+			}/>
 			<DialogContent>
 				<form
 					id="invite-member-form"
@@ -309,3 +309,5 @@ export function InviteMember() {
 		</Dialog>
 	);
 }
+
+
