@@ -218,8 +218,8 @@ export function VersionProvider() {
 	}
 
 	return (
-		<Dialog open={showForceModal} onOpenChange={() => {}}>
-			<DialogContent showCloseButton={false} onPointerDownOutside={(e) => e.preventDefault()}>
+		<Dialog open={showForceModal} onOpenChange={() => {}} closeOnOutsideClick={false}>
+			<DialogContent showCloseButton={false}>
 				<DialogHeader>
 					<DialogTitle>Update required</DialogTitle>
 					<DialogDescription>
@@ -241,5 +241,3 @@ export function VersionProvider() {
 		</Dialog>
 	);
 }
-
-

@@ -11,13 +11,12 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	const [value, setValue] = useState(timeRange);
 	const router = useRouter();
 	const { t } = useLingui();
-	// const utils = api.useUtils();
 
-	const handleChange = (value: TimeRange) => {
+	const handleChange = (value: TimeRange | null) => {
+		if (value === null) return;
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		document.cookie = `startime_timeRange=${value}; path=/`;
-		// utils.overview.invalidate();
 		router.refresh();
 	};
 
@@ -39,7 +38,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 			<SelectTrigger>
 				<SelectValue fallback={timeRangeLabels[value]} />
 			</SelectTrigger>
-			<SelectContent>
+			<SelectContent className="w-full">
 				<SelectGroup>
 					<SelectLabel>Relative</SelectLabel>
 					<SelectItem value="past1">
@@ -87,14 +86,13 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 	const [value, setValue] = useState(biggestUnit);
 	const router = useRouter();
 	const { t } = useLingui();
-	// const utils = api.useUtils();
 
-	const handleChange = (value: NonNullable<BiggestUnit>) => {
+	const handleChange = (value: NonNullable<BiggestUnit> | null) => {
+		if (value === null) return;
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		document.cookie = `startime_biggestUnit=${value}; path=/`;
 		router.refresh();
-		// utils.overview.invalidate();
 	};
 
 	const biggestUnitLabels: Record<NonNullable<BiggestUnit>, string> = {
@@ -126,5 +124,3 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 		</Select>
 	);
 }
-
-

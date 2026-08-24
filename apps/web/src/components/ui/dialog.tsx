@@ -7,8 +7,11 @@ import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { XIcon } from "lucide-react";
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+function Dialog({
+	closeOnOutsideClick = true,
+	...props
+}: DialogPrimitive.Root.Props & { closeOnOutsideClick?: boolean }) {
+	return <DialogPrimitive.Root data-slot="dialog" {...props} disablePointerDismissal={!closeOnOutsideClick} />;
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
@@ -43,8 +46,6 @@ function DialogContent({
 	...props
 }: DialogPrimitive.Popup.Props & {
 	showCloseButton?: boolean;
-	onPointerDownOutside?: (event: PointerEvent) => void;
-	onFocusOutside?: (event: FocusEvent) => void;
 }) {
 	return (
 		<DialogPortal>
