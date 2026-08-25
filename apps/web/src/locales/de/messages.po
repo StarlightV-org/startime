@@ -44,36 +44,36 @@ msgstr "Streak/Max"
 msgid "Top"
 msgstr "Top"
 
-#: src/app/dash/page.tsx:152
+#: src/app/dash/page.tsx:154
 msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 msgstr "<0>Berechnungen</0><1>Die Gesamtzeit zählt jede aktive Minute nur einmal. <2/>Wenn du innerhalb einer Minute zwischen Arbeitsbereich oder Sprache wechselt, wird die gleiche Minute für jede übereinstimmende Kategorie gezählt. <3/>So können Kategorietermine und Prozentsätze über 100% gehen.</1>"
 
-#: src/app/dash/page.tsx:170
+#: src/app/dash/page.tsx:172
 #: src/app/page.tsx:329
 #: src/components/overview/filter-view.tsx:12
 msgid "Editor"
 msgstr "Editor"
 
-#: src/app/dash/page.tsx:182
+#: src/app/dash/page.tsx:184
 #: src/components/overview/filter-view.tsx:13
 msgid "Workspace"
 msgstr "Arbeitsbereich"
 
-#: src/app/dash/page.tsx:194
+#: src/app/dash/page.tsx:196
 #: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
 msgid "Language"
 msgstr "Sprache"
 
-#: src/app/dash/page.tsx:206
+#: src/app/dash/page.tsx:208
 #: src/app/page.tsx:356
 #: src/components/overview/filter-view.tsx:15
 msgid "Platform"
 msgstr "Plattform"
 
-#: src/app/dash/page.tsx:221
+#: src/app/dash/page.tsx:223
 msgid "Daily Coding Distribution"
-msgstr "Täglicher Programmierzeit Verteilung"
+msgstr "Tägliche verteilung der Programmierzeit"
 
 #: src/app/page.tsx:47
 msgid "Respect your privacy"
@@ -211,16 +211,16 @@ msgstr "Editor-Erweiterungen"
 msgid "An extension ecosystem for all the editors you love."
 msgstr "Ein Erweiterungs-Ecosystem für alle Editoren, die ihr liebt."
 
-#: src/components/auth/account-button.tsx:45
+#: src/components/auth/account-button.tsx:47
 msgid "Account"
 msgstr "Konto"
 
-#: src/components/auth/account-button.tsx:50
-#: src/components/ui/header-bar.tsx:52
+#: src/components/auth/account-button.tsx:53
+#: src/components/ui/header-bar.tsx:60
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/components/auth/account-button.tsx:63
+#: src/components/auth/account-button.tsx:67
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -365,59 +365,59 @@ msgstr "Slug aktualisieren"
 msgid "Are you sure you want to update the slug for this organization? <0/>This will change the URL to this organization's page."
 msgstr "Bist du sicher, dass du den Slug für diese Organisation aktualisieren möchtest? <0/>Dies wird die URL dieser Organisation's Seite ändern."
 
-#: src/components/org/edit-org.tsx:125
-#: src/components/org/edit-org.tsx:130
+#: src/components/org/edit-org.tsx:126
+#: src/components/org/edit-org.tsx:133
 msgid "Edit Org"
 msgstr "Organisation bearbeiten"
 
-#: src/components/org/edit-org.tsx:147
-#: src/components/settings/org-settings.tsx:209
+#: src/components/org/edit-org.tsx:150
+#: src/components/settings/org-settings.tsx:211
 msgid "Organization Name"
 msgstr "Organisationsname"
 
-#: src/components/org/edit-org.tsx:206
+#: src/components/org/edit-org.tsx:209
 msgid "The URL slug for the organization."
 msgstr "Der URL-Slug für die Organisation."
 
-#: src/components/org/edit-org.tsx:209
+#: src/components/org/edit-org.tsx:212
 #: src/components/settings/org-settings.tsx:110
-#: src/components/settings/org-settings.tsx:271
+#: src/components/settings/org-settings.tsx:273
 msgid "This slug is already taken. Please choose a different one."
 msgstr "Dieser Slug ist bereits vergeben. Bitte wähle einen anderen."
 
-#: src/components/org/edit-org.tsx:234
+#: src/components/org/edit-org.tsx:237
 msgid "Logo URL of your organization."
 msgstr "Logo-URL deiner Organisation."
 
-#: src/components/org/edit-org.tsx:250
+#: src/components/org/edit-org.tsx:253
 msgid "Can the organization be seen by other users? Project names will be hidden."
 msgstr "Kann die Organisation von anderen Benutzern gesehen werden? Projektnamen werden ausgeblendet."
 
-#: src/components/org/edit-org.tsx:275
+#: src/components/org/edit-org.tsx:278
 msgid "Are you sure you want to delete this organization? <0/><1><2><3>All members will be removed.</3></2><4><5>Other configurations will be deleted.</5></4><6><7>This action cannot be undone.</7></6></1>"
 msgstr "Bist du sicher, dass du diese Organisation löschen möchtest? <0/><1><2><3>Alle Mitglieder werden entfernt.</3></2><4><5>Andere Konfigurationen werden gelöscht.</5></4><6><7>Diese Aktion kann nicht rückgängig gemacht werden.</7></6></1>"
 
 #. placeholder {0}: org.name
-#: src/components/org/edit-org.tsx:290
+#: src/components/org/edit-org.tsx:293
 msgid "Delete Organization: {0}?"
 msgstr "Löschen die Organisation: {0}?"
 
-#: src/components/org/edit-org.tsx:297
+#: src/components/org/edit-org.tsx:300
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/components/org/edit-org.tsx:312
-#: src/components/org/org-components.tsx:320
+#: src/components/org/edit-org.tsx:315
+#: src/components/org/org-components.tsx:322
 #: src/components/settings/auth-settings.tsx:153
 #: src/components/settings/auth-settings.tsx:260
 #: src/components/settings/auth-settings.tsx:449
 #: src/components/settings/data-settings.tsx:239
-#: src/components/settings/org-settings.tsx:313
-#: src/components/ui/confirm-modal.tsx:185
+#: src/components/settings/org-settings.tsx:315
+#: src/components/ui/confirm-modal.tsx:177
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/components/org/edit-org.tsx:315
+#: src/components/org/edit-org.tsx:318
 msgid "Update"
 msgstr "Aktualisieren"
 
@@ -468,15 +468,15 @@ msgstr "Fehler beim Einladen des Mitglieds"
 msgid "Inviting member..."
 msgstr "Mitglied wird eingeladen..."
 
-#: src/components/org/org-components.tsx:266
+#: src/components/org/org-components.tsx:267
 msgid "Invite Member"
 msgstr "Mitglied einladen"
 
-#: src/components/org/org-components.tsx:296
+#: src/components/org/org-components.tsx:298
 msgid "Email of the user you want to invite. <0/> They will be invited with the role \"Member\"."
 msgstr "E-Mail-Adresse des Benutzers, den du einladen möchtest. <0/>Er wird mit der Rolle \"Mitglied\" eingeladen."
 
-#: src/components/org/org-components.tsx:323
+#: src/components/org/org-components.tsx:325
 msgid "Invite"
 msgstr "Einladen"
 
@@ -496,76 +496,76 @@ msgstr "Das Popup konnte nicht geöffnet werden. Bitte überprüfen Sie Ihre Bro
 msgid "Minimal View"
 msgstr "Minimale Ansicht"
 
-#: src/components/overview/overview-select.tsx:25
-#: src/components/overview/overview-select.tsx:46
+#: src/components/overview/overview-select.tsx:24
+#: src/components/overview/overview-select.tsx:45
 msgid "Last 24 hours"
 msgstr "Letzten 24 Stunden"
 
-#: src/components/overview/overview-select.tsx:26
-#: src/components/overview/overview-select.tsx:49
+#: src/components/overview/overview-select.tsx:25
+#: src/components/overview/overview-select.tsx:48
 msgid "Last 7 days"
 msgstr "Letzten 7 Tage"
 
-#: src/components/overview/overview-select.tsx:27
-#: src/components/overview/overview-select.tsx:52
+#: src/components/overview/overview-select.tsx:26
+#: src/components/overview/overview-select.tsx:51
 msgid "Last 30 days"
 msgstr "Letzten 30 Tage"
 
-#: src/components/overview/overview-select.tsx:28
-#: src/components/overview/overview-select.tsx:55
+#: src/components/overview/overview-select.tsx:27
+#: src/components/overview/overview-select.tsx:54
 msgid "Last 90 days"
 msgstr "Letzten 90 Tage"
 
-#: src/components/overview/overview-select.tsx:29
-#: src/components/overview/overview-select.tsx:58
+#: src/components/overview/overview-select.tsx:28
+#: src/components/overview/overview-select.tsx:57
 msgid "Last 365 days"
 msgstr "Letzten 365 Tage"
 
-#: src/components/overview/overview-select.tsx:30
-#: src/components/overview/overview-select.tsx:66
+#: src/components/overview/overview-select.tsx:29
+#: src/components/overview/overview-select.tsx:65
 msgid "Today"
 msgstr "Heute"
 
-#: src/components/overview/overview-select.tsx:31
-#: src/components/overview/overview-select.tsx:69
+#: src/components/overview/overview-select.tsx:30
+#: src/components/overview/overview-select.tsx:68
 msgid "This week"
 msgstr "Diese Woche"
 
-#: src/components/overview/overview-select.tsx:32
-#: src/components/overview/overview-select.tsx:72
+#: src/components/overview/overview-select.tsx:31
+#: src/components/overview/overview-select.tsx:71
 msgid "This month"
 msgstr "Dieser Monat"
 
-#: src/components/overview/overview-select.tsx:33
-#: src/components/overview/overview-select.tsx:75
+#: src/components/overview/overview-select.tsx:32
+#: src/components/overview/overview-select.tsx:74
 msgid "This year"
 msgstr "Dieses Jahr"
 
-#: src/components/overview/overview-select.tsx:34
-#: src/components/overview/overview-select.tsx:78
+#: src/components/overview/overview-select.tsx:33
+#: src/components/overview/overview-select.tsx:77
 msgid "All Time"
 msgstr "Gesamte Zeit"
 
-#: src/components/overview/overview-select.tsx:63
+#: src/components/overview/overview-select.tsx:62
 msgid "Absolute"
 msgstr "Absolut"
 
-#: src/components/overview/overview-select.tsx:101
-#: src/components/overview/overview-select.tsx:116
+#: src/components/overview/overview-select.tsx:99
+#: src/components/overview/overview-select.tsx:114
 msgid "Hour"
 msgstr "Stunde"
 
-#: src/components/overview/overview-select.tsx:102
-#: src/components/overview/overview-select.tsx:119
+#: src/components/overview/overview-select.tsx:100
+#: src/components/overview/overview-select.tsx:117
 msgid "Day"
 msgstr "Tag"
 
-#: src/components/overview/overview-select.tsx:103
-#: src/components/overview/overview-select.tsx:122
+#: src/components/overview/overview-select.tsx:101
+#: src/components/overview/overview-select.tsx:120
 msgid "Week"
 msgstr "Woche"
 
-#: src/components/overview/overview-select.tsx:113
+#: src/components/overview/overview-select.tsx:111
 msgid "Biggest Unit"
 msgstr "Größter Einheit"
 
@@ -621,7 +621,7 @@ msgstr "Passkey erfolgreich erstellt"
 
 #: src/components/settings/auth-settings.tsx:174
 #: src/components/settings/auth-settings.tsx:271
-#: src/components/settings/org-settings.tsx:316
+#: src/components/settings/org-settings.tsx:318
 msgid "Create"
 msgstr "Erstellen"
 
@@ -739,52 +739,52 @@ msgstr "Ausgewählt: {0}"
 msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 msgstr "<0>Exportiere deine Daten in eine ZIP-Datei.<1/><2>Exportiere alle Daten, die mit deinem Account verknüpft sind.</2></0>"
 
-#: src/components/settings/data-settings.tsx:294
+#: src/components/settings/data-settings.tsx:293
 msgid "Are you sure you want to export your data? This may take a few minutes."
 msgstr "Bist du sicher, dass du deine Daten exportieren möchtest? Dies kann einige Minuten dauern."
 
-#: src/components/settings/data-settings.tsx:297
+#: src/components/settings/data-settings.tsx:296
 msgid "Export your data"
 msgstr "Exportiere deine Daten"
 
-#: src/components/settings/data-settings.tsx:316
+#: src/components/settings/data-settings.tsx:315
 msgid "Pending imports"
 msgstr "Ausstehende Imports"
 
-#: src/components/settings/data-settings.tsx:331
+#: src/components/settings/data-settings.tsx:330
 msgid "Past imports"
 msgstr "Vergangene Imports"
 
 #. placeholder {0}: imports.totalCount - 4
-#: src/components/settings/data-settings.tsx:341
+#: src/components/settings/data-settings.tsx:340
 msgid "<0>{0} more...</0>"
 msgstr "<0>{0} mehr...</0>"
 
-#: src/components/settings/data-settings.tsx:384
+#: src/components/settings/data-settings.tsx:383
 msgid "No file name available"
 msgstr "Kein Dateiname verfügbar"
 
-#: src/components/settings/data-settings.tsx:392
+#: src/components/settings/data-settings.tsx:391
 msgid "The file was deleted after the import was completed"
 msgstr "Die Datei wurde gelöscht, nach dem Import erfolgreich abgeschlossen wurde"
 
-#: src/components/settings/data-settings.tsx:393
+#: src/components/settings/data-settings.tsx:392
 msgid "The file was deleted after the import failed"
 msgstr "Die Datei wurde gelöscht, nach dem Import fehlgeschlagen ist"
 
-#: src/components/settings/data-settings.tsx:397
+#: src/components/settings/data-settings.tsx:396
 msgid "(deleted)"
 msgstr "(gelöscht)"
 
-#: src/components/settings/data-settings.tsx:403
+#: src/components/settings/data-settings.tsx:402
 msgid "No message available"
 msgstr "Keine Nachricht verfügbar"
 
-#: src/components/settings/data-settings.tsx:406
+#: src/components/settings/data-settings.tsx:405
 msgid "Updated"
 msgstr "Aktualisiert"
 
-#: src/components/settings/data-settings.tsx:406
+#: src/components/settings/data-settings.tsx:405
 msgid "Created"
 msgstr "Erstellt"
 
@@ -846,76 +846,76 @@ msgstr "Einladung konnte nicht angenommen werden."
 msgid "Accept"
 msgstr "Akzeptieren"
 
-#: src/components/settings/org-settings.tsx:189
+#: src/components/settings/org-settings.tsx:190
 msgid "Create Organization"
 msgstr "Organisation erstellen"
 
-#: src/components/settings/org-settings.tsx:304
+#: src/components/settings/org-settings.tsx:306
 msgid "You can only create one organization per account."
 msgstr "Du kannst nur eine Organisation pro Account erstellen."
 
-#: src/components/settings/org-settings.tsx:334
-#: src/components/ui/header-bar.tsx:46
+#: src/components/settings/org-settings.tsx:336
+#: src/components/ui/header-bar.tsx:51
 msgid "Your Organization"
 msgstr "Deine Organisation"
 
-#: src/components/settings/org-settings.tsx:347
+#: src/components/settings/org-settings.tsx:349
 msgid "Role: "
 msgstr "Rolle: "
 
 #. placeholder {0}: org?.members.length
-#: src/components/settings/org-settings.tsx:355
+#: src/components/settings/org-settings.tsx:357
 msgid "{0} members"
 msgstr "{0} Mitglieder"
 
 #. placeholder {0}: org?.members.length
-#: src/components/settings/org-settings.tsx:355
+#: src/components/settings/org-settings.tsx:357
 msgid "{0} member"
 msgstr "{0} Mitglied"
 
-#: src/components/settings/org-settings.tsx:371
+#: src/components/settings/org-settings.tsx:374
 msgid "Are you sure you want to leave this organization?"
 msgstr "Bist du sicher, dass du diese Organisation verlassen möchtest?"
 
-#: src/components/settings/org-settings.tsx:372
+#: src/components/settings/org-settings.tsx:375
 msgid "Leave Organization"
 msgstr "Organisation verlassen"
 
-#: src/components/settings/org-settings.tsx:373
-#: src/components/settings/org-settings.tsx:389
+#: src/components/settings/org-settings.tsx:376
+#: src/components/settings/org-settings.tsx:392
 msgid "Leave"
 msgstr "Verlassen"
 
-#: src/components/settings/org-settings.tsx:378
+#: src/components/settings/org-settings.tsx:381
 msgid "Leaving organization..."
 msgstr "Organisation wird verlassen..."
 
-#: src/components/settings/org-settings.tsx:381
+#: src/components/settings/org-settings.tsx:384
 msgid "Failed to leave organization."
 msgstr "Fehler beim Verlassen der Organisation."
 
-#: src/components/settings/org-settings.tsx:384
+#: src/components/settings/org-settings.tsx:387
 msgid "You left the organization."
 msgstr "Du hast die Organisation verlassen."
 
-#: src/components/settings/org-settings.tsx:395
+#: src/components/settings/org-settings.tsx:400
 msgid "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
 msgstr "Du kannst diese Organisation nicht verlassen.<0/>Übertrage sie an ein anderes Mitglied oder lösche sie."
 
 #. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
-#: src/components/ui/confirm-modal.tsx:174
+#: src/components/ui/confirm-modal.tsx:166
 msgid "Wait {remainingSeconds} {0}"
 msgstr "Warte {remainingSeconds} {0}"
 
-#: src/components/ui/confirm-modal.tsx:175
+#: src/components/ui/confirm-modal.tsx:167
 msgid "second"
 msgstr "Sekunde"
 
-#: src/components/ui/confirm-modal.tsx:175
+#: src/components/ui/confirm-modal.tsx:167
 msgid "seconds"
 msgstr "Sekunden"
 
-#: src/components/ui/confirm-modal.tsx:188
+#: src/components/ui/confirm-modal.tsx:180
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -923,7 +923,7 @@ msgstr "Bestätigen"
 msgid "Repository"
 msgstr "Repository"
 
-#: src/components/ui/header-bar.tsx:40
+#: src/components/ui/header-bar.tsx:42
 msgid "Overview"
 msgstr "Übersicht"
 

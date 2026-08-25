@@ -119,12 +119,15 @@ export default function EditOrg({ org }: { org: OrgType }) {
 
 	return (
 		<Dialog open={opened} onOpenChange={toggle}>
-			<DialogTrigger asChild>
-				<Button>
-					<PenIcon className="size-4" />
-					<Trans>Edit Org</Trans>
-				</Button>
-			</DialogTrigger>
+			<DialogTrigger
+				render={
+					<Button>
+						<PenIcon className="size-4" />
+						<Trans>Edit Org</Trans>
+					</Button>
+				}
+			/>
+
 			<DialogContent>
 				<DialogTitle>
 					<Trans>Edit Org</Trans>

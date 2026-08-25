@@ -184,11 +184,13 @@ export default function OrgSettings() {
 				{/*<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>*/}
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
-						<DialogTrigger render={
-						<Button>
-							<Trans>Create Organization</Trans>
-						</Button>
-						}/>
+						<DialogTrigger
+							render={
+								<Button>
+									<Trans>Create Organization</Trans>
+								</Button>
+							}
+						/>
 						<DialogContent>
 							<form
 								id="create-org-form"
@@ -359,36 +361,39 @@ export default function OrgSettings() {
 					</span>
 					<div>
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<Button
-									variant="outline"
-									className={!canLeave ? "cursor-not-allowed opacity-50 active:not-aria-[haspopup]:translate-y-0" : ""}
-									onClick={async () => {
-										if (!canLeave) {
-											return;
-										}
-										const result = await confirmModal({
-											content: t`Are you sure you want to leave this organization?`,
-											title: t`Leave Organization`,
-											confirmLabel: t`Leave`,
-										});
-										if (!result) {
-											return;
-										}
-										toast.loading(t`Leaving organization...`, { id: "leave-org", description: undefined });
-										const { error } = await tryCatch(leaveOrganization());
-										if (error) {
-											toast.error(t`Failed to leave organization.`, { id: "leave-org", description: error.message });
-											return;
-										}
-										toast.success(t`You left the organization.`, { id: "leave-org" });
-										router.refresh();
-									}}
-								>
-									<DoorOpenIcon className="size-4" />
-									<Trans>Leave</Trans>
-								</Button>
-							</TooltipTrigger>
+							<TooltipTrigger
+								render={
+									<Button
+										variant="outline"
+										className={!canLeave ? "cursor-not-allowed opacity-50 active:not-aria-[haspopup]:translate-y-0" : ""}
+										onClick={async () => {
+											if (!canLeave) {
+												return;
+											}
+											const result = await confirmModal({
+												content: t`Are you sure you want to leave this organization?`,
+												title: t`Leave Organization`,
+												confirmLabel: t`Leave`,
+											});
+											if (!result) {
+												return;
+											}
+											toast.loading(t`Leaving organization...`, { id: "leave-org", description: undefined });
+											const { error } = await tryCatch(leaveOrganization());
+											if (error) {
+												toast.error(t`Failed to leave organization.`, { id: "leave-org", description: error.message });
+												return;
+											}
+											toast.success(t`You left the organization.`, { id: "leave-org" });
+											router.refresh();
+										}}
+									>
+										<DoorOpenIcon className="size-4" />
+										<Trans>Leave</Trans>
+									</Button>
+								}
+							/>
+
 							<TooltipContent className="text-center" hidden={canLeave}>
 								{canLeave ? null : (
 									<span>
