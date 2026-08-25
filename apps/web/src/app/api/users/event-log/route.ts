@@ -14,6 +14,10 @@ export async function POST(req: NextRequest) {
 		return apiKey;
 	}
 
+	if (!req.bodyUsed) {
+		return NextResponse.json({ error: "No body" }, { status: 400 });
+	}
+
 	const body = await req.json();
 	const parsed = inputEventLogSchema.safeParse(body);
 	if (!parsed.success) {

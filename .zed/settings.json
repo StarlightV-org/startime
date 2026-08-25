@@ -14,6 +14,7 @@
 		"startime": {
 			// Sent once in the LSP `initialize` request.
 			"initialization_options": {
+				"projectOverride": "startime",
 				// "url": "https://localhost:3000/",
 				// "allowSelfSignedCertificates": true,
 				// "token": "3755c8d9-8bcc-460f-b310-8a7149e32daf",
