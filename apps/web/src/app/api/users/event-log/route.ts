@@ -14,11 +14,13 @@ export async function POST(req: NextRequest) {
 		return apiKey;
 	}
 
-	if (!req.bodyUsed) {
-		return NextResponse.json({ error: "No body" }, { status: 400 });
+	let body: unknown;
+	try {
+		body = await req.json();
+	} catch {
+		return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 	}
 
-	const body = await req.json();
 	const parsed = inputEventLogSchema.safeParse(body);
 	if (!parsed.success) {
 		return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 });
