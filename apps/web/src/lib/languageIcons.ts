@@ -133,6 +133,7 @@ export const languageIcons = [
 	{ name: "groovy", ids: ["groovy"] },
 	{ name: "markdoc", ids: ["markdoc"] },
 	{ name: "markdown", ids: ["markdown", "md"] },
+	{ name: "mdx", ids: ["mdx"] },
 	{ name: "jinja", ids: ["jinja"] },
 	{ name: "proto", ids: ["proto"] },
 	{ name: "python-misc", ids: ["pip-requirements"] },

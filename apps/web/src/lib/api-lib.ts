@@ -13,7 +13,7 @@ const languageIdMap: Record<string, string[]> = {
 	javascriptreact: ["jsx", "javascriptreact"],
 	typescript: ["ts", "typescript"],
 	typescriptreact: ["tsx", "typescriptreact"],
-	markdown: ["md", "markdown"],
+	markdown: ["md", "markdown", "mdx"],
 };
 
 export function normalizeLanguageId(languageId: string): string {
