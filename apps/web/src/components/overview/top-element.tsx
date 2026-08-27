@@ -16,7 +16,7 @@ export default function TopElement({
 }: {
 	element: OverviewTopElement;
 	isP1?: boolean;
-	filterKey?: "editor" | "workspace" | "language" | "platform";
+	filterKey?: "editor" | "workspace" | "language" | "platform" | "user";
 	interactive?: boolean;
 }) {
 	const [state, setState] = useQueryState(
@@ -58,5 +58,3 @@ export default function TopElement({
 		</div>
 	);
 }
-
-

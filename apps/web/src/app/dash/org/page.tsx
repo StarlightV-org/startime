@@ -15,7 +15,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
-import { getTimeRange, type TimeRange } from "~/lib/time-range";
+import { getTimeRange, timeRangeValues, type TimeRange } from "~/lib/time-range";
 import { tryCatch } from "~/lib/utils";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 import { getAuth } from "~/server/better-auth";
@@ -31,21 +31,30 @@ export const filter = {
 };
 export const loadSearchParams = createLoader(filter);
 
+const biggestUnitValues = ["hour", "day", "week"] as const satisfies readonly BiggestUnit[];
+
+function parseTimeRange(value: string | undefined): TimeRange {
+	return timeRangeValues.find((candidate) => candidate === value) ?? "past30";
+}
+
+function parseBiggestUnit(value: string | undefined): BiggestUnit {
+	return biggestUnitValues.find((candidate) => candidate === value) ?? "hour";
+}
+
 export default async function OrgPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-	const { org } = await getAuth();
+	const { org, user: authUser } = await getAuth();
 	if (!org?.id) redirect("/dash");
-	const auth = await getAuth();
 	const cookieManager = await cookies();
-	await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers())));
+	await setRequestI18n(resolveLocale(authUser.accountConfig.regional.lang, fromHeader(await headers())));
 	const { editor, workspace, language, platform, user } = await loadSearchParams(searchParams);
 
-	const timeRange = (cookieManager.get("startime_timeRange_org")?.value ?? "past30") as TimeRange;
-	const biggestUnit = (cookieManager.get("startime_biggestUnit_org")?.value ?? "hour") as BiggestUnit;
-	const regional = auth.user.accountConfig.regional;
+	const timeRange = parseTimeRange(cookieManager.get("startime_timeRange_org")?.value);
+	const biggestUnit = parseBiggestUnit(cookieManager.get("startime_biggestUnit_org")?.value);
+	const regional = authUser.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 
-	const { data: projects } = await tryCatch(api.org.projects.list());
-	const { data: top } = await tryCatch(
+	const { data: projects, error: projectsError } = await tryCatch(api.org.projects.list());
+	const { data: top, error: topError } = await tryCatch(
 		api.org.getTop({
 			timeRange,
 			biggestUnit,
@@ -58,6 +67,9 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 			},
 		}),
 	);
+
+	projectsError && Print.Error("[ORG] Failed to load projects", projectsError);
+	topError && Print.Error("[ORG] Failed to load overview", topError);
 
 	return (
 		<div className="flex flex-col gap-5">
@@ -127,6 +139,11 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 						</div>
 					</CardHeader>
 					<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">
+						{topError && (
+							<p className="col-span-4 text-sm text-destructive">
+								<Trans>Unable to load organization statistics.</Trans>
+							</p>
+						)}
 						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
 							<div className="flex items-center gap-2">
 								<PencilIcon className="size-4" />
@@ -195,7 +212,15 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 						</div>
 					</CardDescription>
 				</Card>
-				<ProjectList org={org} projects={projects ?? []} />
+				{projectsError ? (
+					<Card>
+						<CardContent className="text-sm text-destructive">
+							<Trans>Unable to load organization projects.</Trans>
+						</CardContent>
+					</Card>
+				) : (
+					<ProjectList org={org} projects={projects ?? []} />
+				)}
 			</div>
 			<MemberList org={org} />
 		</div>

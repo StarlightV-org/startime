@@ -459,6 +459,13 @@ const manageOrg = createTRPCRouter({
 		}),
 });
 
+const projectNameSchema = z.string().min(5, "Project name must be at least 5 characters");
+const projectDescriptionSchema = z
+	.string()
+	.min(5, "Description must be at least 5 characters")
+	.max(100, "Description must be at most 100 characters")
+	.or(z.literal(""));
+
 const orgProjects = createTRPCRouter({
 	list: protectedProcedure.query(async ({ ctx }) => {
 		if (!ctx.user.organizationId) {
@@ -481,16 +488,28 @@ const orgProjects = createTRPCRouter({
 	create: protectedProcedure
 		.input(
 			z.object({
-				name: z.string(),
-				description: z.string().optional(),
+				name: projectNameSchema,
+				description: projectDescriptionSchema,
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
 			requireOrganizationManager(ctx.user);
+			const normalizedName = input.name.toLowerCase();
+			const existingProject = await ctx.db.query.organizationProjects.findFirst({
+				where: and(
+					eq(organizationProjects.organizationId, ctx.user.organizationId),
+					eq(organizationProjects.normalizedName, normalizedName),
+				),
+				columns: { id: true },
+			});
+
+			if (existingProject) {
+				throw new TRPCError({ code: "CONFLICT", message: "A project with this name already exists" });
+			}
 
 			await ctx.db.insert(organizationProjects).values({
 				name: input.name,
-				normalizedName: input.name.toLowerCase(),
+				normalizedName,
 				organizationId: ctx.user.organizationId,
 				description: input.description,
 			});
@@ -500,8 +519,8 @@ const orgProjects = createTRPCRouter({
 		.input(
 			z.object({
 				projectId: z.string(),
-				name: z.string(),
-				description: z.string().optional(),
+				name: projectNameSchema,
+				description: projectDescriptionSchema,
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -515,11 +534,26 @@ const orgProjects = createTRPCRouter({
 				throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
 			}
 
+			const normalizedName = input.name.toLowerCase();
+			const existingProject = await ctx.db.query.organizationProjects.findFirst({
+				where: (candidate, { and, eq, not }) =>
+					and(
+						eq(candidate.organizationId, ctx.user.organizationId),
+						eq(candidate.normalizedName, normalizedName),
+						not(eq(candidate.id, input.projectId)),
+					),
+				columns: { id: true },
+			});
+
+			if (existingProject) {
+				throw new TRPCError({ code: "CONFLICT", message: "A project with this name already exists" });
+			}
+
 			await ctx.db
 				.update(organizationProjects)
 				.set({
 					name: input.name,
-					normalizedName: input.name.toLowerCase(),
+					normalizedName,
 					description: input.description,
 				})
 				.where(eq(organizationProjects.id, project.id));
@@ -561,30 +595,27 @@ const orgProjects = createTRPCRouter({
 				throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
 			}
 
-			const existingAssignments = await ctx.db.query.organizationProjectAssignments.findMany({
-				where: (assignment, { eq, and }) =>
-					and(eq(assignment.organizationProjectId, input.projectId), eq(assignment.userId, ctx.user.id)),
-			});
+			await ctx.db.transaction(async (tx) => {
+				await tx
+					.delete(organizationProjectAssignments)
+					.where(
+						and(
+							eq(organizationProjectAssignments.organizationProjectId, input.projectId),
+							eq(organizationProjectAssignments.userId, ctx.user.id),
+						),
+					);
 
-			// If a project is in existing assignments, but not in the input, remove it
-			for (const assignment of existingAssignments) {
-				if (!input.userProjects.includes(assignment.sourceProject)) {
-					await ctx.db.delete(organizationProjectAssignments).where(eq(organizationProjectAssignments.id, assignment.id));
-				}
-			}
+				if (input.userProjects.length === 0) return;
 
-			// For projects in the input, add or update their assignments
-			for (const userProject of input.userProjects) {
-				await ctx.db
-					.insert(organizationProjectAssignments)
-					.values({
+				await tx.insert(organizationProjectAssignments).values(
+					input.userProjects.map((userProject) => ({
 						sourceProject: userProject,
 						normalizedSourceProject: userProject.toLowerCase(),
 						organizationProjectId: input.projectId,
 						userId: ctx.user.id,
-					})
-					.onConflictDoNothing();
-			}
+					})),
+				);
+			});
 		}),
 });
 

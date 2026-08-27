@@ -327,8 +327,6 @@ export default function OrgSettings() {
 			</Card>
 		);
 
-	Print.Debug(org);
-
 	return (
 		<Card>
 			<CardHeader>

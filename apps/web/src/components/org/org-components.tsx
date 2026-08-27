@@ -396,7 +396,6 @@ function ProjectItem({ project }: { project: API["org"]["projects"]["list"][numb
 		},
 	});
 
-	Print.Debug(project);
 	return (
 		<div className="flex items-center justify-between border-b-2 border-b-border p-1">
 			<p className="flex h-fit items-center gap-1">
@@ -461,7 +460,6 @@ function CreateProjectDialog({ org }: { org: SessionType["org"] }) {
 			}),
 		},
 		onSubmit: async (values) => {
-			Print.Debug(values.value);
 			createProject({ name: values.value.projectName, description: values.value.description });
 		},
 	});
@@ -754,6 +752,7 @@ function AssignProjectDialog({ project }: { project: API["org"]["projects"]["lis
 	const router = useRouter();
 	const [opened, { toggle }] = useDisclosure();
 	const anchor = useComboboxAnchor();
+	const formId = `assign-project-form-${project.id}`;
 
 	const assignement = project.assignments[0];
 	const { data: projects } = api.self.listProjects.useQuery(undefined, {
@@ -812,7 +811,7 @@ function AssignProjectDialog({ project }: { project: API["org"]["projects"]["lis
 					<Trans>Assign Project: {project.name}</Trans>
 				</DialogTitle>
 				<form
-					id="create-project-form"
+					id={formId}
 					onSubmit={(e) => {
 						e.preventDefault();
 						form.handleSubmit();
@@ -884,7 +883,7 @@ function AssignProjectDialog({ project }: { project: API["org"]["projects"]["lis
 								>
 									<Trans>Cancel</Trans>
 								</Button>
-								<Button type="submit" form="create-project-form">
+								<Button type="submit" form={formId}>
 									{project.assignments?.length === 0 ? (
 										<Trans>Assign Project</Trans>
 									) : typeof projects === "boolean" || !projects ? (

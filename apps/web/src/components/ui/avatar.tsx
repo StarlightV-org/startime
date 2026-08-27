@@ -37,8 +37,12 @@ function AvatarImage({ className, ...props }: React.ComponentProps<"img">) {
 	);
 }
 
-function AvatarFallback({ className, ...props }: AvatarPrimitive.Fallback.Props & { visible?: boolean }) {
-	if (!props.visible) return null;
+function AvatarFallback({
+	className,
+	visible = true,
+	...props
+}: AvatarPrimitive.Fallback.Props & { visible?: boolean }) {
+	if (!visible) return null;
 	return (
 		<AvatarPrimitive.Fallback
 			data-slot="avatar-fallback"
