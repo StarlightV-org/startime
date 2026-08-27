@@ -1,6 +1,12 @@
-import { and, count, eq, isNull, sql } from "drizzle-orm";
+import { and, count, eq, gte, isNull, lt, sql } from "drizzle-orm";
 import z from "zod";
-import { createTRPCRouter, protectedProcedure, reauthProcedure, trackMiddleware } from "~/server/api/trpc";
+import {
+	createTRPCRouter,
+	protectedProcedure,
+	reauthProcedure,
+	serverOnlyMiddleware,
+	trackMiddleware,
+} from "~/server/api/trpc";
 import { auth } from "~/server/better-auth";
 
 import {
@@ -10,11 +16,16 @@ import {
 	members,
 	organizationProjects,
 	organizationProjectAssignments,
+	eventLogs,
 } from "@startime/db";
 import { TRPCError } from "@trpc/server";
 import { op } from "~/lib/op";
 import { msg } from "@lingui/core/macro";
 import { _int32 } from "zod/v4/core";
+
+import { getTimeRange, timeRangeValues, toTimeString } from "~/lib/time-range";
+import type { BiggestUnit } from "~/server/api/routers/overview";
+import type { API } from "~/trpc/server";
 
 const slugSchema = z
 	.string()
@@ -577,6 +588,8 @@ const orgProjects = createTRPCRouter({
 		}),
 });
 
+export type OrgTopElement = NonNullable<API["org"]["getTop"]>["editor"]["p1"];
+
 export const orgRouter = createTRPCRouter({
 	isSlugTaken: protectedProcedure
 		.input(
@@ -595,6 +608,128 @@ export const orgRouter = createTRPCRouter({
 	invites: orgInvitesRouter,
 	members: orgMembersRouter,
 	projects: orgProjects,
+
+	getTop: protectedProcedure
+		.use(serverOnlyMiddleware)
+		.input(
+			z.object({
+				timeRange: z.enum(timeRangeValues),
+				biggestUnit: z.enum(["hour", "day", "week"]).optional(),
+				filter: z.object({
+					user: z.string().or(z.literal("")),
+					editor: z.string().or(z.literal("")),
+					workspace: z.string().or(z.literal("")),
+					language: z.string().or(z.literal("")),
+					platform: z.string().or(z.literal("")),
+				}),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const organizationId = ctx.user.organizationId;
+			if (!organizationId) return null;
+
+			const regional = ctx.user.accountConfig.regional;
+			const [start, end] = getTimeRange(input.timeRange, regional.timeZone, undefined, regional.startOfWeek);
+			const eventFilter = and(
+				eq(members.organizationId, organizationId),
+				input.filter.user ? eq(users.name, input.filter.user) : undefined,
+				start ? gte(eventLogs.eventTime, start) : undefined,
+				end ? lt(eventLogs.eventTime, end) : undefined,
+				input.filter.editor ? eq(eventLogs.editor, input.filter.editor) : undefined,
+				input.filter.language ? eq(eventLogs.language, input.filter.language) : undefined,
+				input.filter.platform ? eq(eventLogs.platform, input.filter.platform) : undefined,
+				input.filter.workspace ? eq(organizationProjects.name, input.filter.workspace) : undefined,
+			);
+			type Dimension = "user" | "editor" | "workspace" | "language" | "platform";
+			type RankedRow = {
+				dimension: Dimension;
+				id: string;
+				value: string;
+				minutes: number;
+				percentage: number;
+				rank: number;
+			};
+			const rows = await ctx.db.execute<RankedRow>(sql`
+				with member_events as materialized (
+					select
+						${eventLogs.userId} as user_id,
+						${eventLogs.eventTime} as event_time,
+						${eventLogs.editor} as editor,
+						${eventLogs.language} as language,
+						${eventLogs.platform} as platform,
+						${users.name} as user_name,
+						${organizationProjects.id} as project_id,
+						${organizationProjects.name} as project_name,
+						coalesce(${users.accountConfig} #>> '{personalOrg,shareAllTime}', 'false') = 'true' as share_all_time
+					from ${eventLogs}
+					inner join ${members} on ${members.userId} = ${eventLogs.userId}
+					inner join ${users} on ${users.id} = ${eventLogs.userId}
+					left join ${organizationProjectAssignments} on
+						${organizationProjectAssignments.userId} = ${eventLogs.userId}
+						and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
+					left join ${organizationProjects} on
+						${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
+						and ${organizationProjects.organizationId} = ${organizationId}
+					where ${eventFilter}
+				), grouped as (
+					select 'user' as dimension, user_id as id, user_name as value,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int as minutes
+					from member_events where share_all_time or project_id is not null group by user_id, user_name
+					union all
+					select 'editor', editor, editor,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					from member_events where project_id is not null group by editor
+					union all
+					select 'workspace', project_id, project_name,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					from member_events where project_id is not null group by project_id, project_name
+					union all
+					select 'language', language, language,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					from member_events where project_id is not null group by language
+					union all
+					select 'platform', platform, platform,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					from member_events where project_id is not null group by platform
+				), totals as (
+					select 'user' as dimension,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int as minutes
+					from member_events where share_all_time or project_id is not null
+					union all
+					select dimension,
+						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					from member_events
+					cross join (values ('editor'), ('workspace'), ('language'), ('platform')) dimensions(dimension)
+					where project_id is not null group by dimension
+				), ranked as (
+					select grouped.*, round(grouped.minutes::numeric / nullif(totals.minutes, 0) * 100, 2)::float as percentage,
+						row_number() over (partition by grouped.dimension order by grouped.minutes desc, grouped.value) as rank
+					from grouped inner join totals using (dimension)
+				)
+				select dimension, id, value, minutes, percentage, rank::int
+				from ranked where rank <= 5 order by dimension, rank
+			`);
+
+			const rankedItems = (dimension: Dimension) => {
+				const dimensionRows = rows.filter((row) => row.dimension === dimension);
+				const item = (index: number) => ({
+					id: dimensionRows[index]?.id ?? "",
+					value: dimensionRows[index]?.value ?? "",
+					time: toTimeString(dimensionRows[index]?.minutes ?? 0, input.biggestUnit),
+					percentage: dimensionRows[index]?.percentage ?? 0,
+				});
+				return { p1: item(0), p2: item(1), p3: item(2), p4: item(3), p5: item(4) };
+			};
+
+			return {
+				user: rankedItems("user"),
+				editor: rankedItems("editor"),
+				workspace: rankedItems("workspace"),
+				language: rankedItems("language"),
+				platform: rankedItems("platform"),
+			};
+		}),
+
 	create: protectedProcedure
 		.input(
 			z.object({

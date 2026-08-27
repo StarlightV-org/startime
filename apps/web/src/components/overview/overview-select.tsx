@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 import { Trans, useLingui } from "@lingui/react/macro";
 
-export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
+export function TimeSelect({ timeRange, cookieSuffix }: { timeRange: TimeRange; cookieSuffix?: string }) {
 	const [value, setValue] = useState(timeRange);
 	const router = useRouter();
 	const { t } = useLingui();
@@ -16,7 +16,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 		if (value === null) return;
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
-		document.cookie = `startime_timeRange=${value}; path=/`;
+		document.cookie = `startime_timeRange${cookieSuffix ? `_${cookieSuffix}` : ""}=${value}; path=/`;
 		router.refresh();
 	};
 
@@ -82,7 +82,7 @@ export function TimeSelect({ timeRange }: { timeRange: TimeRange }) {
 	);
 }
 
-export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit }) {
+export function BiggestUnitSelect({ biggestUnit, cookieSuffix }: { biggestUnit: BiggestUnit; cookieSuffix?: string }) {
 	const [value, setValue] = useState(biggestUnit);
 	const router = useRouter();
 	const { t } = useLingui();
@@ -91,7 +91,7 @@ export function BiggestUnitSelect({ biggestUnit }: { biggestUnit: BiggestUnit })
 		if (value === null) return;
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
-		document.cookie = `startime_biggestUnit=${value}; path=/`;
+		document.cookie = `startime_biggestUnit${cookieSuffix ? `_${cookieSuffix}` : ""}=${value}; path=/`;
 		router.refresh();
 	};
 

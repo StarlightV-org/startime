@@ -13,6 +13,7 @@ const filterLabels = {
 	workspace: msg`Workspace`,
 	language: msg`Language`,
 	platform: msg`Platform`,
+	user: msg`User`,
 };
 
 export default function FilterView() {
@@ -21,6 +22,7 @@ export default function FilterView() {
 		workspace: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
 		language: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
 		platform: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
+		user: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
 	});
 
 	const router = useRouter();
@@ -29,13 +31,14 @@ export default function FilterView() {
 		setTimeout(() => {
 			router.refresh();
 		}, 100);
-	}, [state.editor, state.workspace, state.language, state.platform]);
+	}, [state.editor, state.workspace, state.language, state.platform, state.user]);
 
 	const filters = [
 		{ filter: "editor", val: state.editor },
 		{ filter: "workspace", val: state.workspace },
 		{ filter: "language", val: state.language },
 		{ filter: "platform", val: state.platform },
+		{ filter: "user", val: state.user },
 	].filter((f) => f.val !== "");
 
 	return (
@@ -67,5 +70,3 @@ function Badge({
 		</div>
 	);
 }
-
-

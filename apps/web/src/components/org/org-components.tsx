@@ -350,11 +350,12 @@ export function InviteMember() {
 }
 
 export function ProjectList({ org, projects }: { org: SessionType["org"]; projects: API["org"]["projects"]["list"] }) {
+	const checkRole = useRole();
 	return (
 		<Card className="gap-0">
 			<CardHeader className="flex items-center justify-between">
 				<CardTitle className="text-2xl">Projects</CardTitle>
-				<CreateProjectDialog org={org} />
+				{checkRole("admin") && <CreateProjectDialog org={org} />}
 			</CardHeader>
 			<CardContent>
 				{projects.map((project) => (
@@ -467,9 +468,25 @@ function CreateProjectDialog({ org }: { org: SessionType["org"] }) {
 
 	const { mutate: createProject } = api.org.projects.create.useMutation({
 		onSuccess: () => {
+			toast.success(t`Project created successfully`, {
+				id: "create-project",
+				description: undefined,
+			});
 			toggle();
 			form.reset();
 			router.refresh();
+		},
+		onError: (error) => {
+			toast.error(t`Failed to create project`, {
+				id: "create-project-error",
+				description: error.message,
+			});
+		},
+		onMutate: () => {
+			toast.loading(t`Creating project...`, {
+				id: "create-project-loading",
+				description: undefined,
+			});
 		},
 	});
 
