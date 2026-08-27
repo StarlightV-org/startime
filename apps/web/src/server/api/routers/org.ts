@@ -687,6 +687,8 @@ export const orgRouter = createTRPCRouter({
 				dimension: Dimension;
 				id: string;
 				value: string;
+				image: string | null;
+				shareAllTime: boolean | null;
 				minutes: number;
 				percentage: number;
 				rank: number;
@@ -700,6 +702,7 @@ export const orgRouter = createTRPCRouter({
 						${eventLogs.language} as language,
 						${eventLogs.platform} as platform,
 						${users.name} as user_name,
+						${users.image} as user_image,
 						${organizationProjects.id} as project_id,
 						${organizationProjects.name} as project_name,
 						coalesce(${users.accountConfig} #>> '{personalOrg,shareAllTime}', 'false') = 'true' as share_all_time
@@ -714,23 +717,25 @@ export const orgRouter = createTRPCRouter({
 						and ${organizationProjects.organizationId} = ${organizationId}
 					where ${eventFilter}
 				), grouped as (
-					select 'user' as dimension, user_id as id, user_name as value,
+					select 'user' as dimension, user_id as id, user_name as value, user_image as image,
+						share_all_time as share_all_time,
 						count(distinct (user_id, date_trunc('minute', event_time)))::int as minutes
-					from member_events where share_all_time or project_id is not null group by user_id, user_name
+					from member_events where share_all_time or project_id is not null
+					group by user_id, user_name, user_image, share_all_time
 					union all
-					select 'editor', editor, editor,
+					select 'editor', editor, editor, null::text, null::boolean,
 						count(distinct (user_id, date_trunc('minute', event_time)))::int
 					from member_events where project_id is not null group by editor
 					union all
-					select 'workspace', project_id, project_name,
+					select 'workspace', project_id, project_name, null::text, null::boolean,
 						count(distinct (user_id, date_trunc('minute', event_time)))::int
 					from member_events where project_id is not null group by project_id, project_name
 					union all
-					select 'language', language, language,
+					select 'language', language, language, null::text, null::boolean,
 						count(distinct (user_id, date_trunc('minute', event_time)))::int
 					from member_events where project_id is not null group by language
 					union all
-					select 'platform', platform, platform,
+					select 'platform', platform, platform, null::text, null::boolean,
 						count(distinct (user_id, date_trunc('minute', event_time)))::int
 					from member_events where project_id is not null group by platform
 				), totals as (
@@ -748,7 +753,7 @@ export const orgRouter = createTRPCRouter({
 						row_number() over (partition by grouped.dimension order by grouped.minutes desc, grouped.value) as rank
 					from grouped inner join totals using (dimension)
 				)
-				select dimension, id, value, minutes, percentage, rank::int
+				select dimension, id, value, image, share_all_time as "shareAllTime", minutes, percentage, rank::int
 				from ranked where rank <= 5 order by dimension, rank
 			`);
 
@@ -757,6 +762,8 @@ export const orgRouter = createTRPCRouter({
 				const item = (index: number) => ({
 					id: dimensionRows[index]?.id ?? "",
 					value: dimensionRows[index]?.value ?? "",
+					image: dimensionRows[index]?.image ?? null,
+					shareAllTime: dimensionRows[index]?.shareAllTime ?? false,
 					time: toTimeString(dimensionRows[index]?.minutes ?? 0, input.biggestUnit),
 					percentage: dimensionRows[index]?.percentage ?? 0,
 				});

@@ -24,11 +24,6 @@ msgid "Top"
 msgstr "Top"
 
 #: src/app/dash/org/page.tsx
-#: src/app/dash/page.tsx
-msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
-msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
-
-#: src/app/dash/org/page.tsx
 msgid "Unable to load organization statistics."
 msgstr "Unable to load organization statistics."
 
@@ -91,6 +86,10 @@ msgstr "Streak/Current"
 #: src/app/dash/page.tsx
 msgid "Streak/Max"
 msgstr "Streak/Max"
+
+#: src/app/dash/page.tsx
+msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 
 #: src/app/dash/page.tsx
 msgid "Daily Coding Distribution"
@@ -692,6 +691,10 @@ msgstr "Week"
 #: src/components/overview/overview-select.tsx
 msgid "Biggest Unit"
 msgstr "Biggest Unit"
+
+#: src/components/overview/top-element.tsx
+msgid "This user has not shared their all-time data. <0/>So the time shown is only for they assigned to the organization."
+msgstr "This user has not shared their all-time data. <0/>So the time shown is only for they assigned to the organization."
 
 #: src/components/settings/account-settings.tsx
 msgid "Settings saved"

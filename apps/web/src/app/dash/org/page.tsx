@@ -126,26 +126,6 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 						</CardTitle>
 						<div className="flex items-center">
 							<RefetchOverviewButton />
-							<Dialog>
-								<DialogTrigger
-									render={
-										<Button variant="ghost" size="icon-sm">
-											<InfoIcon className="size-4 cursor-pointer" />
-										</Button>
-									}
-								/>
-								<DialogContent>
-									<Trans>
-										<DialogTitle>Calculations</DialogTitle>
-										<span className="text-sm text-pretty text-muted-foreground">
-											Total time counts each active minute once. <br />
-											If you switch workspace or language within a minute, that same minute is counted for every matching category.{" "}
-											<br />
-											So category times and percentages can exceed 100%.
-										</span>
-									</Trans>
-								</DialogContent>
-							</Dialog>
 						</div>
 					</CardHeader>
 					<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">
