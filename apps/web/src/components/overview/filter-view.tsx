@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Button } from "../ui/button";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react/macro";
+import { useMounted } from "@mantine/hooks";
 
 const filterLabels = {
 	editor: msg`Editor`,
@@ -26,9 +27,11 @@ export default function FilterView() {
 	});
 
 	const router = useRouter();
+	const isMounted = useMounted();
 
 	useEffect(() => {
 		setTimeout(() => {
+			if (!isMounted) return;
 			router.refresh();
 		}, 100);
 	}, [state.editor, state.workspace, state.language, state.platform, state.user]);
