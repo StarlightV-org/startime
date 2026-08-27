@@ -1,5 +1,7 @@
 "use client";
 
+import type { I18n, MessageDescriptor } from "@lingui/core";
+import { useLingui } from "@lingui/react/macro";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -13,6 +15,7 @@ import {
 	type AccountConfigPath,
 	type SchemaSettingsField,
 } from "~/lib/account-config";
+import { msg } from "@lingui/core/macro";
 
 const sections = describeAccountSchemaSettingsSections();
 
@@ -31,9 +34,21 @@ function clampNumber(value: number, field: Extract<SchemaSettingsField, { kind: 
 	return result;
 }
 
-function booleanLabel(value: boolean, configuredDefault?: boolean): string {
-	const label = value ? "On" : "Off";
-	return configuredDefault === value ? `${label} (Default)` : label;
+function booleanLabel(value: boolean, configuredDefault?: boolean): MessageDescriptor {
+	switch (true) {
+		case configuredDefault === value && value:
+			return msg`On (Default)`;
+		case value:
+			return msg`On`;
+		case configuredDefault === value && !value:
+			return msg`Off (Default)`;
+		default:
+			return msg`Off`;
+	}
+}
+
+function translate(i18n: I18n, message: MessageDescriptor | string): string {
+	return typeof message === "string" ? i18n._(message) : i18n._(message);
 }
 
 function AutoConfigField({
@@ -45,12 +60,14 @@ function AutoConfigField({
 }: Props & { field: SchemaSettingsField }) {
 	const value = getNestedValue(config, field.path);
 	const id = `account-config-${field.path}`;
+	const { i18n } = useLingui();
+	const enumLabel = field.kind === "enum" ? field.enumLabels[String(value)] : undefined;
 
 	return (
 		<div className="grid gap-3 border-t border-border/60 pt-5 sm:grid-cols-[minmax(0,1fr)_minmax(16rem,26rem)] sm:items-center">
 			<div className="grid gap-1">
-				<Label htmlFor={id}>{field.label}</Label>
-				{field.description ? <p className="text-sm text-muted-foreground">{field.description}</p> : null}
+				<Label htmlFor={id}>{translate(i18n, field.label)}</Label>
+				{field.description ? <p className="text-sm text-muted-foreground">{translate(i18n, field.description)}</p> : null}
 			</div>
 			<div className="w-full">
 				{field.kind === "boolean" ? (
@@ -60,11 +77,11 @@ function AutoConfigField({
 						onValueChange={(nextValue: string | null) => onValueCommit(field.path, nextValue === "true")}
 					>
 						<SelectTrigger id={id} className="w-full">
-							<SelectValue fallback={booleanLabel(Boolean(value), field.configuredDefault)} />
+							<SelectValue fallback={translate(i18n, booleanLabel(Boolean(value), field.configuredDefault))} />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="true">{booleanLabel(true, field.configuredDefault)}</SelectItem>
-							<SelectItem value="false">{booleanLabel(false, field.configuredDefault)}</SelectItem>
+							<SelectItem value="true">{translate(i18n, booleanLabel(true, field.configuredDefault))}</SelectItem>
+							<SelectItem value="false">{translate(i18n, booleanLabel(false, field.configuredDefault))}</SelectItem>
 						</SelectContent>
 					</Select>
 				) : null}
@@ -75,12 +92,12 @@ function AutoConfigField({
 						onValueChange={(nextValue: string | null) => onValueCommit(field.path, nextValue)}
 					>
 						<SelectTrigger id={id} className="w-full">
-							<SelectValue fallback={field.enumLabels[String(value)] ?? String(value)} />
+							<SelectValue fallback={enumLabel ? translate(i18n, enumLabel) : String(value)} />
 						</SelectTrigger>
 						<SelectContent>
 							{field.values.map((option) => (
 								<SelectItem key={option} value={option}>
-									{field.enumLabels[option] ?? option}
+									{translate(i18n, field.enumLabels[option] ?? option)}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -127,8 +144,10 @@ function AutoConfigField({
 
 /** Renders every schema section, subgroup, and supported leaf from config UI metadata. */
 export function AutoConfigSettings({ config, disabled, onValueChange, onValueCommit }: Props) {
+	const { i18n } = useLingui();
+
 	return sections.map((section) => (
-		<Card key={section.cardTitle}>
+		<Card key={i18n._(section.cardTitle)}>
 			{/*<CardHeader>
 				<CardTitle>{section.cardTitle}</CardTitle>
 				{section.cardDescription ? <p className="text-sm text-muted-foreground">{section.cardDescription}</p> : null}
@@ -138,8 +157,10 @@ export function AutoConfigSettings({ config, disabled, onValueChange, onValueCom
 					<div key={group.groupId} className="flex flex-col gap-1">
 						{group.title ? (
 							<div>
-								<h2 className="text-lg font-medium">{group.title}</h2>
-								{group.description ? <p className="mt-1 text-sm text-muted-foreground">{group.description}</p> : null}
+								<h2 className="text-lg font-medium">{translate(i18n, group.title)}</h2>
+								{group.description ? (
+									<p className="mt-1 text-sm text-muted-foreground">{translate(i18n, group.description)}</p>
+								) : null}
 							</div>
 						) : null}
 						{group.fields.map((field) => (
@@ -158,6 +179,3 @@ export function AutoConfigSettings({ config, disabled, onValueChange, onValueCom
 		</Card>
 	));
 }
-
-
-

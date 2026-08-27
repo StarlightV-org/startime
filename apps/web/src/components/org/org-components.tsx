@@ -1,15 +1,15 @@
 "use client";
 
 import type { SessionType } from "better-auth";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { OrgType } from "better-auth";
 import { Separator } from "../ui/separator";
-import { Fragment } from "react";
+import React, { Fragment } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { authClient } from "~/server/better-auth/client";
-import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
@@ -20,12 +20,28 @@ import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRole, useSession } from "~/provider/session-provider";
-import { TrashIcon } from "lucide-react";
+import { InfoIcon, PenIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useConfirmModal } from "../ui/confirm-modal";
 
-import { tryCatch } from "~/lib/utils";
+import { cn, tryCatch } from "~/lib/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { roleLabels } from "../settings/org-settings";
+import type { API } from "~/trpc/server";
+import { Badge } from "../ui/badge";
+import {
+	Combobox,
+	ComboboxChip,
+	ComboboxChips,
+	ComboboxChipsInput,
+	ComboboxContent,
+	ComboboxEmpty,
+	ComboboxInput,
+	ComboboxItem,
+	ComboboxList,
+	ComboboxValue,
+	useComboboxAnchor,
+} from "../ui/combobox";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function MemberList({ org }: { org: SessionType["org"] }) {
 	const checkRole = useRole();
@@ -35,12 +51,12 @@ export function MemberList({ org }: { org: SessionType["org"] }) {
 	if (org.members.length === 0) return null;
 
 	return (
-		<Card className="w-full">
+		<Card className="w-full gap-0">
+			<CardHeader className="flex items-center justify-between pb-2">
+				<CardTitle className="text-2xl">Members</CardTitle>
+				{checkRole("admin") && <InviteMember />}
+			</CardHeader>
 			<CardContent>
-				<div className="flex items-center justify-between pb-2">
-					<h1 className="text-2xl">Members</h1>
-					{checkRole("admin") && <InviteMember />}
-				</div>
 				{org.members.map((member, i) => {
 					return (
 						<Fragment key={member.id}>
@@ -263,7 +279,7 @@ export function InviteMember() {
 		<Dialog open={open} onOpenChange={toggle}>
 			<DialogTrigger
 				render={
-					<Button variant="secondary">
+					<Button variant="outline" size="sm">
 						<Trans>Invite Member</Trans>
 					</Button>
 				}
@@ -323,6 +339,393 @@ export function InviteMember() {
 								</Button>
 								<Button disabled={!canSubmit || isSubmitting} type="submit" form="invite-member-form">
 									<Trans>Invite</Trans>
+								</Button>
+							</>
+						)}
+					/>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+export function ProjectList({ org, projects }: { org: SessionType["org"]; projects: API["org"]["projects"]["list"] }) {
+	return (
+		<Card className="gap-0">
+			<CardHeader className="flex items-center justify-between">
+				<CardTitle className="text-2xl">Projects</CardTitle>
+				<CreateProjectDialog org={org} />
+			</CardHeader>
+			<CardContent>
+				{projects.map((project) => (
+					<div key={project.id}>
+						<ProjectItem project={project} />
+					</div>
+				))}
+			</CardContent>
+		</Card>
+	);
+}
+
+function ProjectItem({ project }: { project: API["org"]["projects"]["list"][number] }) {
+	const checkRole = useRole();
+	const confirmModal = useConfirmModal();
+	const { t } = useLingui();
+	const router = useRouter();
+
+	const { mutate: deleteProject } = api.org.projects.delete.useMutation({
+		onSuccess: () => {
+			toast.success(t`Project deleted`, {
+				id: project.id,
+				description: undefined,
+			});
+			router.refresh();
+		},
+		onError: (e) => {
+			toast.error(t`Failed to delete project`, {
+				description: e instanceof Error ? e.message : String(e),
+				id: project.id,
+			});
+		},
+		onMutate: () => {
+			toast.loading(t`Deleting project`, {
+				id: project.id,
+				description: undefined,
+			});
+		},
+	});
+
+	Print.Debug(project);
+	return (
+		<div className="flex items-center justify-between border-b-2 border-b-border p-1">
+			<p className="flex h-fit items-center gap-1">
+				<span>{project.name}</span>
+				{project.description && (
+					<Tooltip>
+						<TooltipTrigger>
+							<InfoIcon className="size-4" />
+						</TooltipTrigger>
+						<TooltipContent className="max-w-xs text-pretty">
+							<p>{project.description}</p>
+						</TooltipContent>
+					</Tooltip>
+				)}
+			</p>
+			<div className="flex items-center gap-2">
+				{checkRole("member") && <AssignProjectDialog project={project} />}
+				{checkRole("admin") && (
+					<Button variant="outline" size="icon-sm">
+						<PenIcon />
+					</Button>
+				)}
+				{checkRole("owner") && (
+					<Button
+						variant="destructive"
+						size="icon-sm"
+						onClick={async () => {
+							const result = await confirmModal({
+								title: t`Delete project`,
+								content: t`Are you sure you want to delete the project: "${project.name}"?`,
+								confirmLabel: t`Delete`,
+								delay: 2000,
+							});
+							if (!result) return;
+							deleteProject({
+								projectId: project.id,
+							});
+						}}
+					>
+						<TrashIcon />
+					</Button>
+				)}
+			</div>
+		</div>
+	);
+}
+
+function CreateProjectDialog({ org }: { org: SessionType["org"] }) {
+	const router = useRouter();
+	const [opened, { toggle }] = useDisclosure();
+	const { t } = useLingui();
+
+	const form = useForm({
+		defaultValues: {
+			projectName: "",
+			description: "",
+		},
+		validators: {
+			onSubmit: z.object({
+				projectName: z.string().min(5, t`Project name must be at least 5 characters`),
+				description: z
+					.string()
+					.min(5, t`Description must be at least 5 characters`)
+					.max(100, t`Description must be at most 100 characters`)
+					.or(z.literal("")),
+			}),
+		},
+		onSubmit: async (values) => {
+			Print.Debug(values.value);
+			createProject({ name: values.value.projectName, description: values.value.description });
+		},
+	});
+
+	const { mutate: createProject } = api.org.projects.create.useMutation({
+		onSuccess: () => {
+			toggle();
+			form.reset();
+			router.refresh();
+		},
+	});
+
+	return (
+		<Dialog open={opened} onOpenChange={toggle}>
+			<DialogTrigger
+				render={
+					<Button variant="outline" size="sm">
+						<PlusIcon />
+						<Trans>Create Project</Trans>
+					</Button>
+				}
+			></DialogTrigger>
+			<DialogContent>
+				<DialogTitle>
+					<Trans>Create Project</Trans>
+				</DialogTitle>
+				<form
+					id="create-project-form"
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<FieldGroup>
+						<form.Field
+							name="projectName"
+							children={(field) => {
+								const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel required htmlFor={field.name}>
+											<Trans>Project Name</Trans>
+										</FieldLabel>
+										<Input
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											aria-invalid={isInvalid}
+											placeholder="startime"
+											autoComplete="off"
+										/>
+										<FieldDescription>
+											<Trans>The name of the project you want to create.</Trans>
+										</FieldDescription>
+										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+									</Field>
+								);
+							}}
+						/>
+						<form.Field
+							name="description"
+							children={(field) => {
+								const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel htmlFor={field.name}>
+											<Trans>Description</Trans>
+										</FieldLabel>
+										<Input
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(e) => field.handleChange(e.target.value)}
+											aria-invalid={isInvalid}
+											placeholder="Codetime tracking app"
+											autoComplete="off"
+										/>
+										<FieldDescription>
+											<Trans>A short description of the project you want to create.</Trans>
+										</FieldDescription>
+										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+									</Field>
+								);
+							}}
+						/>
+					</FieldGroup>
+				</form>
+				<DialogFooter>
+					<form.Subscribe
+						selector={(state) => [state.canSubmit, state.isSubmitting]}
+						children={([canSubmit, isSubmitting]) => (
+							<>
+								<Button
+									variant="outline"
+									disabled={isSubmitting}
+									onClick={() => {
+										toggle();
+										form.reset();
+									}}
+								>
+									<Trans>Cancel</Trans>
+								</Button>
+								<Button disabled={!canSubmit || isSubmitting} type="submit" form="create-project-form">
+									<Trans>Create Project</Trans>
+								</Button>
+							</>
+						)}
+					/>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function AssignProjectDialog({ project }: { project: API["org"]["projects"]["list"][number] }) {
+	const router = useRouter();
+	const [opened, { toggle }] = useDisclosure();
+	const anchor = useComboboxAnchor();
+
+	const assignement = project.assignments[0];
+	const { data: projects } = api.self.listProjects.useQuery(undefined, {
+		staleTime: 0,
+		enabled: opened,
+	});
+
+	const { mutate: assignProject } = api.org.projects.assign.useMutation({
+		onSuccess: () => {
+			toggle();
+			router.refresh();
+		},
+	});
+
+	const { t } = useLingui();
+
+	const form = useForm({
+		defaultValues: {
+			projects: project.assignments.map((a) => a.sourceProject),
+		},
+		validators: {
+			onSubmit: z.object({
+				projects: z.array(z.enum(projects ?? [])),
+			}),
+		},
+		onSubmit: async (values) => {
+			assignProject({
+				projectId: project.id,
+				userProjects: values.value.projects,
+			});
+			// createProject({ name: values.value.projectName, description: values.value.description });
+		},
+	});
+
+	return (
+		<Dialog
+			open={opened}
+			onOpenChange={() => {
+				toggle();
+				form.reset();
+			}}
+		>
+			<DialogTrigger
+				render={
+					<Button
+						variant="outline"
+						size="sm"
+						className={cn(assignement ? "border-green-500/40! bg-green-500/30!" : "border-red-500/40! bg-red-500/30!")}
+					>
+						{assignement ? "Assigned" : "Not assigned"}
+					</Button>
+				}
+			></DialogTrigger>
+			<DialogContent>
+				<DialogTitle>
+					<Trans>Assign Project: {project.name}</Trans>
+				</DialogTitle>
+				<form
+					id="create-project-form"
+					onSubmit={(e) => {
+						e.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<FieldGroup>
+						<form.Field
+							name="projects"
+							children={(field) => {
+								const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel required htmlFor={field.name}>
+											<Trans>Project Name</Trans>
+										</FieldLabel>
+										<Combobox
+											multiple
+											items={projects}
+											value={field.state.value}
+											onValueChange={(value) => field.handleChange(value)}
+											autoHighlight
+											virtualized
+										>
+											<ComboboxChips ref={anchor} className="w-full">
+												<ComboboxValue>
+													{(values) => (
+														<React.Fragment>
+															{values.map((value: string) => (
+																<ComboboxChip key={value}>{value}</ComboboxChip>
+															))}
+															<ComboboxChipsInput placeholder={values.length === 0 ? t`Select a project` : undefined} />
+														</React.Fragment>
+													)}
+												</ComboboxValue>
+											</ComboboxChips>
+											<ComboboxContent anchor={anchor}>
+												<ComboboxEmpty>No items found.</ComboboxEmpty>
+												<ComboboxList>
+													{(item) => (
+														<ComboboxItem key={item} value={item}>
+															{item}
+														</ComboboxItem>
+													)}
+												</ComboboxList>
+											</ComboboxContent>
+										</Combobox>
+										<FieldDescription>
+											<Trans>Select a personal project, to add its time to the org.</Trans>
+										</FieldDescription>
+										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+									</Field>
+								);
+							}}
+						/>
+					</FieldGroup>
+				</form>
+				<DialogFooter>
+					<form.Subscribe
+						selector={(state) => [state.canSubmit, state.isSubmitting, state.values.projects]}
+						children={([canSubmit, isSubmitting, projects]) => (
+							<>
+								<Button
+									variant="outline"
+									disabled={!!isSubmitting}
+									onClick={() => {
+										toggle();
+										form.reset();
+									}}
+								>
+									<Trans>Cancel</Trans>
+								</Button>
+								<Button type="submit" form="create-project-form">
+									{project.assignments?.length === 0 ? (
+										<Trans>Assign Project</Trans>
+									) : typeof projects === "boolean" || !projects ? (
+										<Trans>Update Project</Trans>
+									) : projects.length === 0 ? (
+										<Trans>Unassign Project</Trans>
+									) : (
+										<Trans>Update Project</Trans>
+									)}
 								</Button>
 							</>
 						)}

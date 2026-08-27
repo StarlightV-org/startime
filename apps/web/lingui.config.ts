@@ -6,7 +6,7 @@ export default defineConfig({
 	locales: ["en", "de"],
 	fallbackLocales: { default: "en" },
 
-	format: formatter({ lineNumbers: true }),
+	format: formatter({ lineNumbers: false }),
 	orderBy: "origin",
 	catalogs: [
 		{

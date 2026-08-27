@@ -52,6 +52,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	memberships: many(members),
 	exports: many(userExports),
 	apiKeys: many(apiKeys),
+	organizationProjectAssignments: many(organizationProjectAssignments),
 }));
 
 export const accounts = createTable("accounts", {
@@ -202,6 +203,7 @@ export type DbOrganization = typeof organizations.$inferSelect;
 export const organizationRelations = relations(organizations, ({ many }) => ({
 	members: many(members),
 	invitations: many(invitations),
+	projects: many(organizationProjects),
 }));
 
 export const members = createTable(
@@ -235,6 +237,74 @@ export const memberRelations = relations(members, ({ one }) => ({
 	}),
 	user: one(users, {
 		fields: [members.userId],
+		references: [users.id],
+	}),
+}));
+
+export const organizationProjects = createTable(
+	"organization_projects",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId(8)),
+		organizationId: t
+			.text("organization_id")
+			.notNull()
+			.references(() => organizations.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		name: t.text("name").notNull(),
+		normalizedName: t.text("normalized_name").notNull(),
+		description: t.text("description"),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	},
+	(table) => [
+		t.index("organization_projects_organization_id_idx").on(table.organizationId),
+		t.unique("organization_projects_organization_normalized_name_unique").on(table.organizationId, table.normalizedName),
+	],
+);
+
+export const organizationProjectRelations = relations(organizationProjects, ({ many, one }) => ({
+	organization: one(organizations, {
+		fields: [organizationProjects.organizationId],
+		references: [organizations.id],
+	}),
+	assignments: many(organizationProjectAssignments),
+}));
+
+export const organizationProjectAssignments = createTable(
+	"organization_project_assignments",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId(8)),
+		organizationProjectId: t
+			.text("organization_project_id")
+			.notNull()
+			.references(() => organizationProjects.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		userId: t
+			.text("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		sourceProject: t.text("source_project").notNull(),
+		normalizedSourceProject: t.text("normalized_source_project").notNull(),
+		createdAt: t.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	},
+	(table) => [
+		t.index("organization_project_assignments_project_user_idx").on(table.organizationProjectId, table.userId),
+		t
+			.unique("organization_project_assignments_user_normalized_source_project_unique")
+			.on(table.userId, table.normalizedSourceProject),
+	],
+);
+
+export const organizationProjectAssignmentRelations = relations(organizationProjectAssignments, ({ one }) => ({
+	project: one(organizationProjects, {
+		fields: [organizationProjectAssignments.organizationProjectId],
+		references: [organizationProjects.id],
+	}),
+	user: one(users, {
+		fields: [organizationProjectAssignments.userId],
 		references: [users.id],
 	}),
 }));

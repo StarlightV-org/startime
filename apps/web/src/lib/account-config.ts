@@ -1,3 +1,4 @@
+import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import z, { globalRegistry } from "zod";
 
@@ -5,14 +6,13 @@ import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
 
 /** Metadata for auto-generated settings UI; attach via `.meta({ configUI: … })`. */
 export type AccountConfigUIMeta = {
-	cardTitle?: string;
-	cardDescription?: string;
-	requiredPermission?: string;
-	groupTitle?: string;
-	groupDescription?: string;
-	label?: string;
-	description?: string;
-	enumLabels?: Partial<Record<string, string>>;
+	cardTitle?: MessageDescriptor;
+	cardDescription?: MessageDescriptor;
+	groupTitle?: MessageDescriptor;
+	groupDescription?: MessageDescriptor;
+	label?: MessageDescriptor;
+	description?: MessageDescriptor;
+	enumLabels?: Partial<Record<string, MessageDescriptor>>;
 	defaultBadge?: "On" | "Off";
 	excludeFromAutoSettings?: boolean;
 	numberMin?: number;
@@ -38,6 +38,9 @@ export const defaultAccountConfig = {
 	ui: {
 		popupForReauth: true,
 	},
+	personalOrg: {
+		shareAllTime: false,
+	},
 } as const;
 
 const timeZoneSchema = z
@@ -49,9 +52,9 @@ const timeZoneSchema = z
 	.catch(defaultAccountConfig.regional.timeZone)
 	.meta(
 		createMeta({
-			groupTitle: "Regional settings",
-			label: "Time zone",
-			description: "Used to calculate daily and weekly activity ranges.",
+			groupTitle: msg`Regional settings`,
+			label: msg`Time zone`,
+			description: msg`Used to calculate daily and weekly activity ranges.`,
 			editor: "input",
 		}),
 	);
@@ -63,10 +66,10 @@ const startOfWeekSchema = z
 	.catch(defaultAccountConfig.regional.startOfWeek)
 	.meta(
 		createMeta({
-			groupTitle: "Regional settings",
-			label: "Start of week",
-			description: "Controls which day starts weekly activity ranges.",
-			enumLabels: { monday: "Monday", sunday: "Sunday" },
+			groupTitle: msg`Regional settings`,
+			label: msg`Start of week`,
+			description: msg`Controls which day starts weekly activity ranges.`,
+			enumLabels: { monday: msg`Monday`, sunday: msg`Sunday` },
 		}),
 	);
 
@@ -77,10 +80,10 @@ const langSchema = z
 	.catch(defaultAccountConfig.regional.lang)
 	.meta(
 		createMeta({
-			groupTitle: "Regional settings",
-			label: "Language",
-			description: "Preferred interface language.",
-			enumLabels: { en: "English", de: "Deutsch" },
+			groupTitle: msg`Regional settings`,
+			label: msg`Language`,
+			description: msg`Preferred interface language.`,
+			enumLabels: { en: msg`English`, de: msg`German` },
 		}),
 	);
 
@@ -91,7 +94,7 @@ const regionalSchema = z
 	.catch(defaultAccountConfig.regional)
 	.meta(
 		createMeta({
-			groupTitle: "Regional settings",
+			groupTitle: msg`Regional settings`,
 		}),
 	);
 
@@ -103,9 +106,9 @@ const privacySchema = z
 			.default(defaultAccountConfig.privacy.publicProfile)
 			.meta(
 				createMeta({
-					groupTitle: "Privacy settings",
-					label: "Public profile",
-					description: "Whether your profile is publicly visible.",
+					groupTitle: msg`Privacy settings`,
+					label: msg`Public profile`,
+					description: msg`Whether your profile is publicly visible.`,
 				}),
 			),
 	})
@@ -114,7 +117,7 @@ const privacySchema = z
 	.catch(defaultAccountConfig.privacy)
 	.meta(
 		createMeta({
-			groupTitle: "Privacy settings",
+			groupTitle: msg`Privacy settings`,
 		}),
 	);
 
@@ -126,9 +129,9 @@ const uiSchema = z
 			.default(defaultAccountConfig.ui.popupForReauth)
 			.meta(
 				createMeta({
-					groupTitle: "UI settings",
-					label: "Popup for reauthentication",
-					description: "Whether to show a popup for reauthentication, or show it in the main window.",
+					groupTitle: msg`UI settings`,
+					label: msg`Popup for reauthentication`,
+					description: msg`Whether to show a popup for reauthentication, or show it in the main window.`,
 					defaultBadge: "On",
 				}),
 			),
@@ -138,18 +141,41 @@ const uiSchema = z
 	.catch(defaultAccountConfig.ui)
 	.meta(
 		createMeta({
-			groupTitle: "UI settings",
+			groupTitle: msg`UI settings`,
+		}),
+	);
+const personalOrgSchema = z
+	.object({
+		shareAllTime: z
+			.boolean()
+			.optional()
+			.default(defaultAccountConfig.personalOrg.shareAllTime)
+			.meta(
+				createMeta({
+					label: msg`Share all time`,
+					description: msg`Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared.`,
+					defaultBadge: "Off",
+				}),
+			),
+	})
+	.optional()
+	.default(defaultAccountConfig.personalOrg)
+	.catch(defaultAccountConfig.personalOrg)
+	.meta(
+		createMeta({
+			groupTitle: msg`Personal Org Settings`,
 		}),
 	);
 
 const accountConfigObjectSchema = z.object({
 	regional: regionalSchema.meta(
 		createMeta({
-			cardTitle: "Account Settings",
+			cardTitle: msg`Account Settings`,
 		}),
 	),
 	privacy: privacySchema,
 	ui: uiSchema,
+	personalOrg: personalOrgSchema,
 });
 
 export const accountConfigSchema = accountConfigObjectSchema.catch(defaultAccountConfig).default(defaultAccountConfig);
@@ -170,12 +196,13 @@ export type PathValue<T, P extends string> = P extends `${infer K}.${infer Rest}
 		: never;
 
 export type AccountConfigPath = Paths<AccountConfig>;
+type Translatable = MessageDescriptor | string;
 type SchemaSettingsFieldBase = {
 	path: AccountConfigPath;
-	label: string;
-	description?: string;
-	groupTitle?: string;
-	groupDescription?: string;
+	label: Translatable;
+	description?: Translatable;
+	groupTitle?: Translatable;
+	groupDescription?: Translatable;
 };
 
 export type SchemaSettingsFieldBoolean = SchemaSettingsFieldBase & {
@@ -186,7 +213,7 @@ export type SchemaSettingsFieldBoolean = SchemaSettingsFieldBase & {
 export type SchemaSettingsFieldEnum = SchemaSettingsFieldBase & {
 	kind: "enum";
 	values: readonly string[];
-	enumLabels: Partial<Record<string, string>>;
+	enumLabels: Partial<Record<string, Translatable>>;
 	schemaDefaultEnum?: string;
 };
 export type SchemaSettingsFieldNumber = SchemaSettingsFieldBase & {
@@ -206,14 +233,14 @@ export type SchemaSettingsField =
 	SchemaSettingsFieldBoolean | SchemaSettingsFieldEnum | SchemaSettingsFieldNumber | SchemaSettingsFieldString;
 export type SchemaSettingsSubgroup = {
 	groupId: string;
-	title?: string;
-	description?: string;
+	title?: Translatable;
+	description?: Translatable;
 	fields: SchemaSettingsField[];
 };
 export type SchemaSettingsSection = {
-	cardTitle: string;
-	cardDescription?: string;
-	requiredPermission?: string;
+	cardTitle: MessageDescriptor;
+	cardDescription?: MessageDescriptor;
+	requiredPermission?: MessageDescriptor;
 	subgroups: SchemaSettingsSubgroup[];
 };
 
@@ -263,6 +290,10 @@ function humanizeKey(key: string): string {
 		.replace(/([A-Z])/g, " $1")
 		.replace(/^./, (character) => character.toUpperCase())
 		.trim();
+}
+
+function messageId(message: MessageDescriptor | string): string {
+	return typeof message === "string" ? message : message.id;
 }
 
 function buildField(
@@ -363,12 +394,13 @@ export function describeAccountSchemaSettingsSections(): SchemaSettingsSection[]
 		const sectionKey = sectionKeyRaw as keyof AccountConfig;
 		for (const field of collectLeaves(section, sectionKey, [])) {
 			const title = field.groupTitle ?? humanizeKey(sectionKeyRaw);
-			const group = subgroups.find((candidate) => candidate.title === title);
+			const groupId = messageId(title);
+			const group = subgroups.find((candidate) => candidate.groupId === groupId);
 			if (group) {
 				group.fields.push(field);
 			} else {
 				subgroups.push({
-					groupId: title,
+					groupId,
 					title,
 					description: field.groupDescription,
 					fields: [field],
@@ -377,7 +409,7 @@ export function describeAccountSchemaSettingsSections(): SchemaSettingsSection[]
 		}
 	}
 
-	return subgroups.length === 0 ? [] : [{ cardTitle: "Account Settings", subgroups }];
+	return subgroups.length === 0 ? [] : [{ cardTitle: msg`Account Settings`, subgroups }];
 }
 
 export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
@@ -389,6 +421,7 @@ export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
 	z.object({ path: z.literal("regional.lang"), value: z.enum(["en", "de"]) }),
 	z.object({ path: z.literal("privacy.publicProfile"), value: z.boolean() }),
 	z.object({ path: z.literal("ui.popupForReauth"), value: z.boolean() }),
+	z.object({ path: z.literal("personalOrg.shareAllTime"), value: z.boolean() }),
 ]);
 
 export function checkAccountConfig(config: unknown): AccountConfig {

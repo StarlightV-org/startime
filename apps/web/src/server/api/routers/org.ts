@@ -3,7 +3,14 @@ import z from "zod";
 import { createTRPCRouter, protectedProcedure, reauthProcedure, trackMiddleware } from "~/server/api/trpc";
 import { auth } from "~/server/better-auth";
 
-import { users, invitations, organizations, members } from "@startime/db";
+import {
+	users,
+	invitations,
+	organizations,
+	members,
+	organizationProjects,
+	organizationProjectAssignments,
+} from "@startime/db";
 import { TRPCError } from "@trpc/server";
 import { op } from "~/lib/op";
 import { msg } from "@lingui/core/macro";
@@ -28,6 +35,14 @@ function requireOrganizationManager<T extends { organizationId: string | null; r
 	user: T,
 ): asserts user is T & { organizationId: string; role: "admin" | "owner" } {
 	if (!user.organizationId || (user.role !== "admin" && user.role !== "owner")) {
+		throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
+	}
+}
+
+function requireOrganizationOwner<T extends { organizationId: string | null; role: string | null }>(
+	user: T,
+): asserts user is T & { organizationId: string; role: "owner" } {
+	if (!user.organizationId || user.role !== "owner") {
 		throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
 	}
 }
@@ -433,6 +448,135 @@ const manageOrg = createTRPCRouter({
 		}),
 });
 
+const orgProjects = createTRPCRouter({
+	list: protectedProcedure.query(async ({ ctx }) => {
+		if (!ctx.user.organizationId) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "You must be a member of an organization to perform this action",
+			});
+		}
+
+		const projects = await ctx.db.query.organizationProjects.findMany({
+			where: eq(organizationProjects.organizationId, ctx.user.organizationId),
+			with: {
+				assignments: {
+					where: eq(organizationProjectAssignments.userId, ctx.user.id),
+				},
+			},
+		});
+		return projects;
+	}),
+	create: protectedProcedure
+		.input(
+			z.object({
+				name: z.string(),
+				description: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			requireOrganizationManager(ctx.user);
+
+			await ctx.db.insert(organizationProjects).values({
+				name: input.name,
+				normalizedName: input.name.toLowerCase(),
+				organizationId: ctx.user.organizationId,
+				description: input.description,
+			});
+		}),
+
+	edit: protectedProcedure
+		.input(
+			z.object({
+				projectId: z.string(),
+				name: z.string(),
+				description: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			requireOrganizationManager(ctx.user);
+
+			const project = await ctx.db.query.organizationProjects.findFirst({
+				where: (project, { eq, and }) =>
+					and(eq(project.id, input.projectId), eq(project.organizationId, ctx.user.organizationId)),
+			});
+			if (!project) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+			}
+
+			await ctx.db
+				.update(organizationProjects)
+				.set({
+					name: input.name,
+					normalizedName: input.name.toLowerCase(),
+					description: input.description,
+				})
+				.where(eq(organizationProjects.id, project.id));
+		}),
+
+	delete: reauthProcedure
+		.input(
+			z.object({
+				projectId: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			requireOrganizationOwner(ctx.user);
+
+			const project = await ctx.db.query.organizationProjects.findFirst({
+				where: (project, { eq, and }) =>
+					and(eq(project.id, input.projectId), eq(project.organizationId, ctx.user.organizationId)),
+			});
+			if (!project) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+			}
+
+			await ctx.db.delete(organizationProjects).where(eq(organizationProjects.id, input.projectId));
+		}),
+
+	assign: protectedProcedure
+		.input(
+			z.object({
+				projectId: z.string(),
+				userProjects: z.array(z.string()),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const project = await ctx.db.query.organizationProjects.findFirst({
+				where: (project, { eq, and }) =>
+					and(eq(project.id, input.projectId), eq(project.organizationId, ctx.user.organizationId)),
+			});
+			if (!project) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Project not found" });
+			}
+
+			const existingAssignments = await ctx.db.query.organizationProjectAssignments.findMany({
+				where: (assignment, { eq, and }) =>
+					and(eq(assignment.organizationProjectId, input.projectId), eq(assignment.userId, ctx.user.id)),
+			});
+
+			// If a project is in existing assignments, but not in the input, remove it
+			for (const assignment of existingAssignments) {
+				if (!input.userProjects.includes(assignment.sourceProject)) {
+					await ctx.db.delete(organizationProjectAssignments).where(eq(organizationProjectAssignments.id, assignment.id));
+				}
+			}
+
+			// For projects in the input, add or update their assignments
+			for (const userProject of input.userProjects) {
+				await ctx.db
+					.insert(organizationProjectAssignments)
+					.values({
+						sourceProject: userProject,
+						normalizedSourceProject: userProject.toLowerCase(),
+						organizationProjectId: input.projectId,
+						userId: ctx.user.id,
+					})
+					.onConflictDoNothing();
+			}
+		}),
+});
+
 export const orgRouter = createTRPCRouter({
 	isSlugTaken: protectedProcedure
 		.input(
@@ -450,6 +594,7 @@ export const orgRouter = createTRPCRouter({
 		}),
 	invites: orgInvitesRouter,
 	members: orgMembersRouter,
+	projects: orgProjects,
 	create: protectedProcedure
 		.input(
 			z.object({
