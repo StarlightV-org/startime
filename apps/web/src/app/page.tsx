@@ -69,7 +69,7 @@ const extensions: Array<{
 	{
 		editor: "Zed",
 		description: msg`Fast and AI-powered code editor that makes you more productive.`,
-		url: undefined,
+		url: "https://docs.starlightv.dev/docs/startime/extensions/zed",
 		icon: <ZedLogo className="size-10 text-white" />,
 		state: "completed",
 	},
@@ -170,19 +170,25 @@ export default async function Home() {
 					</div>
 					<nav className="flex items-center gap-2" aria-label="Primary navigation">
 						{!user ? (
-							<Button variant="ghost" render={
-								<Link href="/auth/signin">
-									<Trans>Sign in</Trans>
-									<ArrowRight data-icon="inline-end" aria-hidden="true" />
-								</Link>
-							}/>
+							<Button
+								variant="ghost"
+								render={
+									<Link href="/auth/signin">
+										<Trans>Sign in</Trans>
+										<ArrowRight data-icon="inline-end" aria-hidden="true" />
+									</Link>
+								}
+							/>
 						) : (
-							<Button className="hidden sm:inline-flex" render={
-								<Link href="/dash">
-									<Trans>Open dashboard</Trans>
-									<ArrowRight data-icon="inline-end" aria-hidden="true" />
-								</Link>
-							}/>
+							<Button
+								className="hidden sm:inline-flex"
+								render={
+									<Link href="/dash">
+										<Trans>Open dashboard</Trans>
+										<ArrowRight data-icon="inline-end" aria-hidden="true" />
+									</Link>
+								}
+							/>
 						)}
 					</nav>
 				</div>
@@ -208,20 +214,27 @@ export default async function Home() {
 						</div>
 						<nav className="flex items-center gap-2" aria-label="Primary navigation">
 							{!user ? (
-								<Button variant="ghost" render={
-									<Link href="/auth/signin">
-										<Trans>Sign in</Trans>
-										<ArrowRight data-icon="inline-end" aria-hidden="true" />
-									</Link>
-								}/>
-							) : (
-								<div className="flex items-center gap-2 rounded-lg bg-accent">
-									<Button className="hidden sm:inline-flex" render={
-										<Link href="/dash">
-											<Trans>Open dashboard</Trans>
+								<Button
+									nativeButton={false}
+									variant="ghost"
+									render={
+										<Link href="/auth/signin">
+											<Trans>Sign in</Trans>
 											<ArrowRight data-icon="inline-end" aria-hidden="true" />
 										</Link>
-									}/>
+									}
+								/>
+							) : (
+								<div className="flex items-center gap-2 rounded-lg bg-accent">
+									<Button
+										className="hidden sm:inline-flex"
+										render={
+											<Link href="/dash">
+												<Trans>Open dashboard</Trans>
+												<ArrowRight data-icon="inline-end" aria-hidden="true" />
+											</Link>
+										}
+									/>
 									<div className="flex items-center gap-2 pr-2">
 										<span className="text-sm">{user.name}</span>
 										<Avatar size="sm">
@@ -389,11 +402,13 @@ export default async function Home() {
 												{icon}
 												{state !== undefined && (
 													<Tooltip>
-														<TooltipTrigger render={
-															<Badge variant="outline" className={cn(stateLabels[state]?.className, "cursor-help")}>
-																{i18n._(stateLabels[state]?.label!)}
-															</Badge>
-														}/>
+														<TooltipTrigger
+															render={
+																<Badge variant="outline" className={cn(stateLabels[state]?.className, "cursor-help")}>
+																	{i18n._(stateLabels[state]?.label!)}
+																</Badge>
+															}
+														/>
 														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
@@ -419,11 +434,13 @@ export default async function Home() {
 												{icon}
 												{state !== undefined && (
 													<Tooltip>
-														<TooltipTrigger render={
-															<Badge variant="outline" className={stateLabels[state]?.className}>
-																{i18n._(stateLabels[state]?.label!)}
-															</Badge>
-														}/>
+														<TooltipTrigger
+															render={
+																<Badge variant="outline" className={stateLabels[state]?.className}>
+																	{i18n._(stateLabels[state]?.label!)}
+																</Badge>
+															}
+														/>
 														<TooltipContent>{i18n._(stateLabels[state]?.description!)}</TooltipContent>
 													</Tooltip>
 												)}
@@ -441,4 +458,3 @@ export default async function Home() {
 		</main>
 	);
 }
-

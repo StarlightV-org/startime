@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -eu
 
+if git diff --cached --quiet -- apps/web; then
+	exit 0
+fi
+
 (
 	cd apps/web
 	bun pm version patch --no-git-tag-version

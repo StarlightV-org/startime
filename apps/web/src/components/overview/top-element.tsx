@@ -1,7 +1,7 @@
 "use client";
 
 import type { OverviewTopElement } from "~/server/api/routers/overview";
-import { Progress } from "../ui/progress";
+import { Progress, ProgressLabel, ProgressValue } from "../ui/progress";
 import { cn } from "~/lib/utils";
 import { FileIcons } from "./file-icons";
 import { parseAsString, useQueryState } from "nuqs";
@@ -53,7 +53,7 @@ export default function TopElement({
 				<span className="line-clamp-1 min-w-fit text-xs">{element.percentage}%</span>
 			</div>
 			<div className="flex flex-row items-center gap-1">
-				<Progress value={element.percentage} />
+				<Progress value={element.percentage} className="w-full max-w-sm" />
 			</div>
 		</div>
 	);
