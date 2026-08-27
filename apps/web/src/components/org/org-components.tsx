@@ -413,11 +413,7 @@ function ProjectItem({ project }: { project: API["org"]["projects"]["list"][numb
 			</p>
 			<div className="flex items-center gap-2">
 				{checkRole("member") && <AssignProjectDialog project={project} />}
-				{checkRole("admin") && (
-					<Button variant="outline" size="icon-sm">
-						<PenIcon />
-					</Button>
-				)}
+				{checkRole("admin") && <UpdateProjectDialog project={project} />}
 				{checkRole("owner") && (
 					<Button
 						variant="destructive"
@@ -572,6 +568,161 @@ function CreateProjectDialog({ org }: { org: SessionType["org"] }) {
 								</Button>
 								<Button disabled={!canSubmit || isSubmitting} type="submit" form="create-project-form">
 									<Trans>Create Project</Trans>
+								</Button>
+							</>
+						)}
+					/>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function UpdateProjectDialog({ project }: { project: API["org"]["projects"]["list"][number] }) {
+	const router = useRouter();
+	const [opened, { close, open }] = useDisclosure();
+	const { t } = useLingui();
+	const formId = `update-project-form-${project.id}`;
+
+	const { mutateAsync: updateProject } = api.org.projects.edit.useMutation({
+		onSuccess: () => {
+			close();
+			toast.success(t`Project updated`, {
+				id: `update-project-${project.id}`,
+			});
+			router.refresh();
+		},
+		onError: (error) => {
+			toast.error(t`Failed to update project`, {
+				description: error.message,
+				id: `update-project-${project.id}`,
+			});
+		},
+	});
+
+	const form = useForm({
+		defaultValues: {
+			projectName: project.name,
+			description: project.description ?? "",
+		},
+		validators: {
+			onSubmit: z.object({
+				projectName: z.string().min(5, t`Project name must be at least 5 characters`),
+				description: z
+					.string()
+					.min(5, t`Description must be at least 5 characters`)
+					.max(100, t`Description must be at most 100 characters`)
+					.or(z.literal("")),
+			}),
+		},
+		onSubmit: async ({ value }) => {
+			await updateProject({
+				projectId: project.id,
+				name: value.projectName,
+				description: value.description,
+			});
+		},
+	});
+
+	const resetAndClose = () => {
+		form.reset();
+		close();
+	};
+
+	return (
+		<Dialog
+			open={opened}
+			onOpenChange={(isOpen) => {
+				if (isOpen) {
+					open();
+					return;
+				}
+				resetAndClose();
+			}}
+		>
+			<DialogTrigger
+				render={
+					<Button variant="outline" size="icon-sm" aria-label={t`Update project`}>
+						<PenIcon />
+					</Button>
+				}
+			/>
+			<DialogContent>
+				<DialogTitle>
+					<Trans>Update Project</Trans>
+				</DialogTitle>
+				<form
+					id={formId}
+					onSubmit={(event) => {
+						event.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<FieldGroup>
+						<form.Field
+							name="projectName"
+							children={(field) => {
+								const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel required htmlFor={field.name}>
+											<Trans>Project Name</Trans>
+										</FieldLabel>
+										<Input
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(event) => field.handleChange(event.target.value)}
+											aria-invalid={isInvalid}
+											autoComplete="off"
+										/>
+										<FieldDescription>
+											<Trans>The name of the organization project.</Trans>
+										</FieldDescription>
+										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+									</Field>
+								);
+							}}
+						/>
+						<form.Field
+							name="description"
+							children={(field) => {
+								const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+								return (
+									<Field data-invalid={isInvalid}>
+										<FieldLabel htmlFor={field.name}>
+											<Trans>Description</Trans>
+										</FieldLabel>
+										<Input
+											id={field.name}
+											name={field.name}
+											value={field.state.value}
+											onBlur={field.handleBlur}
+											onChange={(event) => field.handleChange(event.target.value)}
+											aria-invalid={isInvalid}
+											autoComplete="off"
+										/>
+										<FieldDescription>
+											<Trans>A short description of the project.</Trans>
+										</FieldDescription>
+										{isInvalid && <FieldError errors={field.state.meta.errors} />}
+									</Field>
+								);
+							}}
+						/>
+					</FieldGroup>
+				</form>
+				<DialogFooter>
+					<form.Subscribe
+						selector={(state) => [state.canSubmit, state.isSubmitting]}
+						children={([canSubmit, isSubmitting]) => (
+							<>
+								<Button variant="outline" disabled={isSubmitting} onClick={resetAndClose}>
+									<Trans>Cancel</Trans>
+								</Button>
+								<Button disabled={!canSubmit || isSubmitting} type="submit" form={formId}>
+									<Trans>Update Project</Trans>
 								</Button>
 							</>
 						)}
