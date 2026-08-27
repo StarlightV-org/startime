@@ -62,6 +62,7 @@ msgstr "Arbeitsbereich"
 #: src/app/dash/page.tsx:196
 #: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
+#: src/lib/account-config.ts:84
 msgid "Language"
 msgstr "Sprache"
 
@@ -701,6 +702,22 @@ msgstr "API-Schlüssel kopieren"
 msgid "You can copy this API key to your clipboard now."
 msgstr "Sie können diesen API-Schlüssel in die Zwischenablage kopieren."
 
+#: src/components/settings/auto-config-settings.tsx:40
+msgid "On (Default)"
+msgstr "An (Standard)"
+
+#: src/components/settings/auto-config-settings.tsx:42
+msgid "On"
+msgstr "An"
+
+#: src/components/settings/auto-config-settings.tsx:44
+msgid "Off (Default)"
+msgstr "Aus (Standard)"
+
+#: src/components/settings/auto-config-settings.tsx:46
+msgid "Off"
+msgstr "Aus"
+
 #: src/components/settings/data-settings.tsx:77
 msgid "File size must be less than 64MB"
 msgstr "Die Dateigröße muss kleiner als 64MB sein"
@@ -960,6 +977,92 @@ msgstr "Hochladen fehlgeschlagen: {0}"
 #: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"
+
+#: src/lib/account-config.ts:55
+#: src/lib/account-config.ts:69
+#: src/lib/account-config.ts:83
+#: src/lib/account-config.ts:97
+msgid "Regional settings"
+msgstr "Regionale Einstellungen"
+
+#: src/lib/account-config.ts:56
+msgid "Time zone"
+msgstr "Zeitzone"
+
+#: src/lib/account-config.ts:57
+msgid "Used to calculate daily and weekly activity ranges."
+msgstr "Wird verwendet, um tägliche und wöchentliche Aktivitätsbereiche zu berechnen."
+
+#: src/lib/account-config.ts:70
+msgid "Start of week"
+msgstr "Start der Woche"
+
+#: src/lib/account-config.ts:71
+msgid "Controls which day starts weekly activity ranges."
+msgstr "Steuert, welchen Tag die wöchentlichen Aktivitätsbereiche beginnen."
+
+#: src/lib/account-config.ts:72
+msgid "Monday"
+msgstr "Montag"
+
+#: src/lib/account-config.ts:72
+msgid "Sunday"
+msgstr "Sonntag"
+
+#: src/lib/account-config.ts:85
+msgid "Preferred interface language."
+msgstr "Sprache der Benutzeroberfläche."
+
+#: src/lib/account-config.ts:86
+msgid "English"
+msgstr "Englisch"
+
+#: src/lib/account-config.ts:86
+msgid "German"
+msgstr "Deutsch"
+
+#: src/lib/account-config.ts:109
+#: src/lib/account-config.ts:120
+msgid "Privacy settings"
+msgstr "Privatsphäre-Einstellungen"
+
+#: src/lib/account-config.ts:110
+msgid "Public profile"
+msgstr "Öffentliches Profil"
+
+#: src/lib/account-config.ts:111
+msgid "Whether your profile is publicly visible."
+msgstr "Ob dein Profil öffentlich sichtbar ist."
+
+#: src/lib/account-config.ts:132
+#: src/lib/account-config.ts:144
+msgid "UI settings"
+msgstr "UI-Einstellungen"
+
+#: src/lib/account-config.ts:133
+msgid "Popup for reauthentication"
+msgstr "Popup für die erneute Authentifizierung"
+
+#: src/lib/account-config.ts:134
+msgid "Whether to show a popup for reauthentication, or show it in the main window."
+msgstr "Ob das Popup für die erneute Authentifizierung angezeigt werden soll oder in der Hauptfenster angezeigt werden soll."
+
+#: src/lib/account-config.ts:155
+msgid "Share all time"
+msgstr "Alle Zeit teilen"
+
+#: src/lib/account-config.ts:156
+msgid "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
+msgstr "Teile alle Zeit, die du programmierst, mit deiner Organisation. Wenn ausgeschaltet, wird nur die Zeit geteilt, die du auf Projekten spendest, die du zugewiesen hast."
+
+#: src/lib/account-config.ts:166
+msgid "Personal Org Settings"
+msgstr "Persönliche Org-Einstellungen"
+
+#: src/lib/account-config.ts:173
+#: src/lib/account-config.ts:412
+msgid "Account Settings"
+msgstr "Konto-Einstellungen"
 
 #: src/server/api/routers/overview.ts:55
 msgid "1 day"

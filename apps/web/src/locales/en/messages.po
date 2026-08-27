@@ -62,6 +62,7 @@ msgstr "Workspace"
 #: src/app/dash/page.tsx:196
 #: src/app/page.tsx:342
 #: src/components/overview/filter-view.tsx:14
+#: src/lib/account-config.ts:84
 msgid "Language"
 msgstr "Language"
 
@@ -701,6 +702,22 @@ msgstr "Copy API key"
 msgid "You can copy this API key to your clipboard now."
 msgstr "You can copy this API key to your clipboard now."
 
+#: src/components/settings/auto-config-settings.tsx:40
+msgid "On (Default)"
+msgstr "On (Default)"
+
+#: src/components/settings/auto-config-settings.tsx:42
+msgid "On"
+msgstr "On"
+
+#: src/components/settings/auto-config-settings.tsx:44
+msgid "Off (Default)"
+msgstr "Off (Default)"
+
+#: src/components/settings/auto-config-settings.tsx:46
+msgid "Off"
+msgstr "Off"
+
 #: src/components/settings/data-settings.tsx:77
 msgid "File size must be less than 64MB"
 msgstr "File size must be less than 64MB"
@@ -960,6 +977,92 @@ msgstr "Upload failed: {0}"
 #: src/components/uploadthing.tsx:81
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"
+
+#: src/lib/account-config.ts:55
+#: src/lib/account-config.ts:69
+#: src/lib/account-config.ts:83
+#: src/lib/account-config.ts:97
+msgid "Regional settings"
+msgstr "Regional settings"
+
+#: src/lib/account-config.ts:56
+msgid "Time zone"
+msgstr "Time zone"
+
+#: src/lib/account-config.ts:57
+msgid "Used to calculate daily and weekly activity ranges."
+msgstr "Used to calculate daily and weekly activity ranges."
+
+#: src/lib/account-config.ts:70
+msgid "Start of week"
+msgstr "Start of week"
+
+#: src/lib/account-config.ts:71
+msgid "Controls which day starts weekly activity ranges."
+msgstr "Controls which day starts weekly activity ranges."
+
+#: src/lib/account-config.ts:72
+msgid "Monday"
+msgstr "Monday"
+
+#: src/lib/account-config.ts:72
+msgid "Sunday"
+msgstr "Sunday"
+
+#: src/lib/account-config.ts:85
+msgid "Preferred interface language."
+msgstr "Preferred interface language."
+
+#: src/lib/account-config.ts:86
+msgid "English"
+msgstr "English"
+
+#: src/lib/account-config.ts:86
+msgid "German"
+msgstr "German"
+
+#: src/lib/account-config.ts:109
+#: src/lib/account-config.ts:120
+msgid "Privacy settings"
+msgstr "Privacy settings"
+
+#: src/lib/account-config.ts:110
+msgid "Public profile"
+msgstr "Public profile"
+
+#: src/lib/account-config.ts:111
+msgid "Whether your profile is publicly visible."
+msgstr "Whether your profile is publicly visible."
+
+#: src/lib/account-config.ts:132
+#: src/lib/account-config.ts:144
+msgid "UI settings"
+msgstr "UI settings"
+
+#: src/lib/account-config.ts:133
+msgid "Popup for reauthentication"
+msgstr "Popup for reauthentication"
+
+#: src/lib/account-config.ts:134
+msgid "Whether to show a popup for reauthentication, or show it in the main window."
+msgstr "Whether to show a popup for reauthentication, or show it in the main window."
+
+#: src/lib/account-config.ts:155
+msgid "Share all time"
+msgstr "Share all time"
+
+#: src/lib/account-config.ts:156
+msgid "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
+msgstr "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
+
+#: src/lib/account-config.ts:166
+msgid "Personal Org Settings"
+msgstr "Personal Org Settings"
+
+#: src/lib/account-config.ts:173
+#: src/lib/account-config.ts:412
+msgid "Account Settings"
+msgstr "Account Settings"
 
 #: src/server/api/routers/overview.ts:55
 msgid "1 day"
