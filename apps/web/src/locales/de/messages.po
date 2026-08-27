@@ -13,63 +13,39 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. js-lingui-id: F_amnS
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 msgid "Time Range"
 msgstr "Zeitraum"
 
-#. js-lingui-id: XJOV1Y
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Activity"
-msgstr "Aktivität"
-
-#. js-lingui-id: g6Neeg
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Time/Total"
-msgstr "Zeit/Gesamt"
-
-#. js-lingui-id: KLY8mS
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Time/Today"
-msgstr "Zeit/Heute"
-
-#. js-lingui-id: Hr4FYL
-#: src/app/dash/page.tsx
-msgid "Streak/Current"
-msgstr "Streak/Aktuell"
-
-#. js-lingui-id: zZ_h73
-#: src/app/dash/page.tsx
-msgid "Streak/Max"
-msgstr "Streak/Max"
-
-#. js-lingui-id: WWy8TN
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 msgid "Top"
 msgstr "Top"
 
-#. js-lingui-id: ErCeZs
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 msgstr "<0>Berechnungen</0><1>Die Gesamtzeit zählt jede aktive Minute nur einmal. <2/>Wenn du innerhalb einer Minute zwischen Arbeitsbereich oder Sprache wechselt, wird die gleiche Minute für jede übereinstimmende Kategorie gezählt. <3/>So können Kategorietermine und Prozentsätze über 100% gehen.</1>"
 
-#. js-lingui-id: uBAxNB
+#: src/app/dash/org/page.tsx
+msgid "Unable to load organization statistics."
+msgstr "Fehler beim Laden der Statistiken"
+
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 #: src/app/page.tsx
 #: src/components/overview/filter-view.tsx
 msgid "Editor"
 msgstr "Editor"
 
-#. js-lingui-id: pmUArF
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 #: src/components/overview/filter-view.tsx
 msgid "Workspace"
 msgstr "Arbeitsbereich"
 
-#. js-lingui-id: vXIe7J
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 #: src/app/page.tsx
 #: src/components/overview/filter-view.tsx
@@ -77,417 +53,372 @@ msgstr "Arbeitsbereich"
 msgid "Language"
 msgstr "Sprache"
 
-#. js-lingui-id: F3bW6y
+#: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
 #: src/app/page.tsx
 #: src/components/overview/filter-view.tsx
 msgid "Platform"
 msgstr "Plattform"
 
-#. js-lingui-id: Ygc62z
+#: src/app/dash/org/page.tsx
+#: src/components/overview/filter-view.tsx
+msgid "User"
+msgstr "Benutzer"
+
+#: src/app/dash/org/page.tsx
+msgid "Unable to load organization projects."
+msgstr "Fehler beim Laden der Projekte"
+
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Activity"
+msgstr "Aktivität"
+
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Time/Total"
+msgstr "Zeit/Gesamt"
+
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Time/Today"
+msgstr "Zeit/Heute"
+
+#: src/app/dash/page.tsx
+msgid "Streak/Current"
+msgstr "Streak/Aktuell"
+
+#: src/app/dash/page.tsx
+msgid "Streak/Max"
+msgstr "Streak/Max"
+
 #: src/app/dash/page.tsx
 msgid "Daily Coding Distribution"
 msgstr "Tägliche verteilung der Programmierzeit"
 
-#. js-lingui-id: NZrGEq
 #: src/app/page.tsx
 msgid "Respect your privacy"
 msgstr "Respektiere deine Privatsphäre"
 
-#. js-lingui-id: QYL3wa
 #: src/app/page.tsx
 msgid "Only stores the necessary data. Filenames are hashed."
 msgstr "Nur die notwendigen Daten werden gespeichert. Dateinamen werden gehasht."
 
-#. js-lingui-id: qe_4lR
 #: src/app/page.tsx
 msgid "Join or create an organization"
 msgstr "Beitritt oder Erstellung einer Organisation"
 
-#. js-lingui-id: OJ9-7Q
 #: src/app/page.tsx
 msgid "Track your time together with your friends / team"
 msgstr "Verfolge deine Zeit zusammen mit deinen Freunden / Team"
 
-#. js-lingui-id: gQ9__i
 #: src/app/page.tsx
 msgid "Import your data"
 msgstr "Importiere deine Daten"
 
-#. js-lingui-id: afnVjx
 #: src/app/page.tsx
 msgid "Import your existing time tracking data from other tools. Like, codetime.dev"
 msgstr "Importiere deine bestehenden Zeitverfolgungsdaten von anderen Tools. Zum Beispiel codetime.dev"
 
-#. js-lingui-id: 6CZKpq
 #: src/app/page.tsx
 msgid "Fast and AI-powered code editor that makes you more productive."
 msgstr "Schnell und KI-gestützer Code-Editor, der dich produktiver macht."
 
-#. js-lingui-id: LkzY_B
 #: src/app/page.tsx
 msgid "Note-taking and knowledge management app"
 msgstr "Notizen- und Wissensmanagement-App"
 
-#. js-lingui-id: sFPIot
 #: src/app/page.tsx
 msgid "Game development engine"
 msgstr "Spielentwicklungseingine"
 
-#. js-lingui-id: u7tym8
 #: src/app/page.tsx
 msgid "The popular code editor"
 msgstr "Der beliebte Code-Editor"
 
-#. js-lingui-id: hvqQp2
 #: src/app/page.tsx
 msgid "Fork of VS Code with AI-powered features"
 msgstr "Fork von VS Code mit KI-gestützten Funktionen"
 
-#. js-lingui-id: wVKbvU
 #: src/app/page.tsx
 msgid "Built-in full-stack support ready for your next endeavor"
 msgstr "Integrierter Full-Stack-Unterstützung für deine nächste Herausforderung"
 
-#. js-lingui-id: hpp1aQ
 #: src/app/page.tsx
 msgid "Missing an editor extension? Create a request on GitHub"
 msgstr "Fehlt eine Editor-Erweiterung? Erstelle eine Anfrage auf GitHub"
 
-#. js-lingui-id: mu1gVr
 #: src/app/page.tsx
 msgid "Not started"
 msgstr "Nicht gestartet"
 
-#. js-lingui-id: zt41Rj
 #: src/app/page.tsx
 msgid "This editor extension is planned but not yet in development."
 msgstr "Diese Editor-Erweiterung ist geplant, aber noch nicht in Entwicklung."
 
-#. js-lingui-id: JEGlfK
 #: src/app/page.tsx
 msgid "Started"
 msgstr "Gestartet"
 
-#. js-lingui-id: jM71ez
 #: src/app/page.tsx
 msgid "Development has begun for this editor extension."
 msgstr "Entwicklung für diese Editor-Erweiterung hat gestartet."
 
-#. js-lingui-id: qqWcBV
 #: src/app/page.tsx
 msgid "Completed"
 msgstr "Abgeschlossen"
 
-#. js-lingui-id: y7Acq0
 #: src/app/page.tsx
 msgid "This editor extension is available to use."
 msgstr "Diese Editor-Erweiterung ist verfügbar zum Einsatz."
 
-#. js-lingui-id: SPNbMN
 #: src/app/page.tsx
 msgid "Easy setup"
 msgstr "Einfaches Setup"
 
-#. js-lingui-id: 2POOFK
 #: src/app/page.tsx
 msgid "Free"
 msgstr "Gratis"
 
-#. js-lingui-id: v-Wp--
 #: src/app/page.tsx
 msgid "Open source"
 msgstr "Open Source"
 
-#. js-lingui-id: 5lWFkC
 #: src/app/page.tsx
 msgid "Sign in"
 msgstr "Anmelden"
 
-#. js-lingui-id: jtj9g4
 #: src/app/page.tsx
 msgid "Open dashboard"
 msgstr "Dashboard öffnen"
 
-#. js-lingui-id: o306Ac
 #: src/app/page.tsx
 msgid "Track how you spend your time"
 msgstr "Verfolge wie du deine Zeit nutzt"
 
-#. js-lingui-id: TfXZs_
 #: src/app/page.tsx
 msgid "Visualize your coding time. <0/>"
 msgstr "Visualisiere deine Programmierzeit. <0/>"
 
-#. js-lingui-id: k-Iu9v
 #: src/app/page.tsx
 msgid "<0>We are currently in closed beta. Singups will be open soon.</0>"
 msgstr "<0>Wir sind aktuell in der geschlossenen Beta-Phase. Anmeldungen werden bald geöffnet.</0>"
 
-#. js-lingui-id: QdNqur
 #: src/app/page.tsx
 msgid "Designed for developers"
 msgstr "Für Entwickler"
 
-#. js-lingui-id: 7g7We1
 #: src/app/page.tsx
 msgid "What we offer"
 msgstr "Was wir anbieten"
 
-#. js-lingui-id: LTU0HH
 #: src/app/page.tsx
 msgid "The last 90d"
 msgstr "Letzten 90 Tage"
 
-#. js-lingui-id: tISDsO
 #: src/app/page.tsx
 msgid "What our users are using"
 msgstr "Was unsere Benutzer verwenden"
 
-#. js-lingui-id: 77lMzN
 #: src/app/page.tsx
 msgid "Editor Extensions"
 msgstr "Editor-Erweiterungen"
 
-#. js-lingui-id: pdabZ9
 #: src/app/page.tsx
 msgid "An extension ecosystem for all the editors you love."
 msgstr "Ein Erweiterungs-Ecosystem für alle Editoren, die ihr liebt."
 
-#. js-lingui-id: AeXO77
 #: src/components/auth/account-button.tsx
 msgid "Account"
 msgstr "Konto"
 
-#. js-lingui-id: Tz0i8g
 #: src/components/auth/account-button.tsx
 #: src/components/ui/header-bar.tsx
 msgid "Settings"
 msgstr "Einstellungen"
 
-#. js-lingui-id: nOhz3x
 #: src/components/auth/account-button.tsx
 msgid "Logout"
 msgstr "Abmelden"
 
-#. js-lingui-id: su5kw0
 #: src/components/auth/reauth-form.tsx
 msgid "Passkeys are not supported in this browser."
 msgstr "Passkeys werden in diesem Browser nicht unterstützt."
 
-#. js-lingui-id: x0N3mH
 #: src/components/auth/reauth-form.tsx
 #: src/components/auth/sign-in-form.tsx
 msgid "Your passkey could not be verified."
 msgstr "Dein Passkey konnte nicht überprüft werden."
 
-#. js-lingui-id: ap7mO9
 #: src/components/auth/reauth-form.tsx
 msgid "Verify it's you"
 msgstr "Überprüfe, dass du es bist"
 
-#. js-lingui-id: XtsFsw
 #: src/components/auth/reauth-form.tsx
 msgid "Use a passkey to continue with this sensitive action."
 msgstr "Verwende einen Passkey, um mit dieser sensiblen Aktion fortzufahren."
 
-#. js-lingui-id: 4KQHwG
 #: src/components/auth/reauth-form.tsx
 #: src/components/auth/sign-in-form.tsx
 msgid "Continue with a passkey"
 msgstr "Weiter mit deinem Passkey"
 
-#. js-lingui-id: LodllG
 #: src/components/auth/reauth-form.tsx
 msgid "Reauthentication is available only with a registered passkey."
 msgstr "Die erneute Authentifizierung ist nur mit einem registrierten Passkey verfügbar."
 
-#. js-lingui-id: SlfejT
 #: src/components/auth/sign-in-error.tsx
 msgid "Error"
 msgstr "Fehler"
 
-#. js-lingui-id: MqiANk
 #: src/components/auth/sign-in-error.tsx
 msgid "An error occurred while signing in."
 msgstr "Ein Fehler ist beim Anmelden aufgetreten."
 
-#. js-lingui-id: qJb6G2
 #: src/components/auth/sign-in-error.tsx
 msgid "Try Again"
 msgstr "Erneut versuchen"
 
-#. js-lingui-id: 6Y-86H
 #: src/components/auth/sign-in-form.tsx
 msgid "GitHub sign-in could not be started."
 msgstr "GitHub-Anmeldung konnte nicht gestartet werden."
 
-#. js-lingui-id: jvxNL8
 #: src/components/auth/sign-in-form.tsx
 msgid "Passkeys are not supported in this browser. Try GitHub instead."
 msgstr "Passkeys werden in diesem Browser nicht unterstützt. Bitte versuche es mit GitHub anstelle eines Passkeys."
 
-#. js-lingui-id: 6jfS51
 #: src/components/auth/sign-in-form.tsx
 msgid "Welcome"
 msgstr "Willkommen"
 
-#. js-lingui-id: OC65wZ
 #: src/components/auth/sign-in-form.tsx
 msgid "Sign in to view your dashboard."
 msgstr "Melde dich an, um deinen Dashboard anzusehen."
 
-#. js-lingui-id: 5Rq6w1
 #: src/components/auth/sign-in-form.tsx
 msgid "Continue with GitHub"
 msgstr "Weiter mit GitHub"
 
-#. js-lingui-id: zK2Mfx
 #: src/components/auth/sign-in-form.tsx
 msgid "Signups are currently disabled."
 msgstr "Anmeldungen sind derzeit deaktiviert."
 
-#. js-lingui-id: nUSomm
 #: src/components/auth/sign-in-form.tsx
 msgid "This site is currently in closed beta. Want to contribute?"
 msgstr "Diese Seite befindet sich in geschlossener Beta. Möchtest du mitmachen?"
 
-#. js-lingui-id: 31TuIx
 #: src/components/auth/sign-in-form.tsx
 msgid "Join our Discord"
 msgstr "Discord beitreten"
 
-#. js-lingui-id: AI1raI
 #: src/components/org/edit-org.tsx
 msgid "Organization updated successfully."
 msgstr "Organisation erfolgreich aktualisiert."
 
-#. js-lingui-id: C80Cpz
 #: src/components/org/edit-org.tsx
 msgid "Updating organization..."
 msgstr "Organisation wird aktualisiert..."
 
-#. js-lingui-id: RQInqS
 #: src/components/org/edit-org.tsx
 msgid "Failed to update organization."
 msgstr "Organisation konnte nicht aktualisiert werden."
 
-#. js-lingui-id: ub8ub1
 #: src/components/org/edit-org.tsx
 msgid "Organization deleted successfully."
 msgstr "Organisation erfolgreich gelöscht."
 
-#. js-lingui-id: jqqejH
 #: src/components/org/edit-org.tsx
 msgid "Deleting organization..."
 msgstr "Organisation wird gelöscht..."
 
-#. js-lingui-id: X6d3Zy
 #: src/components/org/edit-org.tsx
 msgid "Failed to delete organization."
 msgstr "Organisation konnte nicht gelöscht werden."
 
-#. js-lingui-id: gq_idq
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Name must be at least 5 characters."
 msgstr "Name muss mindestens 5 Zeichen lang sein."
 
-#. js-lingui-id: hD67w4
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Name must be at most 32 characters."
 msgstr "Name darf maximal 32 Zeichen lang sein."
 
-#. js-lingui-id: nO-F_f
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Slug must be at least 5 characters."
 msgstr "Slug muss mindestens 5 Zeichen lang sein."
 
-#. js-lingui-id: Fqkg-Q
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Slug must be at most 32 characters."
 msgstr "Slug darf maximal 32 Zeichen lang sein."
 
-#. js-lingui-id: oGujlT
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
 msgstr "Slug muss mit einer Kleinbuchstaben beginnen und nur Kleinbuchstaben, Zahlen und ein einzelner Bindestrich enthalten."
 
-#. js-lingui-id: TJCs4E
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 #: src/server/api/routers/org.ts
 msgid "Logo must be at least 5 characters."
 msgstr "Logo muss mindestens 5 Zeichen lang sein."
 
-#. js-lingui-id: Fyu-Sz
 #: src/components/org/edit-org.tsx
 msgid "Update Slug"
 msgstr "Slug aktualisieren"
 
-#. js-lingui-id: o3CGzK
 #: src/components/org/edit-org.tsx
 msgid "Are you sure you want to update the slug for this organization? <0/>This will change the URL to this organization's page."
 msgstr "Bist du sicher, dass du den Slug für diese Organisation aktualisieren möchtest? <0/>Dies wird die URL dieser Organisation's Seite ändern."
 
-#. js-lingui-id: S2ubjY
 #: src/components/org/edit-org.tsx
 msgid "Edit Org"
 msgstr "Organisation bearbeiten"
 
-#. js-lingui-id: nfnm9D
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 msgid "Organization Name"
 msgstr "Organisationsname"
 
-#. js-lingui-id: YBzAtK
 #: src/components/org/edit-org.tsx
 msgid "The URL slug for the organization."
 msgstr "Der URL-Slug für die Organisation."
 
-#. js-lingui-id: kEfpsd
 #: src/components/org/edit-org.tsx
 #: src/components/settings/org-settings.tsx
 msgid "This slug is already taken. Please choose a different one."
 msgstr "Dieser Slug ist bereits vergeben. Bitte wähle einen anderen."
 
-#. js-lingui-id: sHjfIe
 #: src/components/org/edit-org.tsx
 msgid "Logo URL of your organization."
 msgstr "Logo-URL deiner Organisation."
 
-#. js-lingui-id: 5XiZn7
 #: src/components/org/edit-org.tsx
 msgid "Can the organization be seen by other users? Project names will be hidden."
 msgstr "Kann die Organisation von anderen Benutzern gesehen werden? Projektnamen werden ausgeblendet."
 
-#. js-lingui-id: qxM8iI
 #: src/components/org/edit-org.tsx
 msgid "Are you sure you want to delete this organization? <0/><1><2><3>All members will be removed.</3></2><4><5>Other configurations will be deleted.</5></4><6><7>This action cannot be undone.</7></6></1>"
 msgstr "Bist du sicher, dass du diese Organisation löschen möchtest? <0/><1><2><3>Alle Mitglieder werden entfernt.</3></2><4><5>Andere Konfigurationen werden gelöscht.</5></4><6><7>Diese Aktion kann nicht rückgängig gemacht werden.</7></6></1>"
 
-#. js-lingui-id: Nzz_QM
 #. placeholder {0}: org.name
 #: src/components/org/edit-org.tsx
 msgid "Delete Organization: {0}?"
 msgstr "Löschen die Organisation: {0}?"
 
-#. js-lingui-id: cnGeoo
 #: src/components/org/edit-org.tsx
+#: src/components/org/org-components.tsx
 msgid "Delete"
 msgstr "Löschen"
 
-#. js-lingui-id: dEgA5A
 #: src/components/org/edit-org.tsx
 #: src/components/org/org-components.tsx
 #: src/components/settings/auth-settings.tsx
@@ -497,779 +428,753 @@ msgstr "Löschen"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#. js-lingui-id: EkH9pt
 #: src/components/org/edit-org.tsx
 msgid "Update"
 msgstr "Aktualisieren"
 
-#. js-lingui-id: ImM7Hj
+#: src/components/org/org-components.tsx
+msgid "Members"
+msgstr "Mitglieder"
+
 #: src/components/org/org-components.tsx
 msgid "Change role"
 msgstr "Rolle ändern"
 
-#. js-lingui-id: _CVEzf
 #. placeholder {0}: member.user.name
 #: src/components/org/org-components.tsx
 msgid "<0>Are you sure you want to change the role of \"{0}\" to <1>owner</1>?<2/>They will be able to do everything, including changing <3>your role</3>.</0>"
 msgstr "<0>Bist du sicher, dass du die Rolle von \"{0}\" auf <1>Eigentümer</1> ändern möchtest?<2/>Eigentümer können alles tun, einschließlich der Änderung <3>Deiner Rolle</3>.</0>"
 
-#. js-lingui-id: AzZUGP
 #. placeholder {0}: member.user.name
 #: src/components/org/org-components.tsx
 msgid "<0>Are you sure you want to kick \"{0}\"? <1/>this action cannot be undone.</0>"
 msgstr "<0>Bist du sicher, dass du den Mitglied \"{0}\" kicken möchtest? <1/>Diese Aktion kann nicht rückgängig gemacht werden.</0>"
 
-#. js-lingui-id: 3y-d4K
 #: src/components/org/org-components.tsx
 msgid "Kick Member"
 msgstr "Mitglied kicken"
 
-#. js-lingui-id: YC1eEM
 #. placeholder {0}: member.user.name
 #: src/components/org/org-components.tsx
 msgid "Kick \"{0}\""
 msgstr "\"{0}\" kicken"
 
-#. js-lingui-id: qV3Te8
 #: src/components/org/org-components.tsx
 msgid "Kicking member"
 msgstr "Mitglied wird gekickt..."
 
-#. js-lingui-id: ajnMjE
 #: src/components/org/org-components.tsx
 msgid "Failed to kick member"
 msgstr "Fehler beim Kicken des Mitglieds"
 
-#. js-lingui-id: 9JAi13
 #: src/components/org/org-components.tsx
 msgid "Member kicked"
 msgstr "Mitglied gekickt"
 
-#. js-lingui-id: ko0cLw
 #: src/components/org/org-components.tsx
 msgid "Member invited successfully"
 msgstr "Mitglied erfolgreich eingeladen"
 
-#. js-lingui-id: e15ld3
 #: src/components/org/org-components.tsx
 msgid "Failed to invite member"
 msgstr "Fehler beim Einladen des Mitglieds"
 
-#. js-lingui-id: vaLBc2
 #: src/components/org/org-components.tsx
 msgid "Inviting member..."
 msgstr "Mitglied wird eingeladen..."
 
-#. js-lingui-id: brC2in
 #: src/components/org/org-components.tsx
 msgid "Invite Member"
 msgstr "Mitglied einladen"
 
-#. js-lingui-id: 48tl_w
 #: src/components/org/org-components.tsx
 msgid "Email of the user you want to invite. <0/> They will be invited with the role \"Member\"."
 msgstr "E-Mail-Adresse des Benutzers, den du einladen möchtest. <0/>Er wird mit der Rolle \"Mitglied\" eingeladen."
 
-#. js-lingui-id: MFKlMB
 #: src/components/org/org-components.tsx
 msgid "Invite"
 msgstr "Einladen"
 
-#. js-lingui-id: _12oT4
+#: src/components/org/org-components.tsx
+msgid "Projects"
+msgstr "Projekte"
+
+#: src/components/org/org-components.tsx
+msgid "Project deleted"
+msgstr "Projekt gelöscht"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to delete project"
+msgstr "Fehler beim Löschen des Projekts"
+
+#: src/components/org/org-components.tsx
+msgid "Deleting project"
+msgstr "Projekt wird gelöscht"
+
+#: src/components/org/org-components.tsx
+msgid "Delete project"
+msgstr "Projekt löschen"
+
+#. placeholder {0}: project.name
+#: src/components/org/org-components.tsx
+msgid "Are you sure you want to delete the project: \"{0}\"?"
+msgstr "Bist du sicher, dass du das Projekt \"{0}\" löschen möchtest?"
+
+#: src/components/org/org-components.tsx
+msgid "Project name must be at least 5 characters"
+msgstr "Projektname muss mindestens 5 Zeichen lang sein"
+
+#: src/components/org/org-components.tsx
+msgid "Description must be at least 5 characters"
+msgstr "Beschreibung muss mindestens 5 Zeichen lang sein"
+
+#: src/components/org/org-components.tsx
+msgid "Description must be at most 100 characters"
+msgstr "Beschreibung muss höchstens 100 Zeichen lang sein"
+
+#: src/components/org/org-components.tsx
+msgid "Project created successfully"
+msgstr "Projekt erfolgreich erstellt"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to create project"
+msgstr "Fehler beim Erstellen des Projekts"
+
+#: src/components/org/org-components.tsx
+msgid "Creating project..."
+msgstr "Projekt wird erstellt..."
+
+#: src/components/org/org-components.tsx
+msgid "Create Project"
+msgstr "Projekt erstellen"
+
+#: src/components/org/org-components.tsx
+msgid "Project Name"
+msgstr "Projektname"
+
+#: src/components/org/org-components.tsx
+msgid "The name of the project you want to create."
+msgstr "Der Name des Projekts, das du erstellen möchtest."
+
+#: src/components/org/org-components.tsx
+msgid "Description"
+msgstr "Beschreibung"
+
+#: src/components/org/org-components.tsx
+msgid "A short description of the project you want to create."
+msgstr "Eine kurze Beschreibung des Projekts, das du erstellen möchtest."
+
+#: src/components/org/org-components.tsx
+msgid "Project updated"
+msgstr "Projekt aktualisiert"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to update project"
+msgstr "Fehler beim Aktualisieren des Projekts"
+
+#: src/components/org/org-components.tsx
+msgid "Update project"
+msgstr "Projekt aktualisieren"
+
+#: src/components/org/org-components.tsx
+msgid "Update Project"
+msgstr "Projekt aktualisieren"
+
+#: src/components/org/org-components.tsx
+msgid "The name of the organization project."
+msgstr "Der Name des Projekts."
+
+#: src/components/org/org-components.tsx
+msgid "A short description of the project."
+msgstr "Eine kurze Beschreibung des Projekts."
+
+#: src/components/org/org-components.tsx
+msgid "Assigned"
+msgstr "Zugewiesen"
+
+#: src/components/org/org-components.tsx
+msgid "Not assigned"
+msgstr "Nicht zugewiesen"
+
+#. placeholder {0}: project.name
+#: src/components/org/org-components.tsx
+msgid "Assign Project: {0}"
+msgstr "Projekt zuweisen: {0}"
+
+#: src/components/org/org-components.tsx
+msgid "Select a project"
+msgstr "Projekt auswählen"
+
+#: src/components/org/org-components.tsx
+msgid "Select a personal project, to add its time to the org."
+msgstr "Wähle ein persönliches Projekt aus, um dessen Zeit zur Organisation hinzuzufügen."
+
+#: src/components/org/org-components.tsx
+msgid "Assign Project"
+msgstr "Projekt zuweisen"
+
+#: src/components/org/org-components.tsx
+msgid "Unassign Project"
+msgstr "Projekt abweisen"
+
 #: src/components/overview/client-overview.tsx
 msgid "Working on"
 msgstr "Arbeitet an"
 
-#. js-lingui-id: rvf95Q
 #: src/components/overview/open-minimal.tsx
 msgid "Failed to open minimal view"
 msgstr "Fehler beim Öffnen der minimalen Ansicht"
 
-#. js-lingui-id: dcGkAS
 #: src/components/overview/open-minimal.tsx
 msgid "The popup could not be opened. Please check your browser settings."
 msgstr "Das Popup konnte nicht geöffnet werden. Bitte überprüfen Sie Ihre Browser-Einstellungen."
 
-#. js-lingui-id: _xcudK
 #: src/components/overview/open-minimal.tsx
 msgid "Minimal View"
 msgstr "Minimale Ansicht"
 
-#. js-lingui-id: aK4uBd
 #: src/components/overview/overview-select.tsx
 msgid "Last 24 hours"
 msgstr "Letzten 24 Stunden"
 
-#. js-lingui-id: ct2SYD
 #: src/components/overview/overview-select.tsx
 msgid "Last 7 days"
 msgstr "Letzten 7 Tage"
 
-#. js-lingui-id: uq2BmQ
 #: src/components/overview/overview-select.tsx
 msgid "Last 30 days"
 msgstr "Letzten 30 Tage"
 
-#. js-lingui-id: XgOuA7
 #: src/components/overview/overview-select.tsx
 msgid "Last 90 days"
 msgstr "Letzten 90 Tage"
 
-#. js-lingui-id: hQQrgH
 #: src/components/overview/overview-select.tsx
 msgid "Last 365 days"
 msgstr "Letzten 365 Tage"
 
-#. js-lingui-id: ecUA8p
 #: src/components/overview/overview-select.tsx
 msgid "Today"
 msgstr "Heute"
 
-#. js-lingui-id: yByRxz
 #: src/components/overview/overview-select.tsx
 msgid "This week"
 msgstr "Diese Woche"
 
-#. js-lingui-id: oW3yYY
 #: src/components/overview/overview-select.tsx
 msgid "This month"
 msgstr "Dieser Monat"
 
-#. js-lingui-id: xYHlfW
 #: src/components/overview/overview-select.tsx
 msgid "This year"
 msgstr "Dieses Jahr"
 
-#. js-lingui-id: 5b4J4v
 #: src/components/overview/overview-select.tsx
 msgid "All Time"
 msgstr "Gesamte Zeit"
 
-#. js-lingui-id: HJV2ZQ
 #: src/components/overview/overview-select.tsx
 msgid "Absolute"
 msgstr "Absolut"
 
-#. js-lingui-id: 6XgEPi
 #: src/components/overview/overview-select.tsx
 msgid "Hour"
 msgstr "Stunde"
 
-#. js-lingui-id: H7OUPr
 #: src/components/overview/overview-select.tsx
 msgid "Day"
 msgstr "Tag"
 
-#. js-lingui-id: zx4BuL
 #: src/components/overview/overview-select.tsx
 msgid "Week"
 msgstr "Woche"
 
-#. js-lingui-id: tYi7Ll
 #: src/components/overview/overview-select.tsx
 msgid "Biggest Unit"
 msgstr "Größter Einheit"
 
-#. js-lingui-id: iMxx2A
 #: src/components/settings/account-settings.tsx
 msgid "Settings saved"
 msgstr "Einstellungen gespeichert"
 
-#. js-lingui-id: X5tBp0
 #: src/components/settings/account-settings.tsx
 msgid "Unable to save settings"
 msgstr "Einstellungen konnten nicht gespeichert werden"
 
-#. js-lingui-id: bTYKht
 #: src/components/settings/account-settings.tsx
 msgid "This setting is not supported by the server yet."
 msgstr "Diese Einstellung wird vom Server noch nicht unterstützt."
 
-#. js-lingui-id: 7w-0Sj
 #: src/components/settings/auth-settings.tsx
 msgid "Name must be at least 3 characters"
 msgstr "Name muss mindestens 3 Zeichen lang sein"
 
-#. js-lingui-id: JQqIIC
 #: src/components/settings/auth-settings.tsx
 msgid "Api key created successfully"
 msgstr "API-Schlüssel erfolgreich erstellt"
 
-#. js-lingui-id: gfTg6u
 #: src/components/settings/auth-settings.tsx
 msgid "Failed to create api key"
 msgstr "Fehler beim Erstellen des API-Schlüssels"
 
-#. js-lingui-id: Ar2tL7
 #: src/components/settings/auth-settings.tsx
 msgid "Creating api key"
 msgstr "API-Schlüssel wird erstellt"
 
-#. js-lingui-id: 88kg0-
 #: src/components/settings/auth-settings.tsx
 #: src/components/settings/org-settings.tsx
 msgid "Created At"
 msgstr "Erstellt am"
 
-#. js-lingui-id: AKqzR1
 #: src/components/settings/auth-settings.tsx
 msgid "Create Passkey"
 msgstr "Passkey erstellen"
 
-#. js-lingui-id: o4oZVo
 #: src/components/settings/auth-settings.tsx
 msgid "A passkey is required to verify sensitive actions."
 msgstr "Ein Passkey ist erforderlich, um sensible Aktionen zu verifizieren."
 
-#. js-lingui-id: R2lzWa
 #: src/components/settings/auth-settings.tsx
 msgid "Passkey created successfully"
 msgstr "Passkey erfolgreich erstellt"
 
-#. js-lingui-id: hYgDIe
 #: src/components/settings/auth-settings.tsx
 #: src/components/settings/org-settings.tsx
 msgid "Create"
 msgstr "Erstellen"
 
-#. js-lingui-id: axVTN8
 #: src/components/settings/auth-settings.tsx
 msgid "No Passkeys"
 msgstr "Keine Passkeys"
 
-#. js-lingui-id: WQg61I
 #: src/components/settings/auth-settings.tsx
 msgid "Keys"
 msgstr "Schlüssel"
 
-#. js-lingui-id: 6YtxFj
 #: src/components/settings/auth-settings.tsx
 msgid "Name"
 msgstr "Name"
 
-#. js-lingui-id: 7L01XJ
 #: src/components/settings/auth-settings.tsx
 msgid "Actions"
 msgstr "Aktionen"
 
-#. js-lingui-id: PMP3XY
 #: src/components/settings/auth-settings.tsx
 msgid "Create Api Key"
 msgstr "API-Schlüssel erstellen"
 
-#. js-lingui-id: nDfy09
 #: src/components/settings/auth-settings.tsx
 msgid "A API key is required to verify sensitive actions."
 msgstr "Ein API-Schlüssel ist erforderlich, um sensible Aktionen zu verifizieren."
 
-#. js-lingui-id: 49Cr4P
 #: src/components/settings/auth-settings.tsx
 msgid "No Api Keys"
 msgstr "Keine API-Schlüssel"
 
-#. js-lingui-id: 0JOn8W
 #: src/components/settings/auth-settings.tsx
 msgid "Delete Passkey"
 msgstr "Passkey löschen"
 
-#. js-lingui-id: Seoavp
 #. placeholder {0}: passkey.name
 #: src/components/settings/auth-settings.tsx
 msgid "Are you sure you want to delete the passkey \"{0}\"?"
 msgstr "Sind Sie sicher, dass Sie den Passkey \"{0}\" löschen möchten?"
 
-#. js-lingui-id: FN3srH
 #: src/components/settings/auth-settings.tsx
 msgid "Failed to delete passkey"
 msgstr "Fehler beim Löschen des Passkeys"
 
-#. js-lingui-id: HHkfQP
 #: src/components/settings/auth-settings.tsx
 msgid "Passkey deleted"
 msgstr "Passkey gelöscht"
 
-#. js-lingui-id: RYi6-2
 #: src/components/settings/auth-settings.tsx
 msgid "Api key copied to clipboard"
 msgstr "API-Schlüssel in die Zwischenablage kopiert"
 
-#. js-lingui-id: crkW20
 #: src/components/settings/auth-settings.tsx
 msgid "Failed to copy api key"
 msgstr "Fehler beim Kopieren des API-Schlüssels"
 
-#. js-lingui-id: zViFJY
 #. placeholder {0}: apiKey.name
 #: src/components/settings/auth-settings.tsx
 msgid "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
 msgstr "<0>Bist du sicher das du den API-Schlüssel: \"{0}\" löschen möchtest?<1/>Diese Aktion <2> kann nicht </2>wieder rückgängig gemacht werden. Der API-Schlüssel wird nicht mehr funktionieren.</0>"
 
-#. js-lingui-id: jPrfCN
 #: src/components/settings/auth-settings.tsx
 msgid "Failed to delete API key: "
 msgstr "Fehler beim Löschen des API-Schlüssels: "
 
-#. js-lingui-id: oriYPl
 #: src/components/settings/auth-settings.tsx
 msgid "API key deleted"
 msgstr "API-Schlüssel gelöscht"
 
-#. js-lingui-id: 80X_M1
 #: src/components/settings/auth-settings.tsx
 msgid "Copy API key"
 msgstr "API-Schlüssel kopieren"
 
-#. js-lingui-id: oGXjpZ
 #: src/components/settings/auth-settings.tsx
 msgid "You can copy this API key to your clipboard now."
 msgstr "Sie können diesen API-Schlüssel in die Zwischenablage kopieren."
 
-#. js-lingui-id: gJb4UB
 #: src/components/settings/auto-config-settings.tsx
 msgid "On (Default)"
 msgstr "An (Standard)"
 
-#. js-lingui-id: Z5HWHd
 #: src/components/settings/auto-config-settings.tsx
 msgid "On"
 msgstr "An"
 
-#. js-lingui-id: ykOSJg
 #: src/components/settings/auto-config-settings.tsx
 msgid "Off (Default)"
 msgstr "Aus (Standard)"
 
-#. js-lingui-id: az8lvo
 #: src/components/settings/auto-config-settings.tsx
 msgid "Off"
 msgstr "Aus"
 
-#. js-lingui-id: c-uD2k
 #: src/components/settings/data-settings.tsx
 msgid "File size must be less than 64MB"
 msgstr "Die Dateigröße muss kleiner als 64MB sein"
 
-#. js-lingui-id: LsGrag
 #: src/components/settings/data-settings.tsx
 msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 msgstr "<0>Importiere eine CSV-Datei von anderen Quellen.<1/><2>Du kannst nur eine Datei hochladen und sie darf nicht größer als 64MB sein.</2></0>"
 
-#. js-lingui-id: l3s5ri
 #: src/components/settings/data-settings.tsx
 msgid "Import"
 msgstr "Importieren"
 
-#. js-lingui-id: 2CeOI3
 #: src/components/settings/data-settings.tsx
 msgid "Import CSV"
 msgstr "CSV Importieren"
 
-#. js-lingui-id: 2VQiez
 #: src/components/settings/data-settings.tsx
 msgid "Currently we support the CSV format form:"
 msgstr "Aktuell unterstützt wir den CSV-Formate von:"
 
-#. js-lingui-id: cSF12I
 #: src/components/settings/data-settings.tsx
 msgid "<0/> - StarTime (this app)"
 msgstr "<0/> - StarTime (diese App)"
 
-#. js-lingui-id: T12k8O
 #: src/components/settings/data-settings.tsx
 msgid "Drop your CSV file here or click to select one.<0/>"
 msgstr "Datei hier ablegen oder auswählen<0/>"
 
-#. js-lingui-id: f2c5Q3
 #. placeholder {0}: file!.name
 #: src/components/settings/data-settings.tsx
 msgid "Selected: {0}"
 msgstr "Ausgewählt: {0}"
 
-#. js-lingui-id: jr4GhQ
 #: src/components/settings/data-settings.tsx
 msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 msgstr "<0>Exportiere deine Daten in eine ZIP-Datei.<1/><2>Exportiere alle Daten, die mit deinem Account verknüpft sind.</2></0>"
 
-#. js-lingui-id: 9j01ML
 #: src/components/settings/data-settings.tsx
 msgid "Are you sure you want to export your data? This may take a few minutes."
 msgstr "Bist du sicher, dass du deine Daten exportieren möchtest? Dies kann einige Minuten dauern."
 
-#. js-lingui-id: d8JD4l
 #: src/components/settings/data-settings.tsx
 msgid "Export your data"
 msgstr "Exportiere deine Daten"
 
-#. js-lingui-id: VzUtUq
 #: src/components/settings/data-settings.tsx
 msgid "Pending imports"
 msgstr "Ausstehende Imports"
 
-#. js-lingui-id: E8VASo
 #: src/components/settings/data-settings.tsx
 msgid "Past imports"
 msgstr "Vergangene Imports"
 
-#. js-lingui-id: JFsfG9
 #. placeholder {0}: imports.totalCount - 4
 #: src/components/settings/data-settings.tsx
 msgid "<0>{0} more...</0>"
 msgstr "<0>{0} mehr...</0>"
 
-#. js-lingui-id: CgwEpK
 #: src/components/settings/data-settings.tsx
 msgid "No file name available"
 msgstr "Kein Dateiname verfügbar"
 
-#. js-lingui-id: fLqhqe
 #: src/components/settings/data-settings.tsx
 msgid "The file was deleted after the import was completed"
 msgstr "Die Datei wurde gelöscht, nach dem Import erfolgreich abgeschlossen wurde"
 
-#. js-lingui-id: WGPHio
 #: src/components/settings/data-settings.tsx
 msgid "The file was deleted after the import failed"
 msgstr "Die Datei wurde gelöscht, nach dem Import fehlgeschlagen ist"
 
-#. js-lingui-id: JKr1yF
 #: src/components/settings/data-settings.tsx
 msgid "(deleted)"
 msgstr "(gelöscht)"
 
-#. js-lingui-id: iGv6M2
 #: src/components/settings/data-settings.tsx
 msgid "No message available"
 msgstr "Keine Nachricht verfügbar"
 
-#. js-lingui-id: -b7T3G
 #: src/components/settings/data-settings.tsx
 msgid "Updated"
 msgstr "Aktualisiert"
 
-#. js-lingui-id: d-F6q9
 #: src/components/settings/data-settings.tsx
 msgid "Created"
 msgstr "Erstellt"
 
-#. js-lingui-id: LtI9AS
 #: src/components/settings/org-settings.tsx
 msgid "Owner"
 msgstr "Eigentümer"
 
-#. js-lingui-id: U3pytU
 #: src/components/settings/org-settings.tsx
 msgid "Admin"
 msgstr "Administrator"
 
-#. js-lingui-id: OvoEq7
 #: src/components/settings/org-settings.tsx
 msgid "Member"
 msgstr "Mitglied"
 
-#. js-lingui-id: yjYtk0
 #: src/components/settings/org-settings.tsx
 msgid "Organization created successfully."
 msgstr "Organisation erfolgreich erstellt."
 
-#. js-lingui-id: GHnTr7
 #: src/components/settings/org-settings.tsx
 msgid "Creating organization..."
 msgstr "Organisation wird erstellt..."
 
-#. js-lingui-id: uzt8cs
 #: src/components/settings/org-settings.tsx
 msgid "Failed to create organization."
 msgstr "Organisation konnte nicht erstellt werden."
 
-#. js-lingui-id: sKX63X
 #: src/components/settings/org-settings.tsx
 msgid "No active organization"
 msgstr "Keine aktive Organisation"
 
-#. js-lingui-id: ZQD50L
 #. placeholder {0}: invitations.length
 #: src/components/settings/org-settings.tsx
 msgid "Pending invitations: {0}"
 msgstr "Ausstehende Einladungen: {0}"
 
-#. js-lingui-id: ho81-f
 #: src/components/settings/org-settings.tsx
 msgid "Are you sure you want to accept this invitation?"
 msgstr "Bist du sicher, dass du diese Einladung akzeptieren möchtest?"
 
-#. js-lingui-id: ooJH31
 #. placeholder {0}: invitation.organization.name
 #: src/components/settings/org-settings.tsx
 msgid "Accept invitation to {0}"
 msgstr "Einladung annehmen für {0}"
 
-#. js-lingui-id: rFTAlS
 #: src/components/settings/org-settings.tsx
 msgid "Accepting invitation..."
 msgstr "Einladung wird angenommen..."
 
-#. js-lingui-id: JgPoJe
 #: src/components/settings/org-settings.tsx
 msgid "Invitation accepted."
 msgstr "Einladung wurde angenommen."
 
-#. js-lingui-id: s7QrNw
 #: src/components/settings/org-settings.tsx
 msgid "Failed to accept invitation."
 msgstr "Einladung konnte nicht angenommen werden."
 
-#. js-lingui-id: g3UF2V
 #: src/components/settings/org-settings.tsx
 msgid "Accept"
 msgstr "Akzeptieren"
 
-#. js-lingui-id: S5Tw3I
 #: src/components/settings/org-settings.tsx
 msgid "Create Organization"
 msgstr "Organisation erstellen"
 
-#. js-lingui-id: z9c_2-
 #: src/components/settings/org-settings.tsx
 msgid "You can only create one organization per account."
 msgstr "Du kannst nur eine Organisation pro Account erstellen."
 
-#. js-lingui-id: gWtYvj
 #: src/components/settings/org-settings.tsx
 #: src/components/ui/header-bar.tsx
 msgid "Your Organization"
 msgstr "Deine Organisation"
 
-#. js-lingui-id: oF8dbr
 #: src/components/settings/org-settings.tsx
 msgid "Role: "
 msgstr "Rolle: "
 
-#. js-lingui-id: 0jddIP
 #. placeholder {0}: org?.members.length
 #: src/components/settings/org-settings.tsx
 msgid "{0} members"
 msgstr "{0} Mitglieder"
 
-#. js-lingui-id: g4bNv7
 #. placeholder {0}: org?.members.length
 #: src/components/settings/org-settings.tsx
 msgid "{0} member"
 msgstr "{0} Mitglied"
 
-#. js-lingui-id: ZbMBQB
 #: src/components/settings/org-settings.tsx
 msgid "Are you sure you want to leave this organization?"
 msgstr "Bist du sicher, dass du diese Organisation verlassen möchtest?"
 
-#. js-lingui-id: pxzFy0
 #: src/components/settings/org-settings.tsx
 msgid "Leave Organization"
 msgstr "Organisation verlassen"
 
-#. js-lingui-id: Mv8CyJ
 #: src/components/settings/org-settings.tsx
 msgid "Leave"
 msgstr "Verlassen"
 
-#. js-lingui-id: GEek3e
 #: src/components/settings/org-settings.tsx
 msgid "Leaving organization..."
 msgstr "Organisation wird verlassen..."
 
-#. js-lingui-id: fn9B7c
 #: src/components/settings/org-settings.tsx
 msgid "Failed to leave organization."
 msgstr "Fehler beim Verlassen der Organisation."
 
-#. js-lingui-id: d3tmeP
 #: src/components/settings/org-settings.tsx
 msgid "You left the organization."
 msgstr "Du hast die Organisation verlassen."
 
-#. js-lingui-id: RVn9CX
 #: src/components/settings/org-settings.tsx
 msgid "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
 msgstr "Du kannst diese Organisation nicht verlassen.<0/>Übertrage sie an ein anderes Mitglied oder lösche sie."
 
-#. js-lingui-id: UpjHEf
 #. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
 #: src/components/ui/confirm-modal.tsx
 msgid "Wait {remainingSeconds} {0}"
 msgstr "Warte {remainingSeconds} {0}"
 
-#. js-lingui-id: ZuduiH
 #: src/components/ui/confirm-modal.tsx
 msgid "second"
 msgstr "Sekunde"
 
-#. js-lingui-id: kALwhk
 #: src/components/ui/confirm-modal.tsx
 msgid "seconds"
 msgstr "Sekunden"
 
-#. js-lingui-id: 7VpPHA
 #: src/components/ui/confirm-modal.tsx
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#. js-lingui-id: IreQBq
 #: src/components/ui/footer.tsx
 msgid "Repository"
 msgstr "Repository"
 
-#. js-lingui-id: 6_dCYd
 #: src/components/ui/header-bar.tsx
 msgid "Overview"
 msgstr "Übersicht"
 
-#. js-lingui-id: Z0Ktd7
 #: src/components/uploadthing.tsx
 msgid "You cant upload so many files at once."
 msgstr "Du kannst nicht so viele Dateien gleichzeitig hochladen."
 
-#. js-lingui-id: eOu9Px
 #: src/components/uploadthing.tsx
 msgid "The file is too large."
 msgstr "Die Datei ist zu groß."
 
-#. js-lingui-id: sbEQ1t
 #: src/components/uploadthing.tsx
 msgid "This file type is not allowed."
 msgstr "Dieser Dateityp ist nicht erlaubt."
 
-#. js-lingui-id: 0TQ5Qi
 #: src/components/uploadthing.tsx
 msgid "You do not have permission to upload files."
 msgstr "Du hast keine Berechtigung, Dateien hochzuladen."
 
-#. js-lingui-id: 2ePs_6
 #: src/components/uploadthing.tsx
 msgid "An unknown error occurred."
 msgstr "Ein unbekannter Fehler ist aufgetreten."
 
-#. js-lingui-id: KKZxBU
 #. placeholder {0}: percentage.toFixed(2)
 #: src/components/uploadthing.tsx
 msgid "Uploading {0}%"
 msgstr "Hochgeladen {0}%"
 
-#. js-lingui-id: Z8nach
 #. placeholder {0}: parseUploadThingError(error)
 #: src/components/uploadthing.tsx
 msgid "Upload failed: {0}"
 msgstr "Hochladen fehlgeschlagen: {0}"
 
-#. js-lingui-id: eLeqGA
 #: src/components/uploadthing.tsx
 msgid "Files uploaded successfully"
 msgstr "Dateien erfolgreich hochgeladen"
 
-#. js-lingui-id: 1yc_3z
 #: src/lib/account-config.ts
 msgid "Regional settings"
 msgstr "Regionale Einstellungen"
 
-#. js-lingui-id: Mz2JN2
 #: src/lib/account-config.ts
 msgid "Time zone"
 msgstr "Zeitzone"
 
-#. js-lingui-id: O79LVD
 #: src/lib/account-config.ts
 msgid "Used to calculate daily and weekly activity ranges."
 msgstr "Wird verwendet, um tägliche und wöchentliche Aktivitätsbereiche zu berechnen."
 
-#. js-lingui-id: mhzZt0
 #: src/lib/account-config.ts
 msgid "Start of week"
 msgstr "Start der Woche"
 
-#. js-lingui-id: 7W1a00
 #: src/lib/account-config.ts
 msgid "Controls which day starts weekly activity ranges."
 msgstr "Steuert, welchen Tag die wöchentlichen Aktivitätsbereiche beginnen."
 
-#. js-lingui-id: hty0d5
 #: src/lib/account-config.ts
 msgid "Monday"
 msgstr "Montag"
 
-#. js-lingui-id: DBC3t5
 #: src/lib/account-config.ts
 msgid "Sunday"
 msgstr "Sonntag"
 
-#. js-lingui-id: fj_kdB
 #: src/lib/account-config.ts
 msgid "Preferred interface language."
 msgstr "Sprache der Benutzeroberfläche."
 
-#. js-lingui-id: lYGfRP
 #: src/lib/account-config.ts
 msgid "English"
 msgstr "Englisch"
 
-#. js-lingui-id: DDcvSo
 #: src/lib/account-config.ts
 msgid "German"
 msgstr "Deutsch"
 
-#. js-lingui-id: rHF1CB
 #: src/lib/account-config.ts
 msgid "Privacy settings"
 msgstr "Privatsphäre-Einstellungen"
 
-#. js-lingui-id: 1trrde
 #: src/lib/account-config.ts
 msgid "Public profile"
 msgstr "Öffentliches Profil"
 
-#. js-lingui-id: G3910t
 #: src/lib/account-config.ts
 msgid "Whether your profile is publicly visible."
 msgstr "Ob dein Profil öffentlich sichtbar ist."
 
-#. js-lingui-id: hCXrhA
 #: src/lib/account-config.ts
 msgid "UI settings"
 msgstr "UI-Einstellungen"
 
-#. js-lingui-id: amp6qN
 #: src/lib/account-config.ts
 msgid "Popup for reauthentication"
 msgstr "Popup für die erneute Authentifizierung"
 
-#. js-lingui-id: aPY_nE
 #: src/lib/account-config.ts
 msgid "Whether to show a popup for reauthentication, or show it in the main window."
 msgstr "Ob das Popup für die erneute Authentifizierung angezeigt werden soll oder in der Hauptfenster angezeigt werden soll."
 
-#. js-lingui-id: JjZ8dv
 #: src/lib/account-config.ts
 msgid "Share all time"
 msgstr "Alle Zeit teilen"
 
-#. js-lingui-id: EX5y6L
 #: src/lib/account-config.ts
 msgid "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
 msgstr "Teile alle Zeit, die du programmierst, mit deiner Organisation. Wenn ausgeschaltet, wird nur die Zeit geteilt, die du auf Projekten spendest, die du zugewiesen hast."
 
-#. js-lingui-id: tI1zeA
 #: src/lib/account-config.ts
 msgid "Personal Org Settings"
 msgstr "Persönliche Org-Einstellungen"
 
-#. js-lingui-id: Puv7-X
 #: src/lib/account-config.ts
 msgid "Account Settings"
 msgstr "Konto-Einstellungen"
 
-#. js-lingui-id: gphxoA
 #: src/server/api/routers/overview.ts
 msgid "1 day"
 msgstr "1 Tag"
 
-#. js-lingui-id: TusXkS
 #: src/server/api/routers/overview.ts
 msgid "{days} days"
 msgstr "{days} Tage"

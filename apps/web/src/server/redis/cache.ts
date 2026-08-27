@@ -8,6 +8,10 @@ function namespacedKey(key: string): string {
 	return key.startsWith(REDIS_CACHE_KEY_PREFIX) ? key : `${REDIS_CACHE_KEY_PREFIX}${key}`;
 }
 
+function escapeRedisPattern(value: string): string {
+	return value.replace(/([*?[\]\\])/g, "\\$1");
+}
+
 export async function redisCacheGet<T>(key: string): Promise<T | undefined> {
 	const redis = getRedis();
 	const raw = await redis.get(namespacedKey(key));
@@ -19,6 +23,15 @@ export async function redisCacheGet<T>(key: string): Promise<T | undefined> {
 	} catch {
 		return undefined;
 	}
+}
+
+/**
+ * Returns the cache key's remaining lifetime in seconds.
+ * Redis returns -1 when the key has no expiration and -2 when it does not exist.
+ */
+export async function redisCacheGetTtl(key: string): Promise<number> {
+	const redis = getRedis();
+	return redis.ttl(namespacedKey(key));
 }
 
 export async function redisCacheSet(key: string, value: unknown, ttlSeconds: number): Promise<void> {
@@ -54,6 +67,31 @@ export async function invalidateCache(key: string): Promise<void> {
 }
 
 /**
+ * Deletes every cache entry whose key contains the given text.
+ * Returns the number of entries deleted.
+ */
+export async function invalidateCachePartialKey(partialKey: string): Promise<number> {
+	if (partialKey.length === 0) {
+		throw new Error("A partial cache key is required");
+	}
+
+	const redis = getRedis();
+	const pattern = `${REDIS_CACHE_KEY_PREFIX}*${escapeRedisPattern(partialKey)}*`;
+	let cursor = "0";
+	let deletedCount = 0;
+
+	do {
+		const [nextCursor, keys] = await redis.scan(cursor, "MATCH", pattern, "COUNT", 100);
+		if (keys.length > 0) {
+			deletedCount += await redis.del(...keys);
+		}
+		cursor = nextCursor;
+	} while (cursor !== "0");
+
+	return deletedCount;
+}
+
+/**
  *
  * @param key The cache key to use
  * @param ttlSeconds Time-to-live in seconds
@@ -65,7 +103,7 @@ export async function withRedisCache<T>(key: string, ttlSeconds: number, fn: () 
 	const fullKey = namespacedKey(key);
 	const raw = await redis.get(fullKey);
 	if (raw !== null) {
-		Print.Success(`Cache hit:`, fullKey);
+		void redis.ttl(fullKey).then((ttl) => Print.Success(`Cache hit:`, `${ttl}s`, fullKey));
 		try {
 			return JSON.parse(raw) as T;
 		} catch {

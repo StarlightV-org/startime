@@ -5,6 +5,7 @@ import { CodeXmlIcon, ComputerIcon, FolderIcon, InfoIcon, PencilIcon } from "luc
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createLoader, parseAsString, type SearchParams } from "nuqs/server";
+import { toast } from "sonner";
 import EditOrg from "~/components/org/edit-org";
 import { MemberList, ProjectList } from "~/components/org/org-components";
 import { BiggestUnitSelect, Filter, TimeSelect, TopElement } from "~/components/overview";
@@ -15,11 +16,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/ui/dialog";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
+import { cacheKey } from "~/lib/cache-key";
 import { getTimeRange, timeRangeValues, type TimeRange } from "~/lib/time-range";
 import { tryCatch } from "~/lib/utils";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 import { getAuth } from "~/server/better-auth";
+import { redisCacheGetTtl, withRedisCache } from "~/server/redis/cache";
 import { api } from "~/trpc/server";
+import ms from "ms";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
 export const filter = {
@@ -54,18 +58,24 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 
 	const { data: projects, error: projectsError } = await tryCatch(api.org.projects.list());
+
+	const topInput = {
+		orgId: org.id,
+		timeRange,
+		biggestUnit,
+		filter: {
+			editor,
+			workspace,
+			language,
+			platform,
+			user,
+		},
+	};
+
+	const cacheKeyString = `org:top:${org.id}:${cacheKey(topInput)}`;
+
 	const { data: top, error: topError } = await tryCatch(
-		api.org.getTop({
-			timeRange,
-			biggestUnit,
-			filter: {
-				editor,
-				workspace,
-				language,
-				platform,
-				user,
-			},
-		}),
+		withRedisCache(cacheKeyString, 120, () => api.org.getTop(topInput)),
 	);
 
 	projectsError && Print.Error("[ORG] Failed to load projects", projectsError);
@@ -90,7 +100,7 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 			<Card>
 				<CardContent>
 					<CardHeader>
-						<CardTitle>
+						<CardTitle className="flex items-center justify-between gap-2">
 							<Trans>Time Range</Trans>
 						</CardTitle>
 					</CardHeader>

@@ -26,6 +26,7 @@ import { _int32 } from "zod/v4/core";
 import { getTimeRange, timeRangeValues, toTimeString } from "~/lib/time-range";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 import type { API } from "~/trpc/server";
+import { invalidateCachePartialKey } from "~/server/redis/cache";
 
 const slugSchema = z
 	.string()
@@ -143,6 +144,8 @@ const orgMembersRouter = createTRPCRouter({
 					.where(and(eq(users.id, ctx.user.id), eq(users.organizationId, ctx.user.organizationId)));
 			});
 
+			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
+
 			return { success: true };
 		}),
 
@@ -180,6 +183,8 @@ const orgMembersRouter = createTRPCRouter({
 					.set({ organizationId: null })
 					.where(and(eq(users.id, userId), eq(users.organizationId, ctx.user.organizationId)));
 			});
+
+			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
 
 			return { success: true };
 		}),
@@ -324,12 +329,14 @@ const orgInvitesRouter = createTRPCRouter({
 					.update(users)
 					.set({ organizationId: updatedInvitation.organizationId })
 					.where(and(eq(users.id, ctx.user.id), isNull(users.organizationId)))
-					.returning({ id: users.id });
+					.returning({ id: users.id, organizationId: users.organizationId });
 
 				if (!updatedUser) {
 					throw new TRPCError({ code: "FORBIDDEN", message: "You already belong to an organization" });
 				}
+				await invalidateCachePartialKey(`org:top:${updatedUser.organizationId}`);
 			});
+
 			return true;
 		}),
 
@@ -577,6 +584,8 @@ const orgProjects = createTRPCRouter({
 			}
 
 			await ctx.db.delete(organizationProjects).where(eq(organizationProjects.id, input.projectId));
+
+			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
 		}),
 
 	assign: protectedProcedure
@@ -616,6 +625,8 @@ const orgProjects = createTRPCRouter({
 					})),
 				);
 			});
+
+			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
 		}),
 });
 

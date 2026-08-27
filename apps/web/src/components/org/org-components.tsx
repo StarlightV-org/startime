@@ -1,7 +1,7 @@
 "use client";
 
 import type { SessionType } from "better-auth";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import type { OrgType } from "better-auth";
 import { Separator } from "../ui/separator";
 import React, { Fragment } from "react";
@@ -53,7 +53,9 @@ export function MemberList({ org }: { org: SessionType["org"] }) {
 	return (
 		<Card className="w-full gap-0">
 			<CardHeader className="flex items-center justify-between pb-2">
-				<CardTitle className="text-2xl">Members</CardTitle>
+				<CardTitle className="text-2xl">
+					<Trans>Members</Trans>
+				</CardTitle>
 				{checkRole("admin") && <InviteMember />}
 			</CardHeader>
 			<CardContent>
@@ -354,16 +356,18 @@ export function ProjectList({ org, projects }: { org: SessionType["org"]; projec
 	return (
 		<Card className="gap-0">
 			<CardHeader className="flex items-center justify-between">
-				<CardTitle className="text-2xl">Projects</CardTitle>
+				<CardTitle className="text-2xl">
+					<Trans>Projects</Trans>
+				</CardTitle>
 				{checkRole("admin") && <CreateProjectDialog org={org} />}
 			</CardHeader>
-			<CardContent>
+			<CardDescription>
 				{projects.map((project) => (
 					<div key={project.id}>
 						<ProjectItem project={project} />
 					</div>
 				))}
-			</CardContent>
+			</CardDescription>
 		</Card>
 	);
 }
@@ -476,13 +480,13 @@ function CreateProjectDialog({ org }: { org: SessionType["org"] }) {
 		},
 		onError: (error) => {
 			toast.error(t`Failed to create project`, {
-				id: "create-project-error",
+				id: "create-project",
 				description: error.message,
 			});
 		},
 		onMutate: () => {
 			toast.loading(t`Creating project...`, {
-				id: "create-project-loading",
+				id: "create-project",
 				description: undefined,
 			});
 		},
@@ -657,7 +661,7 @@ function UpdateProjectDialog({ project }: { project: API["org"]["projects"]["lis
 		>
 			<DialogTrigger
 				render={
-					<Button variant="outline" size="icon-sm" aria-label={t`Update project`}>
+					<Button variant="outline" size="icon-sm" aria-label={t`Update project`} className="text-foreground">
 						<PenIcon />
 					</Button>
 				}
@@ -800,9 +804,12 @@ function AssignProjectDialog({ project }: { project: API["org"]["projects"]["lis
 					<Button
 						variant="outline"
 						size="sm"
-						className={cn(assignement ? "border-green-500/40! bg-green-500/30!" : "border-red-500/40! bg-red-500/30!")}
+						className={cn(
+							"text-foreground",
+							assignement ? "border-green-500/40! bg-green-500/30!" : "border-red-500/40! bg-red-500/30!",
+						)}
 					>
-						{assignement ? "Assigned" : "Not assigned"}
+						{assignement ? t`Assigned` : t`Not assigned`}
 					</Button>
 				}
 			></DialogTrigger>
