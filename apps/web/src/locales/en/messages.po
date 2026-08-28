@@ -20,8 +20,30 @@ msgstr "Time Range"
 
 #: src/app/dash/org/page.tsx
 #: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Activity"
+msgstr "Activity"
+
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Time/Total"
+msgstr "Time/Total"
+
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
+msgid "Time/Today"
+msgstr "Time/Today"
+
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
 msgid "Top"
 msgstr "Top"
+
+#: src/app/dash/org/page.tsx
+msgid "<0>What is shown</0><1>In this section, only projects and time are shown, that users have assigned.</1>"
+msgstr "<0>What is shown</0><1>In this section, only projects and time are shown, that users have assigned.</1>"
 
 #: src/app/dash/org/page.tsx
 msgid "Unable to load organization statistics."
@@ -63,21 +85,6 @@ msgstr "User"
 #: src/app/dash/org/page.tsx
 msgid "Unable to load organization projects."
 msgstr "Unable to load organization projects."
-
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Activity"
-msgstr "Activity"
-
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Time/Total"
-msgstr "Time/Total"
-
-#: src/app/dash/page.tsx
-#: src/app/view/minimal/page.tsx
-msgid "Time/Today"
-msgstr "Time/Today"
 
 #: src/app/dash/page.tsx
 msgid "Streak/Current"
