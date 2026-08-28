@@ -52,6 +52,7 @@ export default function TopElement({
 	return (
 		<div
 			className={cn(
+				"group @container/top-element",
 				"flex flex-col rounded-sm p-1 hover:bg-accent",
 				isActiveFilter && "shadow-[0_0_8px_rgba(0,0,0,0.3)] shadow-primary/80 outline outline-primary/80",
 				interactive ? "cursor-pointer!" : "cursor-default!",
@@ -64,7 +65,7 @@ export default function TopElement({
 			}}
 		>
 			<div className="flex flex-row flex-nowrap items-center justify-between gap-2">
-				<div className="flex flex-row items-center gap-1">
+				<div className="flex max-w-[@container/top-element] flex-row items-center gap-1">
 					{isUser ? (
 						<Avatar className="size-5">
 							<AvatarImage src={element.image ?? undefined} alt={element.value} />
@@ -77,7 +78,13 @@ export default function TopElement({
 						</>
 					)}
 
-					<h3 className={cn("line-clamp-1 truncate text-[1rem]", isP1 ? "text-sidebar-primary" : "")} title={element.value}>
+					<h3
+						className={cn(
+							"line-clamp-1 truncate overflow-hidden text-[1rem] text-pretty",
+							isP1 ? "text-sidebar-primary" : "",
+						)}
+						title={element.value}
+					>
 						{getLanguageLabel(element.value)}
 					</h3>
 				</div>
@@ -100,7 +107,7 @@ export default function TopElement({
 				<span className="line-clamp-1 min-w-fit text-xs">{element.percentage}%</span>
 			</div>
 			<div className="flex flex-row items-center gap-1">
-				<Progress value={element.percentage} className="w-full max-w-sm" />
+				<Progress value={element.percentage} className="w-full" />
 			</div>
 		</div>
 	);
