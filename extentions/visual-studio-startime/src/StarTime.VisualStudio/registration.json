@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "startime.general.apiUrl": {
+      "type": "string",
+      "title": "API URL",
+      "description": "Base URL for the StarTime API.",
+      "default": "https://time.starlightv.dev/"
+    },
+    "startime.general.token": {
+      "type": "string",
+      "title": "Token",
+      "description": "API key from the StarTime dashboard.",
+      "default": ""
+    },
+    "startime.general.projectOverride": {
+      "type": "string",
+      "title": "Project override",
+      "description": "Optional project name sent instead of the solution name.",
+      "default": ""
+    }
+  },
+  "categories": {
+    "startime": {
+      "title": "StarTime"
+    },
+    "startime.general": {
+      "title": "General",
+      "legacyOptionPageId": "D93AC2D5-02CB-4648-9FE4-24C1CB9C5580",
+      "order": 0
+    }
+  }
+}
