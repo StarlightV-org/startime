@@ -1,4 +1,4 @@
-import { and, count, eq, gte, isNull, lt, sql } from "drizzle-orm";
+import { and, count, eq, exists, gte, isNull, lt, sql } from "drizzle-orm";
 import z from "zod";
 import {
 	createTRPCRouter,
@@ -21,7 +21,6 @@ import {
 import { TRPCError } from "@trpc/server";
 import { op } from "~/lib/op";
 import { msg } from "@lingui/core/macro";
-import { _int32 } from "zod/v4/core";
 
 import { getTimeRange, timeRangeValues, toTimeString } from "~/lib/time-range";
 import type { BiggestUnit } from "~/server/api/routers/overview";
@@ -135,6 +134,23 @@ const orgMembersRouter = createTRPCRouter({
 					}
 				}
 
+				await tx.delete(organizationProjectAssignments).where(
+					and(
+						eq(organizationProjectAssignments.userId, ctx.user.id),
+						exists(
+							tx
+								.select({ id: organizationProjects.id })
+								.from(organizationProjects)
+								.where(
+									and(
+										eq(organizationProjects.id, organizationProjectAssignments.organizationProjectId),
+										eq(organizationProjects.organizationId, ctx.user.organizationId),
+									),
+								),
+						),
+					),
+				);
+
 				await tx
 					.delete(members)
 					.where(and(eq(members.userId, ctx.user.id), eq(members.organizationId, ctx.user.organizationId)));
@@ -145,6 +161,7 @@ const orgMembersRouter = createTRPCRouter({
 			});
 
 			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
+			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 
 			return { success: true };
 		}),
@@ -174,6 +191,23 @@ const orgMembersRouter = createTRPCRouter({
 			}
 
 			await ctx.db.transaction(async (tx) => {
+				await tx.delete(organizationProjectAssignments).where(
+					and(
+						eq(organizationProjectAssignments.userId, userId),
+						exists(
+							tx
+								.select({ id: organizationProjects.id })
+								.from(organizationProjects)
+								.where(
+									and(
+										eq(organizationProjects.id, organizationProjectAssignments.organizationProjectId),
+										eq(organizationProjects.organizationId, ctx.user.organizationId),
+									),
+								),
+						),
+					),
+				);
+
 				await tx
 					.delete(members)
 					.where(and(eq(members.userId, userId), eq(members.organizationId, ctx.user.organizationId)));
@@ -185,6 +219,7 @@ const orgMembersRouter = createTRPCRouter({
 			});
 
 			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
+			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 
 			return { success: true };
 		}),
@@ -335,6 +370,7 @@ const orgInvitesRouter = createTRPCRouter({
 					throw new TRPCError({ code: "FORBIDDEN", message: "You already belong to an organization" });
 				}
 				await invalidateCachePartialKey(`org:top:${updatedUser.organizationId}`);
+				await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 			});
 
 			return true;
@@ -586,6 +622,7 @@ const orgProjects = createTRPCRouter({
 			await ctx.db.delete(organizationProjects).where(eq(organizationProjects.id, input.projectId));
 
 			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
+			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 		}),
 
 	assign: protectedProcedure
@@ -627,6 +664,7 @@ const orgProjects = createTRPCRouter({
 			});
 
 			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
+			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 		}),
 });
 

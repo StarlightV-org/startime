@@ -7,8 +7,8 @@ import { Separator } from "../ui/separator";
 import React, { Fragment } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
-import { authClient } from "~/server/better-auth/client";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
@@ -27,7 +27,7 @@ import { cn, tryCatch } from "~/lib/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { roleLabels } from "../settings/org-settings";
 import type { API } from "~/trpc/server";
-import { Badge } from "../ui/badge";
+
 import {
 	Combobox,
 	ComboboxChip,
@@ -35,7 +35,6 @@ import {
 	ComboboxChipsInput,
 	ComboboxContent,
 	ComboboxEmpty,
-	ComboboxInput,
 	ComboboxItem,
 	ComboboxList,
 	ComboboxValue,
@@ -209,7 +208,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 								id: "kick-member",
 							});
 
-							const { data, error } = await tryCatch(kickMember({ userId: member.userId }));
+							const { error } = await tryCatch(kickMember({ userId: member.userId }));
 
 							if (error) {
 								toast.error(t`Failed to kick member`, {

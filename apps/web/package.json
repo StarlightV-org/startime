@@ -1,6 +1,6 @@
 {
 	"name": "@startime/web",
-	"version": "0.1.62",
+	"version": "0.2.1",
 	"private": true,
 	"type": "module",
 	"dependencies": {
@@ -14,6 +14,7 @@
 		"@startime/env": "workspace:*",
 		"@startime/print": "workspace:*",
 		"@startime/service-auth": "workspace:*",
+		"@startime/zod": "workspace:*",
 		"@tailwindcss/postcss": "^4.3.0",
 		"@tailwindcss/typography": "^0.5.20",
 		"class-variance-authority": "^0.7.1",
