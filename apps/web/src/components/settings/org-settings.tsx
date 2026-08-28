@@ -50,6 +50,7 @@ export default function OrgSettings() {
 	const { t, i18n } = useLingui();
 
 	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
+	const { mutateAsync: declineInvite } = api.org.invites.declineInvite.useMutation();
 	const { mutateAsync: leaveOrganization } = api.org.members.leave.useMutation();
 	const [slugCheck, setSlugCheck] = useState<{ slug: string; isTaken: boolean }>();
 
@@ -146,36 +147,60 @@ export default function OrgSettings() {
 									</Avatar>
 									<span className="text-md">{invitation.organization.name}</span>
 									<span className="text-md">
-										<Trans>Created At</Trans>
-										{formatDate(invitation.organization.createdAt, "dd.MM.yyyy")}
+										<Trans>Created At</Trans> {formatDate(invitation.organization.createdAt, "dd.MM.yyyy")}
 										{" - "}
 										{formatDistanceToNowStrict(invitation.organization.createdAt, {
 											addSuffix: true,
 										})}
 									</span>
 								</div>
-								<Button
-									onClick={async () => {
-										const result = await confirmModal({
-											content: t`Are you sure you want to accept this invitation?`,
-											title: t`Accept invitation to ${invitation.organization.name}`,
-											confirmLabel: "Accept",
-										});
-										if (result) {
-											toast.loading(t`Accepting invitation...`, { id: "accept-invitation", description: undefined });
-											const { data, error } = await tryCatch(acceptInvite({ invitationId: invitation.id }));
-											if (data) {
-												toast.success(t`Invitation accepted.`, { id: "accept-invitation" });
-												router.refresh();
+								<div className="flex items-center gap-2">
+									<Button
+										variant="secondary"
+										onClick={async () => {
+											const result = await confirmModal({
+												content: t`Are you sure you want to decline this invitation? You will need to be invited again to join this organization.`,
+												title: t`Decline invitation to ${invitation.organization.name}`,
+												confirmLabel: "Decline",
+											});
+											if (result) {
+												toast.loading(t`Declining invitation...`, { id: "decline-invitation", description: undefined });
+												const { data, error } = await tryCatch(declineInvite({ invitationId: invitation.id }));
+												if (data) {
+													toast.success(t`Invitation declined.`, { id: "decline-invitation" });
+													router.refresh();
+												}
+												if (error) {
+													toast.error(t`Failed to decline invitation.`, { id: "decline-invitation", description: error.message });
+												}
 											}
-											if (error) {
-												toast.error(t`Failed to accept invitation.`, { id: "accept-invitation", description: error.message });
+										}}
+									>
+										<Trans>Decline</Trans>
+									</Button>
+									<Button
+										onClick={async () => {
+											const result = await confirmModal({
+												content: t`Are you sure you want to accept this invitation?`,
+												title: t`Accept invitation to ${invitation.organization.name}`,
+												confirmLabel: "Accept",
+											});
+											if (result) {
+												toast.loading(t`Accepting invitation...`, { id: "accept-invitation", description: undefined });
+												const { data, error } = await tryCatch(acceptInvite({ invitationId: invitation.id }));
+												if (data) {
+													toast.success(t`Invitation accepted.`, { id: "accept-invitation" });
+													router.refresh();
+												}
+												if (error) {
+													toast.error(t`Failed to accept invitation.`, { id: "accept-invitation", description: error.message });
+												}
 											}
-										}
-									}}
-								>
-									<Trans>Accept</Trans>
-								</Button>
+										}}
+									>
+										<Trans>Accept</Trans>
+									</Button>
+								</div>
 							</div>
 						))}
 					</CardDescription>

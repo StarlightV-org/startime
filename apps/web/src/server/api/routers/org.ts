@@ -407,6 +407,8 @@ const orgInvitesRouter = createTRPCRouter({
 					})
 					.where(eq(invitations.id, input.invitationId));
 			});
+
+			return { success: true };
 		}),
 });
 
