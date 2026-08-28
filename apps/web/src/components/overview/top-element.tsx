@@ -8,6 +8,7 @@ import { Progress } from "../ui/progress";
 import { cn } from "~/lib/utils";
 import { FileIcons } from "./file-icons";
 import { parseAsString, useQueryState } from "nuqs";
+import { useTransition } from "react";
 import { EditorIcon } from "./editor-icons";
 import { getLanguageLabel } from "./language-lable";
 import { InfoIcon } from "lucide-react";
@@ -27,9 +28,16 @@ export default function TopElement({
 	filterKey?: "editor" | "workspace" | "language" | "platform" | "user";
 	interactive?: boolean;
 }) {
+	const [, startTransition] = useTransition();
 	const [state, setState] = useQueryState(
 		filterKey ?? "editor",
-		parseAsString.withDefault("").withOptions({ history: "push", clearOnDefault: true }),
+		parseAsString.withDefault("").withOptions({
+			history: "push",
+			clearOnDefault: true,
+			shallow: false,
+			scroll: false,
+			startTransition,
+		}),
 	);
 
 	const isActiveFilter = state === element.value;
@@ -50,9 +58,9 @@ export default function TopElement({
 			)}
 			aria-disabled={!interactive}
 			role="button"
-			onClick={async () => {
+			onClick={() => {
 				if (!interactive) return;
-				await setState((prev) => (prev !== element.value ? element.value : ""));
+				void setState((prev) => (prev !== element.value ? element.value : ""));
 			}}
 		>
 			<div className="flex flex-row flex-nowrap items-center justify-between gap-2">

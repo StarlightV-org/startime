@@ -101,6 +101,7 @@ export function getTimeRange(
 }
 
 export function toTimeString(minutes: number, biggestUnit?: BiggestUnit): string {
+	if (minutes === 0) return "0m";
 	if (biggestUnit === "day") {
 		const fullDays = Math.floor(minutes / (60 * 24));
 		const remainingHours = Math.floor((minutes - fullDays * (60 * 24)) / 60);

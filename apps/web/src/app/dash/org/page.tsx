@@ -74,11 +74,17 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 
 	const cacheKeyString = `org:top:${org.id}:${cacheKey(topInput)}`;
 
-	const { data: top, error: topError } = await tryCatch(
-		withRedisCache(cacheKeyString, 120, () => api.org.getTop(topInput)),
-	);
+	const [{ data: activity, error: activityError }, { data: top, error: topError }] = await Promise.all([
+		tryCatch(
+			withRedisCache(`org:activity:${org.id}:${cacheKey({ timeRange, biggestUnit })}`, 60, () =>
+				api.org.getActivity({ timeRange, biggestUnit }),
+			),
+		),
+		tryCatch(withRedisCache(cacheKeyString, 120, () => api.org.getTop(topInput))),
+	]);
 
 	projectsError && Print.Error("[ORG] Failed to load projects", projectsError);
+	activityError && Print.Error("[ORG] Failed to load activity", activityError);
 	topError && Print.Error("[ORG] Failed to load overview", topError);
 
 	return (
@@ -120,12 +126,52 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 			</Card>
 			<Card>
 				<CardContent>
+					<CardHeader>
+						<CardTitle>
+							<Trans>Activity</Trans>
+						</CardTitle>
+					</CardHeader>
+					<CardDescription className="grid grid-cols-2 divide-x divide-border">
+						<div className="flex flex-col pr-4">
+							<h3 className="text-sm text-sidebar-primary">
+								<Trans>Time/Total</Trans>
+							</h3>
+							<p className="text-xl text-primary-foreground">{activityError ? "-" : (activity?.timeTotal ?? "-")}</p>
+						</div>
+						<div className="flex flex-col pl-4">
+							<h3 className="text-sm text-sidebar-primary">
+								<Trans>Time/Today</Trans>
+							</h3>
+							<p className="text-xl text-primary-foreground">{activityError ? "-" : (activity?.timeToday ?? "-")}</p>
+						</div>
+					</CardDescription>
+				</CardContent>
+			</Card>
+			<Card>
+				<CardContent>
 					<CardHeader className="flex items-center justify-between">
 						<CardTitle>
 							<Trans>Top</Trans>
 						</CardTitle>
 						<div className="flex items-center">
 							<RefetchOverviewButton />
+							<Dialog>
+								<DialogTrigger
+									render={
+										<Button variant="ghost" size="icon-sm">
+											<InfoIcon className="size-4 cursor-pointer" />
+										</Button>
+									}
+								/>
+								<DialogContent>
+									<Trans>
+										<DialogTitle>What is shown</DialogTitle>
+										<span className="text-sm text-pretty text-muted-foreground">
+											In this section, only projects and time are shown, that users have assigned.
+										</span>
+									</Trans>
+								</DialogContent>
+							</Dialog>
 						</div>
 					</CardHeader>
 					<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">

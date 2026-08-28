@@ -651,6 +651,59 @@ export const orgRouter = createTRPCRouter({
 	members: orgMembersRouter,
 	projects: orgProjects,
 
+	getActivity: protectedProcedure
+		.use(serverOnlyMiddleware)
+		.input(
+			z.object({
+				timeRange: z.enum(timeRangeValues),
+				biggestUnit: z.enum(["hour", "day", "week"]).optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const organizationId = ctx.user.organizationId;
+			if (!organizationId) return null;
+
+			const regional = ctx.user.accountConfig.regional;
+			const [start, end] = getTimeRange(input.timeRange, regional.timeZone, undefined, regional.startOfWeek);
+			const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+			if (!startToday || !endToday) throw new Error("Unable to determine the current day range");
+
+			const eventFilter = and(
+				eq(members.organizationId, organizationId),
+				start ? gte(eventLogs.eventTime, start) : undefined,
+				end ? lt(eventLogs.eventTime, end) : undefined,
+			);
+			const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
+
+			const result = await ctx.db.execute<{ minutes: number; minutesToday: number }>(sql`
+				with project_minutes as (
+					select distinct
+						${organizationProjects.id} as project_id,
+						${eventLogs.userId} as user_id,
+						date_trunc('minute', ${eventLogs.eventTime}) as active_minute,
+						case when ${todayFilter} then 1 else 0 end as is_today
+					from ${eventLogs}
+					inner join ${members} on ${members.userId} = ${eventLogs.userId}
+					inner join ${organizationProjectAssignments} on
+						${organizationProjectAssignments.userId} = ${eventLogs.userId}
+						and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
+					inner join ${organizationProjects} on
+						${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
+						and ${organizationProjects.organizationId} = ${organizationId}
+					where ${eventFilter}
+				)
+				select count(*)::int as minutes,
+					coalesce(sum(is_today), 0)::int as "minutesToday"
+				from project_minutes
+			`);
+			const activity = result[0];
+
+			return {
+				timeTotal: toTimeString(activity?.minutes ?? 0, input.biggestUnit),
+				timeToday: toTimeString(activity?.minutesToday ?? 0, input.biggestUnit),
+			};
+		}),
+
 	getTop: protectedProcedure
 		.use(serverOnlyMiddleware)
 		.input(

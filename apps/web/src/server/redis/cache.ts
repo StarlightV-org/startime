@@ -103,7 +103,7 @@ export async function withRedisCache<T>(key: string, ttlSeconds: number, fn: () 
 	const fullKey = namespacedKey(key);
 	const raw = await redis.get(fullKey);
 	if (raw !== null) {
-		void redis.ttl(fullKey).then((ttl) => Print.Success(`Cache hit:`, `${ttl}s`, fullKey));
+		void redis.ttl(fullKey).then((ttl) => Print.Success(`Cache hit:`, `${ttl}s`, fullKey.slice(0, 50)));
 		try {
 			return JSON.parse(raw) as T;
 		} catch {
