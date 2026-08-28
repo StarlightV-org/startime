@@ -1,6 +1,6 @@
 {
 	"name": "@startime/web",
-	"version": "0.1.55",
+	"version": "0.2.1",
 	"private": true,
 	"type": "module",
 	"dependencies": {
@@ -10,6 +10,10 @@
 		"@mdx-js/loader": "^3.1.1",
 		"@mdx-js/react": "^3.1.1",
 		"@next/mdx": "^16.3.1",
+		"@startime/db": "workspace:*",
+		"@startime/env": "workspace:*",
+		"@startime/print": "workspace:*",
+		"@startime/service-auth": "workspace:*",
 		"@startime/zod": "workspace:*",
 		"@tailwindcss/postcss": "^4.3.0",
 		"@tailwindcss/typography": "^0.5.20",

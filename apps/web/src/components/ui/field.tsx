@@ -40,7 +40,7 @@ function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
 		<div
 			data-slot="field-group"
 			className={cn(
-				"group/field-group @container/field-group flex w-full flex-col gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
+				"group/field-group @container/field-group flex w-full flex-col gap-2 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4",
 				className,
 			)}
 			{...props}
@@ -89,7 +89,12 @@ function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
-function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+function FieldLabel({
+	className,
+	required,
+	children,
+	...props
+}: React.ComponentProps<typeof Label> & { required?: boolean }) {
 	return (
 		<Label
 			data-slot="field-label"
@@ -99,7 +104,10 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
 				className,
 			)}
 			{...props}
-		/>
+		>
+			{children}
+			{required && <span className="text-destructive">*</span>}
+		</Label>
 	);
 }
 

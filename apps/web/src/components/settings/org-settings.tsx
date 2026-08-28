@@ -2,13 +2,13 @@
 
 import { authClient } from "~/server/better-auth/client";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardDescription, CardFooter } from "../ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { useForm } from "@tanstack/react-form";
 import z from "zod";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "../ui/input-group";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
 import { useDisclosure } from "@mantine/hooks";
 import { api } from "~/trpc/react";
 import { toast } from "sonner";
@@ -18,6 +18,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
 import { useConfirmModal } from "../ui/confirm-modal";
 import { tryCatch } from "~/lib/utils";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { CheckIcon, DoorOpenIcon, UserIcon, XIcon } from "lucide-react";
+import { msg } from "@lingui/core/macro";
+import type { MessageDescriptor } from "@lingui/core";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Spinner } from "../ui/spinner";
+import { useState } from "react";
 
 export const normalizeSlug = (value: string) =>
 	value
@@ -29,39 +36,56 @@ export const normalizeSlug = (value: string) =>
 		.replace(/-+/g, "-")
 		.replace(/-$/, "");
 
-export default function DataManagement() {
+export const roleLabels: Record<string, MessageDescriptor> = {
+	owner: msg`Owner`,
+	admin: msg`Admin`,
+	member: msg`Member`,
+};
+
+export default function OrgSettings() {
 	const { user, org, invitations } = useSession();
 
 	const [opened, { toggle }] = useDisclosure();
 	const router = useRouter();
+	const { t, i18n } = useLingui();
 
 	const { mutateAsync: acceptInvite } = api.org.invites.acceptInvite.useMutation();
+	const { mutateAsync: leaveOrganization } = api.org.members.leave.useMutation();
+	const [slugCheck, setSlugCheck] = useState<{ slug: string; isTaken: boolean }>();
+
+	const { mutateAsync: checkSlugTaken, isPending: isCheckingSlug } = api.org.isSlugTaken.useMutation();
 
 	const { mutate } = api.org.create.useMutation({
 		onSuccess: () => {
 			router.refresh();
 			toggle();
-			toast.success("Organization created successfully.", { id: "create-org", description: undefined });
+			toast.success(t`Organization created successfully.`, { id: "create-org", description: undefined });
 		},
 		onMutate: () => {
-			toast.loading("Creating organization...", { id: "create-org", description: undefined });
+			toast.loading(t`Creating organization...`, { id: "create-org", description: undefined });
 		},
 		onError: (e) => {
-			toast.error("Failed to create organization.", { id: "create-org", description: e.message });
+			toast.error(t`Failed to create organization.`, { id: "create-org", description: i18n._(e.message) });
 		},
 	});
 
 	const orgSchema = z.object({
-		orgName: z.string().min(5, "Name must be at least 5 characters.").max(32, "Name must be at most 32 characters."),
+		orgName: z
+			.string()
+			.min(5, t`Name must be at least 5 characters.`)
+			.max(32, t`Name must be at most 32 characters.`),
 		slug: z
 			.string()
-			.min(5, "Slug must be at least 5 characters.")
-			.max(32, "Slug must be at most 32 characters.")
+			.min(5, t`Slug must be at least 5 characters.`)
+			.max(32, t`Slug must be at most 32 characters.`)
 			.regex(
 				/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/,
-				"Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.",
+				t`Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens.`,
 			),
-		logo: z.string().min(5, "Logo must be at least 5 characters.").or(z.literal("")),
+		logo: z
+			.string()
+			.min(5, t`Logo must be at least 5 characters.`)
+			.or(z.literal("")),
 	});
 
 	const confirmModal = useConfirmModal();
@@ -82,6 +106,11 @@ export default function DataManagement() {
 		},
 
 		onSubmit: async ({ value }) => {
+			if (await checkSlugTaken({ slug: value.slug })) {
+				form.setErrorMap({ onSubmit: { fields: { slug: t`This slug is already taken. Please choose a different one.` } } });
+				return;
+			}
+
 			mutate({
 				name: value.orgName,
 				slug: value.slug,
@@ -90,36 +119,34 @@ export default function DataManagement() {
 		},
 	});
 
+	const ownerCount = org?.members?.filter((m) => m.role === "owner").length ?? 1;
+	// If the user is not an owner, or there is more than one owner, they can leave the organization.
+	const canLeave = org?.membership?.role !== "owner" || ownerCount > 1;
+
 	if (!user.organizationId)
 		return (
 			<Card>
-				<CardContent>No active organization</CardContent>
-				{/*<Button
-					onClick={async () => {
-						const { data, error } = await authClient.organization.setActive({
-							organizationSlug: "starlightv",
-						});
-						Print.Debug(data, error);
-						router.refresh();
-					}}
-				>
-					Create Organization
-				</Button>*/}
-
+				<CardContent>
+					<Trans>No active organization</Trans>
+				</CardContent>
 				{!!invitations?.length && (
 					<CardDescription className="space-y-2 px-4">
-						<span className="text-sm text-muted-foreground">Pending invitations: {invitations.length}</span>
+						<span className="text-sm text-muted-foreground">
+							<Trans>Pending invitations: {invitations.length}</Trans>
+						</span>
 
 						{invitations.map((invitation) => (
 							<div className="flex justify-between" key={invitation.id}>
 								<div className="flex items-center space-x-2">
 									<Avatar size="sm">
 										<AvatarImage src={invitation.organization.logo!} alt={invitation.user.name} />
-										<AvatarFallback>{invitation.organization.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+										<AvatarFallback visible={!invitation.organization.logo}>
+											{invitation.organization.name.slice(0, 2).toUpperCase()}
+										</AvatarFallback>
 									</Avatar>
 									<span className="text-md">{invitation.organization.name}</span>
 									<span className="text-md">
-										{"Created: "}
+										<Trans>Created At</Trans>
 										{formatDate(invitation.organization.createdAt, "dd.MM.yyyy")}
 										{" - "}
 										{formatDistanceToNowStrict(invitation.organization.createdAt, {
@@ -130,24 +157,24 @@ export default function DataManagement() {
 								<Button
 									onClick={async () => {
 										const result = await confirmModal({
-											content: "Are you sure you want to accept this invitation?",
-											title: `Accept invitation to ${invitation.organization.name}`,
+											content: t`Are you sure you want to accept this invitation?`,
+											title: t`Accept invitation to ${invitation.organization.name}`,
 											confirmLabel: "Accept",
 										});
 										if (result) {
-											toast.loading("Accepting invitation...", { id: "accept-invitation", description: undefined });
+											toast.loading(t`Accepting invitation...`, { id: "accept-invitation", description: undefined });
 											const { data, error } = await tryCatch(acceptInvite({ invitationId: invitation.id }));
 											if (data) {
-												toast.success("Invitation accepted.", { id: "accept-invitation" });
+												toast.success(t`Invitation accepted.`, { id: "accept-invitation" });
 												router.refresh();
 											}
 											if (error) {
-												toast.error("Failed to accept invitation.", { id: "accept-invitation", description: error.message });
+												toast.error(t`Failed to accept invitation.`, { id: "accept-invitation", description: error.message });
 											}
 										}
 									}}
 								>
-									Accept
+									<Trans>Accept</Trans>
 								</Button>
 							</div>
 						))}
@@ -157,9 +184,13 @@ export default function DataManagement() {
 				{/*<CardDescription className="whitespace-pre-wrap">{JSON.stringify(org, null, 2)}</CardDescription>*/}
 				<CardFooter>
 					<Dialog open={opened} onOpenChange={toggle}>
-						<DialogTrigger render={
-							<Button>Create Organization</Button>
-						}/>
+						<DialogTrigger
+							render={
+								<Button>
+									<Trans>Create Organization</Trans>
+								</Button>
+							}
+						/>
 						<DialogContent>
 							<form
 								id="create-org-form"
@@ -176,7 +207,9 @@ export default function DataManagement() {
 											const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
 											return (
 												<Field data-invalid={isInvalid}>
-													<FieldLabel htmlFor={field.name}>Organization Name</FieldLabel>
+													<FieldLabel htmlFor={field.name}>
+														<Trans>Organization Name</Trans>
+													</FieldLabel>
 													<Input
 														id={field.name}
 														name={field.name}
@@ -204,16 +237,41 @@ export default function DataManagement() {
 											return (
 												<Field data-invalid={isInvalid}>
 													<FieldLabel htmlFor={field.name}>Slug</FieldLabel>
-													<Input
-														id={field.name}
-														name={field.name}
-														value={field.state.value}
-														onBlur={field.handleBlur}
-														onChange={(e) => field.handleChange(normalizeSlug(e.target.value))}
-														aria-invalid={isInvalid}
-														placeholder="starlight"
-														autoComplete="off"
-													/>
+													<InputGroup>
+														<InputGroupInput
+															id={field.name}
+															name={field.name}
+															value={field.state.value}
+															onBlur={(event) => {
+																field.handleBlur();
+																const slug = normalizeSlug(event.target.value);
+																void checkSlugTaken({ slug })
+																	.then((isTaken) => {
+																		if (form.state.values.slug === slug) setSlugCheck({ slug, isTaken });
+																	})
+																	.catch(() => undefined);
+															}}
+															onChange={(event) => {
+																setSlugCheck(undefined);
+																field.handleChange(normalizeSlug(event.target.value));
+															}}
+															aria-invalid={isInvalid}
+															placeholder="starlight"
+															autoComplete="off"
+														/>
+														<InputGroupAddon align="inline-end">
+															{isCheckingSlug ? (
+																<Spinner />
+															) : slugCheck?.slug !== field.state.value || !slugCheck.isTaken ? (
+																<CheckIcon className="text-green-500" />
+															) : (
+																<XIcon className="text-red-500" />
+															)}
+														</InputGroupAddon>
+													</InputGroup>
+													{slugCheck?.slug === field.state.value && slugCheck.isTaken && (
+														<FieldError errors={[{ message: t`This slug is already taken. Please choose a different one.` }]} />
+													)}
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
 												</Field>
 											);
@@ -231,7 +289,7 @@ export default function DataManagement() {
 														name={field.name}
 														value={field.state.value}
 														onBlur={field.handleBlur}
-														onChange={(e) => field.handleChange(normalizeSlug(e.target.value))}
+														onChange={(e) => field.handleChange(e.target.value)}
 														aria-invalid={isInvalid}
 														placeholder="https://your-organization-logo.com"
 														autoComplete="off"
@@ -244,7 +302,9 @@ export default function DataManagement() {
 								</FieldGroup>
 							</form>
 
-							<span className="text-sm text-muted-foreground">You can only create one organization per account.</span>
+							<span className="text-sm text-muted-foreground">
+								<Trans>You can only create one organization per account.</Trans>
+							</span>
 
 							<DialogFooter>
 								<form.Subscribe
@@ -252,10 +312,10 @@ export default function DataManagement() {
 									children={([canSubmit, isSubmitting]) => (
 										<>
 											<Button variant="outline" disabled={isSubmitting} onClick={() => form.reset()}>
-												Cancel
+												<Trans>Cancel</Trans>
 											</Button>
 											<Button disabled={!canSubmit || isSubmitting} type="submit" form="create-org-form">
-												Create
+												<Trans>Create</Trans>
 											</Button>
 										</>
 									)}
@@ -267,12 +327,86 @@ export default function DataManagement() {
 			</Card>
 		);
 
-	// Print.Debug(activeOrganization);
-
 	return (
 		<Card>
-			<CardContent></CardContent>
+			<CardHeader>
+				<CardTitle>
+					<Trans>Your Organization</Trans>
+				</CardTitle>
+			</CardHeader>
+			<CardContent className="flex items-center justify-between gap-2">
+				<div className="flex flex-row items-center gap-2">
+					<Avatar size="lg">
+						<AvatarImage src={org?.logo!} alt={org?.name} />
+						<AvatarFallback visible={!org?.logo}>
+							<span>{org?.name?.slice(0, 2).toUpperCase()}</span>
+						</AvatarFallback>
+					</Avatar>
+					<h1 className="text-2xl">{org?.name}</h1>
+					<div className="flex items-center gap-2">
+						<Trans>Role: </Trans>
+						{i18n._(roleLabels[org?.membership?.role!]!)}
+					</div>
+				</div>
+
+				<div className="flex items-center gap-2">
+					<span
+						className="flex items-center gap-1"
+						title={(org?.members.length ?? 0) > 1 ? t`${org?.members.length} members` : t`${org?.members.length} member`}
+					>
+						{org?.members?.length ?? 0}
+						<UserIcon className="size-4" />
+					</span>
+					<div>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant="outline"
+										className={!canLeave ? "cursor-not-allowed opacity-50 active:not-aria-[haspopup]:translate-y-0" : ""}
+										onClick={async () => {
+											if (!canLeave) {
+												return;
+											}
+											const result = await confirmModal({
+												content: t`Are you sure you want to leave this organization?`,
+												title: t`Leave Organization`,
+												confirmLabel: t`Leave`,
+											});
+											if (!result) {
+												return;
+											}
+											toast.loading(t`Leaving organization...`, { id: "leave-org", description: undefined });
+											const { error } = await tryCatch(leaveOrganization());
+											if (error) {
+												toast.error(t`Failed to leave organization.`, { id: "leave-org", description: error.message });
+												return;
+											}
+											toast.success(t`You left the organization.`, { id: "leave-org" });
+											router.refresh();
+										}}
+									>
+										<DoorOpenIcon className="size-4" />
+										<Trans>Leave</Trans>
+									</Button>
+								}
+							/>
+
+							<TooltipContent className="text-center" hidden={canLeave}>
+								{canLeave ? null : (
+									<span>
+										<Trans>
+											You cannot leave this organization.
+											<br />
+											Transfer ownership to another member or delete it.
+										</Trans>
+									</span>
+								)}
+							</TooltipContent>
+						</Tooltip>
+					</div>
+				</div>
+			</CardContent>
 		</Card>
 	);
 }
-

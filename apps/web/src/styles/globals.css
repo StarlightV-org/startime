@@ -196,13 +196,18 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	/* Radix locks scrolling for dialogs and selects. Its scrollbar margin shifts centered layouts in browsers that retain the scrollbar. */
+	body[data-scroll-locked] {
+		margin-right: 0 !important;
+	}
 	html {
 		@apply font-sans;
 	}
 
 	button:not(:disabled),
 	[role="button"]:not([aria-disabled="true"]) {
-		cursor: pointer !important;
+		cursor: pointer;
 	}
 	html:has([data-minimal-page]),
 	body:has([data-minimal-page]) {
