@@ -31,27 +31,24 @@ export async function GET(req: NextRequest) {
 
 	const regional = checkAccountConfig(apiKey.user.accountConfig).regional;
 
-	const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+	const timeZone = normalizeTimeZone(regional.timeZone);
+	const [startToday, endToday] = getTimeRange("thisDay", timeZone, undefined, regional.startOfWeek);
 
 	if (!startToday || !endToday) {
 		throw new Error("Unable to determine the current day range");
 	}
 
-	const timeZone = normalizeTimeZone(regional.timeZone);
-	const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
 	const rangeFilter = and(
 		eq(eventLogs.userId, apiKey.user.id),
+		gte(eventLogs.eventTime, startToday),
+		lt(eventLogs.eventTime, endToday),
 		parsed.data.project ? eq(eventLogs.project, parsed.data.project) : undefined,
 	);
-	const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
 
 	const [activityResult] = await Promise.all([
 		db
 			.select({
-				activeMinutesToday: sql<number>`
-						count(distinct date_trunc('minute', ${eventLogs.eventTime}))
-						filter (where ${todayFilter})
-					`.mapWith(Number),
+				activeMinutesToday: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
 			})
 			.from(eventLogs)
 			.where(rangeFilter),
