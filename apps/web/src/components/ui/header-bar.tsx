@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { usePathname, useRouter } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger } from "./tabs";
+import { usePathname } from "next/navigation";
 import AccountButton from "../auth/account-button";
 import { useSession } from "~/provider/session-provider";
 import { Avatar, AvatarImage } from "./avatar";
@@ -10,6 +10,21 @@ import { Separator } from "./separator";
 import { cn } from "~/lib/utils";
 import OpenMinimal from "../overview/open-minimal";
 import { Trans } from "@lingui/react/macro";
+import { ExternalLinkIcon } from "lucide-react";
+
+function resolveDocsUrl(pathname: string) {
+	const url = new URL("https://docs.starlightv.dev");
+
+	switch (pathname) {
+		case "/dash/org":
+			url.pathname = "/docs/startime/org";
+			break;
+		default:
+			url.pathname = "/docs/startime/what-is-startime";
+	}
+
+	return url.toString();
+}
 
 export function HeaderBar({ showTabs = true, showUser = true }) {
 	const pathname = usePathname();
@@ -58,6 +73,14 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 										render={
 											<Link href="/dash/settings" className="h-8! text-sm">
 												<Trans>Settings</Trans>
+											</Link>
+										}
+									/>
+									<TabsTrigger
+										value="/dash/docs"
+										render={
+											<Link href={resolveDocsUrl(pathname)} target="_blank" rel="noopener noreferrer" className="h-8! text-sm">
+												Docs <ExternalLinkIcon className="inline-flex h-8!" />
 											</Link>
 										}
 									/>
