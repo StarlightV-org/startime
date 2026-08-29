@@ -75,7 +75,6 @@
 		"prettier": "^3.8.4",
 		"prettier-plugin-tailwindcss": "^0.8.0",
 		"tailwindcss": "^4.3.0",
-		"turbo": "^2.10.11",
 		"typescript": "^7.0.2"
 	}
 }
