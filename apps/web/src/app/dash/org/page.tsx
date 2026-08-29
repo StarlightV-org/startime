@@ -17,11 +17,13 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "~/components/
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
 import { cacheKey } from "~/lib/cache-key";
+
 import { getTimeRange, timeRangeValues, type TimeRange } from "~/lib/time-range";
 import { tryCatch } from "~/lib/utils";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 import { getAuth } from "~/server/better-auth";
 import { withRedisCache } from "~/server/redis/cache";
+
 import { api } from "~/trpc/server";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
@@ -71,15 +73,10 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 		},
 	};
 
-	const cacheKeyString = `org:top:${org.id}:${cacheKey(topInput)}`;
-
 	const [{ data: activity, error: activityError }, { data: top, error: topError }] = await Promise.all([
-		tryCatch(
-			withRedisCache(`org:activity:${org.id}:${cacheKey({ timeRange, biggestUnit })}`, 60, () =>
-				api.org.getActivity({ timeRange, biggestUnit }),
-			),
-		),
-		tryCatch(withRedisCache(cacheKeyString, 120, () => api.org.getTop(topInput))),
+		tryCatch(api.org.getActivity({ timeRange, biggestUnit })),
+		tryCatch(withRedisCache(`page:org:top:${org.id}:${cacheKey(topInput)}`, 120, () => api.org.getTop(topInput))),
+		// tryCatch(api.org.getTop(topInput)),
 	]);
 
 	projectsError && Print.Error("[ORG] Failed to load projects", projectsError);

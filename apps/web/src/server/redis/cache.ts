@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getRedis } from "./redis-client";
+import chalk from "chalk";
 
 export const REDIS_CACHE_KEY_PREFIX = "cache:v1:";
 
@@ -103,14 +104,16 @@ export async function withRedisCache<T>(key: string, ttlSeconds: number, fn: () 
 	const fullKey = namespacedKey(key);
 	const raw = await redis.get(fullKey);
 	if (raw !== null) {
-		void redis.ttl(fullKey).then((ttl) => Print.Success(`Cache hit:`, `${ttl}s`, fullKey.slice(0, 50)));
+		void redis
+			.ttl(fullKey)
+			.then((ttl) => Print.Success(`Cache hit:`, `${ttl}s`, fullKey.replace(REDIS_CACHE_KEY_PREFIX, "").slice(0, 50)));
 		try {
 			return JSON.parse(raw) as T;
 		} catch {
 			/* stale payload — refresh */
 		}
 	}
-	Print.Fail(`Cache miss:`, fullKey);
+	Print.Fail(`Cache miss:`, fullKey.replace(REDIS_CACHE_KEY_PREFIX, "").slice(0, 50));
 	const val = await fn();
 	await redis.set(fullKey, JSON.stringify(val), "EX", ttlSeconds);
 	return val;

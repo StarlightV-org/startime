@@ -22,10 +22,11 @@ import { TRPCError } from "@trpc/server";
 import { op } from "~/lib/op";
 import { msg } from "@lingui/core/macro";
 
-import { getTimeRange, timeRangeValues, toTimeString } from "~/lib/time-range";
+import { cacheKey } from "~/lib/cache-key";
+import { getTimeRange, timeRangeValues, toTimeString, type TimeRange } from "~/lib/time-range";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 import type { API } from "~/trpc/server";
-import { invalidateCachePartialKey } from "~/server/redis/cache";
+import { invalidateCachePartialKey, withRedisCache } from "~/server/redis/cache";
 
 const slugSchema = z
 	.string()
@@ -56,6 +57,14 @@ function requireOrganizationOwner<T extends { organizationId: string | null; rol
 	if (!user.organizationId || user.role !== "owner") {
 		throw new TRPCError({ code: "FORBIDDEN", message: "You can not perform this action!" });
 	}
+}
+
+async function invalidateOrgCache(ctx: { user: { organizationId: string } }) {
+	await Promise.allSettled([
+		invalidateCachePartialKey(`org:v2:top:${ctx.user.organizationId}`),
+		invalidateCachePartialKey(`org:v2:activity:${ctx.user.organizationId}`),
+		invalidateCachePartialKey(`page:org:top:${ctx.user.organizationId}`),
+	]);
 }
 
 const orgMembersRouter = createTRPCRouter({
@@ -160,8 +169,7 @@ const orgMembersRouter = createTRPCRouter({
 					.where(and(eq(users.id, ctx.user.id), eq(users.organizationId, ctx.user.organizationId)));
 			});
 
-			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
-			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
+			await invalidateOrgCache(ctx);
 
 			return { success: true };
 		}),
@@ -218,8 +226,7 @@ const orgMembersRouter = createTRPCRouter({
 					.where(and(eq(users.id, userId), eq(users.organizationId, ctx.user.organizationId)));
 			});
 
-			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
-			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
+			await invalidateOrgCache(ctx);
 
 			return { success: true };
 		}),
@@ -369,8 +376,6 @@ const orgInvitesRouter = createTRPCRouter({
 				if (!updatedUser) {
 					throw new TRPCError({ code: "FORBIDDEN", message: "You already belong to an organization" });
 				}
-				await invalidateCachePartialKey(`org:top:${updatedUser.organizationId}`);
-				await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
 			});
 
 			return true;
@@ -623,8 +628,7 @@ const orgProjects = createTRPCRouter({
 
 			await ctx.db.delete(organizationProjects).where(eq(organizationProjects.id, input.projectId));
 
-			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
-			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
+			await invalidateOrgCache(ctx);
 		}),
 
 	assign: protectedProcedure
@@ -665,12 +669,41 @@ const orgProjects = createTRPCRouter({
 				);
 			});
 
-			await invalidateCachePartialKey(`org:top:${ctx.user.organizationId}`);
-			await invalidateCachePartialKey(`org:activity:${ctx.user.organizationId}`);
+			await invalidateOrgCache(ctx);
 		}),
 });
 
 export type OrgTopElement = NonNullable<API["org"]["getTop"]>["editor"]["p1"];
+
+const orgHistoricalCacheTtlSeconds = 60 * 60 * 2;
+const cacheableHistoricalRanges = new Set<TimeRange>([
+	"past7",
+	"past30",
+	"past90",
+	"past365",
+	"thisWeek",
+	"thisMonth",
+	"thisYear",
+	"allTime",
+]);
+
+type TimeInterval = {
+	start: Date | null;
+	end: Date | null;
+};
+
+function splitAtToday(
+	range: TimeInterval,
+	todayStart: Date,
+): { historical: TimeInterval | null; live: TimeInterval | null } {
+	const historicalEnd = range.end && range.end < todayStart ? range.end : todayStart;
+	const historical =
+		range.start === null || range.start < historicalEnd ? { start: range.start, end: historicalEnd } : null;
+	const liveStart = range.start && range.start > todayStart ? range.start : todayStart;
+	const live = range.end === null || liveStart < range.end ? { start: liveStart, end: range.end } : null;
+
+	return { historical, live };
+}
 
 export const orgRouter = createTRPCRouter({
 	isSlugTaken: protectedProcedure
@@ -705,42 +738,51 @@ export const orgRouter = createTRPCRouter({
 
 			const regional = ctx.user.accountConfig.regional;
 			const [start, end] = getTimeRange(input.timeRange, regional.timeZone, undefined, regional.startOfWeek);
-			const [startToday, endToday] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
-			if (!startToday || !endToday) throw new Error("Unable to determine the current day range");
+			const [todayStart] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+			if (!todayStart) throw new Error("Unable to determine the current day range");
 
-			const eventFilter = and(
-				eq(members.organizationId, organizationId),
-				start ? gte(eventLogs.eventTime, start) : undefined,
-				end ? lt(eventLogs.eventTime, end) : undefined,
-			);
-			const todayFilter = and(gte(eventLogs.eventTime, startToday), lt(eventLogs.eventTime, endToday));
+			const getMinutes = async (interval: TimeInterval) => {
+				const eventFilter = and(
+					eq(members.organizationId, organizationId),
+					interval.start ? gte(eventLogs.eventTime, interval.start) : undefined,
+					interval.end ? lt(eventLogs.eventTime, interval.end) : undefined,
+				);
+				const result = await ctx.db.execute<{ minutes: number }>(sql`
+					with project_minutes as (
+						select distinct
+							${organizationProjects.id} as project_id,
+							${eventLogs.userId} as user_id,
+							date_trunc('minute', ${eventLogs.eventTime}) as active_minute
+						from ${eventLogs}
+						inner join ${members} on ${members.userId} = ${eventLogs.userId}
+						inner join ${organizationProjectAssignments} on
+							${organizationProjectAssignments.userId} = ${eventLogs.userId}
+							and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
+						inner join ${organizationProjects} on
+							${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
+							and ${organizationProjects.organizationId} = ${organizationId}
+						where ${eventFilter}
+					)
+					select count(*)::int as minutes from project_minutes
+				`);
+				return result[0]?.minutes ?? 0;
+			};
 
-			const result = await ctx.db.execute<{ minutes: number; minutesToday: number }>(sql`
-				with project_minutes as (
-					select distinct
-						${organizationProjects.id} as project_id,
-						${eventLogs.userId} as user_id,
-						date_trunc('minute', ${eventLogs.eventTime}) as active_minute,
-						case when ${todayFilter} then 1 else 0 end as is_today
-					from ${eventLogs}
-					inner join ${members} on ${members.userId} = ${eventLogs.userId}
-					inner join ${organizationProjectAssignments} on
-						${organizationProjectAssignments.userId} = ${eventLogs.userId}
-						and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
-					inner join ${organizationProjects} on
-						${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
-						and ${organizationProjects.organizationId} = ${organizationId}
-					where ${eventFilter}
-				)
-				select count(*)::int as minutes,
-					coalesce(sum(is_today), 0)::int as "minutesToday"
-				from project_minutes
-			`);
-			const activity = result[0];
+			const { historical, live } = splitAtToday({ start, end }, todayStart);
+			const historicalKey =
+				historical && cacheableHistoricalRanges.has(input.timeRange)
+					? `org:v2:activity:${organizationId}:${cacheKey({ timeRange: input.timeRange, historicalEnd: historical.end?.getTime() ?? null })}`
+					: null;
+			const [historicalMinutes, liveMinutes] = await Promise.all([
+				historical && historicalKey
+					? withRedisCache(historicalKey, orgHistoricalCacheTtlSeconds, () => getMinutes(historical))
+					: Promise.resolve(0),
+				live ? getMinutes(live) : Promise.resolve(0),
+			]);
 
 			return {
-				timeTotal: toTimeString(activity?.minutes ?? 0, input.biggestUnit),
-				timeToday: toTimeString(activity?.minutesToday ?? 0, input.biggestUnit),
+				timeTotal: toTimeString(historicalMinutes + liveMinutes, input.biggestUnit),
+				timeToday: toTimeString(liveMinutes, input.biggestUnit),
 			};
 		}),
 
@@ -765,55 +807,55 @@ export const orgRouter = createTRPCRouter({
 
 			const regional = ctx.user.accountConfig.regional;
 			const [start, end] = getTimeRange(input.timeRange, regional.timeZone, undefined, regional.startOfWeek);
-			const eventFilter = and(
-				eq(members.organizationId, organizationId),
-				input.filter.user ? eq(users.name, input.filter.user) : undefined,
-				start ? gte(eventLogs.eventTime, start) : undefined,
-				end ? lt(eventLogs.eventTime, end) : undefined,
-				input.filter.editor ? eq(eventLogs.editor, input.filter.editor) : undefined,
-				input.filter.language ? eq(eventLogs.language, input.filter.language) : undefined,
-				input.filter.platform ? eq(eventLogs.platform, input.filter.platform) : undefined,
-				input.filter.workspace ? eq(organizationProjects.name, input.filter.workspace) : undefined,
-			);
+			const [todayStart] = getTimeRange("thisDay", regional.timeZone, undefined, regional.startOfWeek);
+			if (!todayStart) throw new Error("Unable to determine the current day range");
+
 			type Dimension = "user" | "editor" | "workspace" | "language" | "platform";
-			type RankedRow = {
+			type AggregateRow = {
 				dimension: Dimension;
 				id: string;
 				value: string;
 				image: string | null;
 				shareAllTime: boolean | null;
 				minutes: number;
-				percentage: number;
-				rank: number;
 			};
-			const rows = await ctx.db.execute<RankedRow>(sql`
-				with member_events as materialized (
-					select distinct on (${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}))
-						${eventLogs.userId} as user_id,
-						${eventLogs.eventTime} as event_time,
-						${eventLogs.editor} as editor,
-						${eventLogs.language} as language,
-						${eventLogs.platform} as platform,
-						${users.name} as user_name,
-						${users.image} as user_image,
-						${organizationProjects.id} as project_id,
-						${organizationProjects.name} as project_name,
-						coalesce(${users.accountConfig} #>> '{personalOrg,shareAllTime}', 'false') = 'true' as share_all_time
-					from ${eventLogs}
-					inner join ${members} on ${members.userId} = ${eventLogs.userId}
-					inner join ${users} on ${users.id} = ${eventLogs.userId}
-					left join ${organizationProjectAssignments} on
-						${organizationProjectAssignments.userId} = ${eventLogs.userId}
-						and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
-					left join ${organizationProjects} on
-						${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
-						and ${organizationProjects.organizationId} = ${organizationId}
-					where ${eventFilter}
-					order by ${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}), ${eventLogs.eventTime}
-				), grouped as (
+			const getAggregates = (interval: TimeInterval) => {
+				const eventFilter = and(
+					eq(members.organizationId, organizationId),
+					input.filter.user ? eq(users.name, input.filter.user) : undefined,
+					interval.start ? gte(eventLogs.eventTime, interval.start) : undefined,
+					interval.end ? lt(eventLogs.eventTime, interval.end) : undefined,
+					input.filter.editor ? eq(eventLogs.editor, input.filter.editor) : undefined,
+					input.filter.language ? eq(eventLogs.language, input.filter.language) : undefined,
+					input.filter.platform ? eq(eventLogs.platform, input.filter.platform) : undefined,
+					input.filter.workspace ? eq(organizationProjects.name, input.filter.workspace) : undefined,
+				);
+				return ctx.db.execute<AggregateRow>(sql`
+					with member_events as materialized (
+						select distinct on (${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}))
+							${eventLogs.userId} as user_id,
+							${eventLogs.editor} as editor,
+							${eventLogs.language} as language,
+							${eventLogs.platform} as platform,
+							${users.name} as user_name,
+							${users.image} as user_image,
+							${organizationProjects.id} as project_id,
+							${organizationProjects.name} as project_name,
+							coalesce(${users.accountConfig} #>> '{personalOrg,shareAllTime}', 'false') = 'true' as share_all_time
+						from ${eventLogs}
+						inner join ${members} on ${members.userId} = ${eventLogs.userId}
+						inner join ${users} on ${users.id} = ${eventLogs.userId}
+						left join ${organizationProjectAssignments} on
+							${organizationProjectAssignments.userId} = ${eventLogs.userId}
+							and ${organizationProjectAssignments.normalizedSourceProject} = lower(${eventLogs.project})
+						left join ${organizationProjects} on
+							${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
+							and ${organizationProjects.organizationId} = ${organizationId}
+						where ${eventFilter}
+						order by ${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}), ${eventLogs.eventTime}
+					)
 					select 'user' as dimension, user_id as id, user_name as value, user_image as image,
-						share_all_time as share_all_time,
-						count(*)::int as minutes
+						share_all_time as "shareAllTime", count(*)::int as minutes
 					from member_events where share_all_time or project_id is not null
 					group by user_id, user_name, user_image, share_all_time
 					union all
@@ -828,33 +870,48 @@ export const orgRouter = createTRPCRouter({
 					union all
 					select 'platform', platform, platform, null::text, null::boolean, count(*)::int
 					from member_events where project_id is not null group by platform
-				), totals as (
-					select 'user' as dimension, count(*)::int as minutes
-					from member_events where share_all_time or project_id is not null
-					union all
-					select dimension, count(*)::int
-					from member_events
-					cross join (values ('editor'), ('workspace'), ('language'), ('platform')) dimensions(dimension)
-					where project_id is not null group by dimension
-				), ranked as (
-					select grouped.*, round(grouped.minutes::numeric / nullif(totals.minutes, 0) * 100, 2)::float as percentage,
-						row_number() over (partition by grouped.dimension order by grouped.minutes desc, grouped.value) as rank
-					from grouped inner join totals using (dimension)
-				)
-				select dimension, id, value, image, share_all_time as "shareAllTime", minutes, percentage, rank::int
-				from ranked where rank <= 5 order by dimension, rank
-			`);
+				`);
+			};
+
+			const { historical, live } = splitAtToday({ start, end }, todayStart);
+			const historicalKey =
+				historical && cacheableHistoricalRanges.has(input.timeRange)
+					? `org:v2:top:${organizationId}:${cacheKey({
+							timeRange: input.timeRange,
+							historicalEnd: historical.end?.getTime() ?? null,
+							filter: input.filter,
+						})}`
+					: null;
+
+			const [historicalRows, liveRows] = await Promise.all([
+				historical && historicalKey
+					? withRedisCache(historicalKey, orgHistoricalCacheTtlSeconds, () => getAggregates(historical))
+					: Promise.resolve([] as AggregateRow[]),
+				live ? getAggregates(live) : Promise.resolve([] as AggregateRow[]),
+			]);
+			const rows = new Map<string, AggregateRow>();
+			for (const row of [...historicalRows, ...liveRows]) {
+				const key = `${row.dimension}:${row.id}`;
+				const existing = rows.get(key);
+				rows.set(key, existing ? { ...existing, minutes: existing.minutes + row.minutes } : row);
+			}
 
 			const rankedItems = (dimension: Dimension) => {
-				const dimensionRows = rows.filter((row) => row.dimension === dimension);
-				const item = (index: number) => ({
-					id: dimensionRows[index]?.id ?? "",
-					value: dimensionRows[index]?.value ?? "",
-					image: dimensionRows[index]?.image ?? null,
-					shareAllTime: dimensionRows[index]?.shareAllTime ?? false,
-					time: toTimeString(dimensionRows[index]?.minutes ?? 0, input.biggestUnit),
-					percentage: dimensionRows[index]?.percentage ?? 0,
-				});
+				const dimensionRows = [...rows.values()]
+					.filter((row) => row.dimension === dimension)
+					.sort((a, b) => b.minutes - a.minutes || a.value.localeCompare(b.value));
+				const totalMinutes = dimensionRows.reduce((total, row) => total + row.minutes, 0);
+				const item = (index: number) => {
+					const row = dimensionRows[index];
+					return {
+						id: row?.id ?? "",
+						value: row?.value ?? "",
+						image: row?.image ?? null,
+						shareAllTime: row?.shareAllTime ?? false,
+						time: toTimeString(row?.minutes ?? 0, input.biggestUnit),
+						percentage: row ? Math.round((row.minutes / totalMinutes) * 10_000) / 100 : 0,
+					};
+				};
 				return { p1: item(0), p2: item(1), p3: item(2), p4: item(3), p5: item(4) };
 			};
 
