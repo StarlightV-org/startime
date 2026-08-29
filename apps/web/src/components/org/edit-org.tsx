@@ -253,6 +253,7 @@ export default function EditOrg({ org }: { org: OrgType }) {
 												<Trans>Can the organization be seen by other users? Project names will be hidden.</Trans>
 											</FieldDescription>
 											<Switch
+												disabled
 												id={field.name}
 												name={field.name}
 												checked={field.state.value}
