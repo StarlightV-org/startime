@@ -1,8 +1,6 @@
 import { OpenPanel } from "@openpanel/nextjs";
 import { ENV } from "@startime/env";
 
-import "server-only";
-
 export const op = new OpenPanel({
 	clientId: ENV.OPEN_PANEL_CLIENT_ID,
 	clientSecret: ENV.OPEN_PANEL_CLIENT_SECRET,

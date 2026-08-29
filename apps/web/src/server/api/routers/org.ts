@@ -788,7 +788,7 @@ export const orgRouter = createTRPCRouter({
 			};
 			const rows = await ctx.db.execute<RankedRow>(sql`
 				with member_events as materialized (
-					select
+					select distinct on (${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}))
 						${eventLogs.userId} as user_id,
 						${eventLogs.eventTime} as event_time,
 						${eventLogs.editor} as editor,
@@ -809,35 +809,30 @@ export const orgRouter = createTRPCRouter({
 						${organizationProjects.id} = ${organizationProjectAssignments.organizationProjectId}
 						and ${organizationProjects.organizationId} = ${organizationId}
 					where ${eventFilter}
+					order by ${eventLogs.userId}, date_trunc('minute', ${eventLogs.eventTime}), ${eventLogs.eventTime}
 				), grouped as (
 					select 'user' as dimension, user_id as id, user_name as value, user_image as image,
 						share_all_time as share_all_time,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int as minutes
+						count(*)::int as minutes
 					from member_events where share_all_time or project_id is not null
 					group by user_id, user_name, user_image, share_all_time
 					union all
-					select 'editor', editor, editor, null::text, null::boolean,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					select 'editor', editor, editor, null::text, null::boolean, count(*)::int
 					from member_events where project_id is not null group by editor
 					union all
-					select 'workspace', project_id, project_name, null::text, null::boolean,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					select 'workspace', project_id, project_name, null::text, null::boolean, count(*)::int
 					from member_events where project_id is not null group by project_id, project_name
 					union all
-					select 'language', language, language, null::text, null::boolean,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					select 'language', language, language, null::text, null::boolean, count(*)::int
 					from member_events where project_id is not null group by language
 					union all
-					select 'platform', platform, platform, null::text, null::boolean,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					select 'platform', platform, platform, null::text, null::boolean, count(*)::int
 					from member_events where project_id is not null group by platform
 				), totals as (
-					select 'user' as dimension,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int as minutes
+					select 'user' as dimension, count(*)::int as minutes
 					from member_events where share_all_time or project_id is not null
 					union all
-					select dimension,
-						count(distinct (user_id, date_trunc('minute', event_time)))::int
+					select dimension, count(*)::int
 					from member_events
 					cross join (values ('editor'), ('workspace'), ('language'), ('platform')) dimensions(dimension)
 					where project_id is not null group by dimension
