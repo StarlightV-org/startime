@@ -50,7 +50,7 @@ export function MemberList({ org }: { org: SessionType["org"] }) {
 	if (org.members.length === 0) return null;
 
 	return (
-		<Card className="w-full gap-0">
+		<Card className="w-full gap-0" data-docs="/docs/startime/org/manage-member">
 			<CardHeader className="flex items-center justify-between pb-2">
 				<CardTitle className="text-2xl">
 					<Trans>Members</Trans>
@@ -280,7 +280,7 @@ export function InviteMember() {
 		<Dialog open={open} onOpenChange={toggle}>
 			<DialogTrigger
 				render={
-					<Button variant="outline" size="sm">
+					<Button variant="outline" size="sm" data-docs="/docs/startime/org/invite-member">
 						<Trans>Invite Member</Trans>
 					</Button>
 				}
@@ -353,7 +353,7 @@ export function InviteMember() {
 export function ProjectList({ org, projects }: { org: SessionType["org"]; projects: API["org"]["projects"]["list"] }) {
 	const checkRole = useRole();
 	return (
-		<Card className="gap-0">
+		<Card className="gap-0" data-docs="/docs/startime/org/projects#creating-a-project">
 			<CardHeader className="flex items-center justify-between">
 				<CardTitle className="text-2xl">
 					<Trans>Projects</Trans>

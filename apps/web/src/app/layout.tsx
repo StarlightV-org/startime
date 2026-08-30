@@ -28,6 +28,7 @@ import Footer from "~/components/ui/footer";
 import { setRequestI18n } from "~/i18n/server";
 import { fromHeader, localeCookieName, resolveLocale } from "~/i18n/locales";
 import { LinguiProvider } from "~/provider/lingui-provider";
+import { DocsContextMenu } from "~/components/docs-context-menu";
 
 export async function generateMetadata(): Promise<Metadata> {
 	return {
@@ -85,6 +86,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 											<TimeZoneSync />
 											<ReauthProvider />
 											<Toaster />
+											<DocsContextMenu />
 											<VersionProvider />
 											<SyncConfigLocal />
 											<main className="relative z-1 mb-8 w-full flex-1 border-b-3 border-b-border bg-background">{children}</main>
@@ -100,5 +102,3 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		</html>
 	);
 }
-
-
