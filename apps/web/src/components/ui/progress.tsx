@@ -24,7 +24,10 @@ function Progress({ className, children, value, locale = "en-US", ...props }: Pr
 function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
 	return (
 		<ProgressPrimitive.Track
-			className={cn("relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted", className)}
+			className={cn(
+				"relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted group-hover:bg-card/50!",
+				className,
+			)}
 			data-slot="progress-track"
 			{...props}
 		/>

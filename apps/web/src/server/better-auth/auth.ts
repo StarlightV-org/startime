@@ -63,6 +63,7 @@ export async function getUserOrg(userId: string) {
 							user: {
 								columns: {
 									email: false,
+									accountConfig: false,
 								},
 							},
 						},
@@ -72,6 +73,7 @@ export async function getUserOrg(userId: string) {
 							user: {
 								columns: {
 									email: false,
+									accountConfig: false,
 								},
 							},
 						},

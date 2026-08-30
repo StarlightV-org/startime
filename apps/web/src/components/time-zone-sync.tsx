@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "~/provider/session-provider";
 import { api } from "~/trpc/react";
 
 /** Keeps the persisted time zone and first weekday aligned with the signed-in browser. */
 export function TimeZoneSync() {
 	const { user, session } = useSession();
+	const pathname = usePathname();
 	const router = useRouter();
 	const synchronizedUserId = useRef<string | null>(null);
 	const { mutate } = api.self.syncSettings.useMutation({
-		onSuccess: () => window.setTimeout(() => router.refresh(), 1000),
+		onSuccess: () =>
+			window.setTimeout(() => {
+				if (pathname === "/dash/settings") router.refresh();
+			}, 1000),
 	});
 
 	useEffect(() => {
@@ -30,5 +34,3 @@ export function TimeZoneSync() {
 
 	return null;
 }
-
-

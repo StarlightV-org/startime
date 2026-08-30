@@ -13,668 +13,1178 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/app/dash/page.tsx:80
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
 msgid "Time Range"
 msgstr "Time Range"
 
-#: src/app/dash/page.tsx:101
-#: src/app/view/minimal/page.tsx:46
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
 msgid "Activity"
 msgstr "Activity"
 
-#: src/app/dash/page.tsx:109
-#: src/app/view/minimal/page.tsx:54
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
 msgid "Time/Total"
 msgstr "Time/Total"
 
-#: src/app/dash/page.tsx:115
-#: src/app/view/minimal/page.tsx:61
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/view/minimal/page.tsx
 msgid "Time/Today"
 msgstr "Time/Today"
 
-#: src/app/dash/page.tsx:121
-msgid "Streak/Current"
-msgstr "Streak/Current"
-
-#: src/app/dash/page.tsx:127
-msgid "Streak/Max"
-msgstr "Streak/Max"
-
-#: src/app/dash/page.tsx:140
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
 msgid "Top"
 msgstr "Top"
 
-#: src/app/dash/page.tsx:152
-msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
-msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+#: src/app/dash/org/page.tsx
+msgid "<0>What is shown</0><1>In this section, only projects and time are shown, that users have assigned.</1>"
+msgstr "<0>What is shown</0><1>In this section, only projects and time are shown, that users have assigned.</1>"
 
-#: src/app/dash/page.tsx:170
-#: src/app/page.tsx:329
-#: src/components/overview/filter-view.tsx:12
+#: src/app/dash/org/page.tsx
+msgid "Unable to load organization statistics."
+msgstr "Unable to load organization statistics."
+
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/page.tsx
+#: src/components/overview/filter-view.tsx
 msgid "Editor"
 msgstr "Editor"
 
-#: src/app/dash/page.tsx:182
-#: src/components/overview/filter-view.tsx:13
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/components/overview/filter-view.tsx
 msgid "Workspace"
 msgstr "Workspace"
 
-#: src/app/dash/page.tsx:194
-#: src/app/page.tsx:342
-#: src/components/overview/filter-view.tsx:14
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/page.tsx
+#: src/components/overview/filter-view.tsx
+#: src/lib/account-config.ts
 msgid "Language"
 msgstr "Language"
 
-#: src/app/dash/page.tsx:206
-#: src/app/page.tsx:356
-#: src/components/overview/filter-view.tsx:15
+#: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+#: src/app/page.tsx
+#: src/components/overview/filter-view.tsx
 msgid "Platform"
 msgstr "Platform"
 
-#: src/app/dash/page.tsx:221
+#: src/app/dash/org/page.tsx
+#: src/components/overview/filter-view.tsx
+msgid "User"
+msgstr "User"
+
+#: src/app/dash/org/page.tsx
+msgid "Unable to load organization projects."
+msgstr "Unable to load organization projects."
+
+#: src/app/dash/page.tsx
+msgid "Streak/Current"
+msgstr "Streak/Current"
+
+#: src/app/dash/page.tsx
+msgid "Streak/Max"
+msgstr "Streak/Max"
+
+#: src/app/dash/page.tsx
+msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
+
+#: src/app/dash/page.tsx
 msgid "Daily Coding Distribution"
 msgstr "Daily Coding Distribution"
 
-#: src/app/page.tsx:47
+#: src/app/page.tsx
 msgid "Respect your privacy"
 msgstr "Respect your privacy"
 
-#: src/app/page.tsx:48
+#: src/app/page.tsx
 msgid "Only stores the necessary data. Filenames are hashed."
 msgstr "Only stores the necessary data. Filenames are hashed."
 
-#: src/app/page.tsx:52
+#: src/app/page.tsx
 msgid "Join or create an organization"
 msgstr "Join or create an organization"
 
-#: src/app/page.tsx:53
+#: src/app/page.tsx
 msgid "Track your time together with your friends / team"
 msgstr "Track your time together with your friends / team"
 
-#: src/app/page.tsx:57
+#: src/app/page.tsx
 msgid "Import your data"
 msgstr "Import your data"
 
-#: src/app/page.tsx:58
+#: src/app/page.tsx
 msgid "Import your existing time tracking data from other tools. Like, codetime.dev"
 msgstr "Import your existing time tracking data from other tools. Like, codetime.dev"
 
-#: src/app/page.tsx:71
+#: src/app/page.tsx
 msgid "Fast and AI-powered code editor that makes you more productive."
 msgstr "Fast and AI-powered code editor that makes you more productive."
 
-#: src/app/page.tsx:78
+#: src/app/page.tsx
 msgid "Note-taking and knowledge management app"
 msgstr "Note-taking and knowledge management app"
 
-#: src/app/page.tsx:85
+#: src/app/page.tsx
 msgid "Game development engine"
 msgstr "Game development engine"
 
-#: src/app/page.tsx:92
-#: src/app/page.tsx:113
-#: src/app/page.tsx:120
+#: src/app/page.tsx
 msgid "The popular code editor"
 msgstr "The popular code editor"
 
-#: src/app/page.tsx:99
+#: src/app/page.tsx
 msgid "Fork of VS Code with AI-powered features"
 msgstr "Fork of VS Code with AI-powered features"
 
-#: src/app/page.tsx:106
+#: src/app/page.tsx
 msgid "Built-in full-stack support ready for your next endeavor"
 msgstr "Built-in full-stack support ready for your next endeavor"
 
-#: src/app/page.tsx:128
+#: src/app/page.tsx
 msgid "Missing an editor extension? Create a request on GitHub"
 msgstr "Missing an editor extension? Create a request on GitHub"
 
-#: src/app/page.tsx:136
+#: src/app/page.tsx
 msgid "Not started"
 msgstr "Not started"
 
-#: src/app/page.tsx:137
+#: src/app/page.tsx
 msgid "This editor extension is planned but not yet in development."
 msgstr "This editor extension is planned but not yet in development."
 
-#: src/app/page.tsx:141
+#: src/app/page.tsx
 msgid "Started"
 msgstr "Started"
 
-#: src/app/page.tsx:142
+#: src/app/page.tsx
 msgid "Development has begun for this editor extension."
 msgstr "Development has begun for this editor extension."
 
-#: src/app/page.tsx:146
+#: src/app/page.tsx
 msgid "Completed"
 msgstr "Completed"
 
-#: src/app/page.tsx:147
+#: src/app/page.tsx
 msgid "This editor extension is available to use."
 msgstr "This editor extension is available to use."
 
-#: src/app/page.tsx:152
+#: src/app/page.tsx
 msgid "Easy setup"
 msgstr "Easy setup"
 
-#: src/app/page.tsx:152
+#: src/app/page.tsx
 msgid "Free"
 msgstr "Free"
 
-#: src/app/page.tsx:152
+#: src/app/page.tsx
 msgid "Open source"
 msgstr "Open source"
 
-#: src/app/page.tsx:175
-#: src/app/page.tsx:213
+#: src/app/page.tsx
 msgid "Sign in"
 msgstr "Sign in"
 
-#: src/app/page.tsx:182
-#: src/app/page.tsx:221
+#: src/app/page.tsx
 msgid "Open dashboard"
 msgstr "Open dashboard"
 
-#: src/app/page.tsx:196
+#: src/app/page.tsx
 msgid "Track how you spend your time"
 msgstr "Track how you spend your time"
 
-#: src/app/page.tsx:199
+#: src/app/page.tsx
 msgid "Visualize your coding time. <0/>"
 msgstr "Visualize your coding time. <0/>"
 
-#: src/app/page.tsx:202
+#: src/app/page.tsx
 msgid "<0>We are currently in closed beta. Singups will be open soon.</0>"
 msgstr "<0>We are currently in closed beta. Singups will be open soon.</0>"
 
-#: src/app/page.tsx:286
+#: src/app/page.tsx
 msgid "Designed for developers"
 msgstr "Designed for developers"
 
-#: src/app/page.tsx:289
+#: src/app/page.tsx
 msgid "What we offer"
 msgstr "What we offer"
 
-#: src/app/page.tsx:312
+#: src/app/page.tsx
 msgid "The last 90d"
 msgstr "The last 90d"
 
-#: src/app/page.tsx:315
+#: src/app/page.tsx
 msgid "What our users are using"
 msgstr "What our users are using"
 
-#: src/app/page.tsx:376
+#: src/app/page.tsx
 msgid "Editor Extensions"
 msgstr "Editor Extensions"
 
-#: src/app/page.tsx:379
+#: src/app/page.tsx
 msgid "An extension ecosystem for all the editors you love."
 msgstr "An extension ecosystem for all the editors you love."
 
-#: src/components/auth/account-button.tsx:45
+#: src/components/auth/account-button.tsx
 msgid "Account"
 msgstr "Account"
 
-#: src/components/auth/account-button.tsx:50
-#: src/components/ui/header-bar.tsx:52
+#: src/components/auth/account-button.tsx
+#: src/components/ui/header-bar.tsx
 msgid "Settings"
 msgstr "Settings"
 
-#: src/components/auth/account-button.tsx:63
+#: src/components/auth/account-button.tsx
 msgid "Logout"
 msgstr "Logout"
 
-#: src/components/auth/reauth-form.tsx:27
+#: src/components/auth/reauth-form.tsx
 msgid "Passkeys are not supported in this browser."
 msgstr "Passkeys are not supported in this browser."
 
-#: src/components/auth/reauth-form.tsx:38
-#: src/components/auth/sign-in-form.tsx:48
+#: src/components/auth/reauth-form.tsx
+#: src/components/auth/sign-in-form.tsx
 msgid "Your passkey could not be verified."
 msgstr "Your passkey could not be verified."
 
-#: src/components/auth/reauth-form.tsx:73
+#: src/components/auth/reauth-form.tsx
 msgid "Verify it's you"
 msgstr "Verify it's you"
 
-#: src/components/auth/reauth-form.tsx:76
+#: src/components/auth/reauth-form.tsx
 msgid "Use a passkey to continue with this sensitive action."
 msgstr "Use a passkey to continue with this sensitive action."
 
-#: src/components/auth/reauth-form.tsx:82
-#: src/components/auth/sign-in-form.tsx:80
+#: src/components/auth/reauth-form.tsx
+#: src/components/auth/sign-in-form.tsx
 msgid "Continue with a passkey"
 msgstr "Continue with a passkey"
 
-#: src/components/auth/reauth-form.tsx:93
+#: src/components/auth/reauth-form.tsx
 msgid "Reauthentication is available only with a registered passkey."
 msgstr "Reauthentication is available only with a registered passkey."
 
-#: src/components/auth/sign-in-error.tsx:24
+#: src/components/auth/sign-in-error.tsx
 msgid "Error"
 msgstr "Error"
 
-#: src/components/auth/sign-in-error.tsx:27
+#: src/components/auth/sign-in-error.tsx
 msgid "An error occurred while signing in."
 msgstr "An error occurred while signing in."
 
-#: src/components/auth/sign-in-error.tsx:39
+#: src/components/auth/sign-in-error.tsx
 msgid "Try Again"
 msgstr "Try Again"
 
-#: src/components/auth/sign-in-form.tsx:31
+#: src/components/auth/sign-in-form.tsx
 msgid "GitHub sign-in could not be started."
 msgstr "GitHub sign-in could not be started."
 
-#: src/components/auth/sign-in-form.tsx:38
+#: src/components/auth/sign-in-form.tsx
 msgid "Passkeys are not supported in this browser. Try GitHub instead."
 msgstr "Passkeys are not supported in this browser. Try GitHub instead."
 
-#: src/components/auth/sign-in-form.tsx:60
+#: src/components/auth/sign-in-form.tsx
 msgid "Welcome"
 msgstr "Welcome"
 
-#: src/components/auth/sign-in-form.tsx:63
+#: src/components/auth/sign-in-form.tsx
 msgid "Sign in to view your dashboard."
 msgstr "Sign in to view your dashboard."
 
-#: src/components/auth/sign-in-form.tsx:69
+#: src/components/auth/sign-in-form.tsx
 msgid "Continue with GitHub"
 msgstr "Continue with GitHub"
 
-#: src/components/auth/sign-in-form.tsx:91
+#: src/components/auth/sign-in-form.tsx
 msgid "Signups are currently disabled."
 msgstr "Signups are currently disabled."
 
-#: src/components/auth/sign-in-form.tsx:94
+#: src/components/auth/sign-in-form.tsx
 msgid "This site is currently in closed beta. Want to contribute?"
 msgstr "This site is currently in closed beta. Want to contribute?"
 
-#: src/components/auth/sign-in-form.tsx:101
+#: src/components/auth/sign-in-form.tsx
 msgid "Join our Discord"
 msgstr "Join our Discord"
 
-#: src/components/overview/client-overview.tsx:92
-msgid "Working on"
-msgstr "Working on"
+#: src/components/org/edit-org.tsx
+msgid "Organization updated successfully."
+msgstr "Organization updated successfully."
 
-#: src/components/overview/open-minimal.tsx:29
-msgid "Failed to open minimal view"
-msgstr "Failed to open minimal view"
+#: src/components/org/edit-org.tsx
+msgid "Updating organization..."
+msgstr "Updating organization..."
 
-#: src/components/overview/open-minimal.tsx:30
-msgid "The popup could not be opened. Please check your browser settings."
-msgstr "The popup could not be opened. Please check your browser settings."
+#: src/components/org/edit-org.tsx
+msgid "Failed to update organization."
+msgstr "Failed to update organization."
 
-#: src/components/overview/open-minimal.tsx:35
-msgid "Minimal View"
-msgstr "Minimal View"
+#: src/components/org/edit-org.tsx
+msgid "Organization deleted successfully."
+msgstr "Organization deleted successfully."
 
-#: src/components/overview/overview-select.tsx:25
-#: src/components/overview/overview-select.tsx:46
-msgid "Last 24 hours"
-msgstr "Last 24 hours"
+#: src/components/org/edit-org.tsx
+msgid "Deleting organization..."
+msgstr "Deleting organization..."
 
-#: src/components/overview/overview-select.tsx:26
-#: src/components/overview/overview-select.tsx:49
-msgid "Last 7 days"
-msgstr "Last 7 days"
+#: src/components/org/edit-org.tsx
+msgid "Failed to delete organization."
+msgstr "Failed to delete organization."
 
-#: src/components/overview/overview-select.tsx:27
-#: src/components/overview/overview-select.tsx:52
-msgid "Last 30 days"
-msgstr "Last 30 days"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Name must be at least 5 characters."
+msgstr "Name must be at least 5 characters."
 
-#: src/components/overview/overview-select.tsx:28
-#: src/components/overview/overview-select.tsx:55
-msgid "Last 90 days"
-msgstr "Last 90 days"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Name must be at most 32 characters."
+msgstr "Name must be at most 32 characters."
 
-#: src/components/overview/overview-select.tsx:29
-#: src/components/overview/overview-select.tsx:58
-msgid "Last 365 days"
-msgstr "Last 365 days"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Slug must be at least 5 characters."
+msgstr "Slug must be at least 5 characters."
 
-#: src/components/overview/overview-select.tsx:30
-#: src/components/overview/overview-select.tsx:66
-msgid "Today"
-msgstr "Today"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Slug must be at most 32 characters."
+msgstr "Slug must be at most 32 characters."
 
-#: src/components/overview/overview-select.tsx:31
-#: src/components/overview/overview-select.tsx:69
-msgid "This week"
-msgstr "This week"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
+msgstr "Slug must start with a lowercase letter and contain only lowercase letters, numbers, and single hyphens."
 
-#: src/components/overview/overview-select.tsx:32
-#: src/components/overview/overview-select.tsx:72
-msgid "This month"
-msgstr "This month"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+#: src/server/api/routers/org.ts
+msgid "Logo must be at least 5 characters."
+msgstr "Logo must be at least 5 characters."
 
-#: src/components/overview/overview-select.tsx:33
-#: src/components/overview/overview-select.tsx:75
-msgid "This year"
-msgstr "This year"
+#: src/components/org/edit-org.tsx
+msgid "Update Slug"
+msgstr "Update Slug"
 
-#: src/components/overview/overview-select.tsx:34
-#: src/components/overview/overview-select.tsx:78
-msgid "All Time"
-msgstr "All Time"
+#: src/components/org/edit-org.tsx
+msgid "Are you sure you want to update the slug for this organization? <0/>This will change the URL to this organization's page."
+msgstr "Are you sure you want to update the slug for this organization? <0/>This will change the URL to this organization's page."
 
-#: src/components/overview/overview-select.tsx:63
-msgid "Absolute"
-msgstr "Absolute"
+#: src/components/org/edit-org.tsx
+msgid "Edit Org"
+msgstr "Edit Org"
 
-#: src/components/overview/overview-select.tsx:101
-#: src/components/overview/overview-select.tsx:116
-msgid "Hour"
-msgstr "Hour"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+msgid "Organization Name"
+msgstr "Organization Name"
 
-#: src/components/overview/overview-select.tsx:102
-#: src/components/overview/overview-select.tsx:119
-msgid "Day"
-msgstr "Day"
+#: src/components/org/edit-org.tsx
+msgid "The URL slug for the organization."
+msgstr "The URL slug for the organization."
 
-#: src/components/overview/overview-select.tsx:103
-#: src/components/overview/overview-select.tsx:122
-msgid "Week"
-msgstr "Week"
+#: src/components/org/edit-org.tsx
+#: src/components/settings/org-settings.tsx
+msgid "This slug is already taken. Please choose a different one."
+msgstr "This slug is already taken. Please choose a different one."
 
-#: src/components/overview/overview-select.tsx:113
-msgid "Biggest Unit"
-msgstr "Biggest Unit"
+#: src/components/org/edit-org.tsx
+msgid "Logo URL of your organization."
+msgstr "Logo URL of your organization."
 
-#: src/components/settings/account-settings.tsx:27
-msgid "Settings saved"
-msgstr "Settings saved"
+#: src/components/org/edit-org.tsx
+msgid "Can the organization be seen by other users? Project names will be hidden."
+msgstr "Can the organization be seen by other users? Project names will be hidden."
 
-#: src/components/settings/account-settings.tsx:30
-#: src/components/settings/account-settings.tsx:45
-msgid "Unable to save settings"
-msgstr "Unable to save settings"
+#: src/components/org/edit-org.tsx
+msgid "Are you sure you want to delete this organization? <0/><1><2><3>All members will be removed.</3></2><4><5>Other configurations will be deleted.</5></4><6><7>This action cannot be undone.</7></6></1>"
+msgstr "Are you sure you want to delete this organization? <0/><1><2><3>All members will be removed.</3></2><4><5>Other configurations will be deleted.</5></4><6><7>This action cannot be undone.</7></6></1>"
 
-#: src/components/settings/account-settings.tsx:47
-msgid "This setting is not supported by the server yet."
-msgstr "This setting is not supported by the server yet."
+#. placeholder {0}: org.name
+#: src/components/org/edit-org.tsx
+msgid "Delete Organization: {0}?"
+msgstr "Delete Organization: {0}?"
 
-#: src/components/settings/auth-settings.tsx:47
-#: src/components/settings/auth-settings.tsx:50
-#: src/components/settings/auth-settings.tsx:61
-#: src/components/settings/auth-settings.tsx:64
-msgid "Name must be at least 3 characters"
-msgstr "Name must be at least 3 characters"
+#: src/components/org/edit-org.tsx
+#: src/components/org/org-components.tsx
+msgid "Delete"
+msgstr "Delete"
 
-#: src/components/settings/auth-settings.tsx:76
-msgid "Api key created successfully"
-msgstr "Api key created successfully"
-
-#: src/components/settings/auth-settings.tsx:85
-msgid "Failed to create api key"
-msgstr "Failed to create api key"
-
-#: src/components/settings/auth-settings.tsx:91
-msgid "Creating api key"
-msgstr "Creating api key"
-
-#: src/components/settings/auth-settings.tsx:110
-#: src/components/settings/auth-settings.tsx:215
-msgid "Created At"
-msgstr "Created At"
-
-#: src/components/settings/auth-settings.tsx:123
-msgid "Create Passkey"
-msgstr "Create Passkey"
-
-#: src/components/settings/auth-settings.tsx:126
-msgid "A passkey is required to verify sensitive actions."
-msgstr "A passkey is required to verify sensitive actions."
-
-#: src/components/settings/auth-settings.tsx:153
-#: src/components/settings/auth-settings.tsx:260
-#: src/components/settings/auth-settings.tsx:449
-#: src/components/settings/data-settings.tsx:239
-#: src/components/ui/confirm-modal.tsx:185
+#: src/components/org/edit-org.tsx
+#: src/components/org/org-components.tsx
+#: src/components/settings/auth-settings.tsx
+#: src/components/settings/data-settings.tsx
+#: src/components/settings/org-settings.tsx
+#: src/components/ui/confirm-modal.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/settings/auth-settings.tsx:169
+#: src/components/org/edit-org.tsx
+msgid "Update"
+msgstr "Update"
+
+#: src/components/org/org-components.tsx
+msgid "Members"
+msgstr "Members"
+
+#: src/components/org/org-components.tsx
+msgid "Change role"
+msgstr "Change role"
+
+#. placeholder {0}: member.user.name
+#: src/components/org/org-components.tsx
+msgid "<0>Are you sure you want to change the role of \"{0}\" to <1>owner</1>?<2/>They will be able to do everything, including changing <3>your role</3>.</0>"
+msgstr "<0>Are you sure you want to change the role of \"{0}\" to <1>owner</1>?<2/>They will be able to do everything, including changing <3>your role</3>.</0>"
+
+#. placeholder {0}: member.user.name
+#: src/components/org/org-components.tsx
+msgid "<0>Are you sure you want to kick \"{0}\"? <1/>this action cannot be undone.</0>"
+msgstr "<0>Are you sure you want to kick \"{0}\"? <1/>this action cannot be undone.</0>"
+
+#: src/components/org/org-components.tsx
+msgid "Kick Member"
+msgstr "Kick Member"
+
+#. placeholder {0}: member.user.name
+#: src/components/org/org-components.tsx
+msgid "Kick \"{0}\""
+msgstr "Kick \"{0}\""
+
+#: src/components/org/org-components.tsx
+msgid "Kicking member"
+msgstr "Kicking member"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to kick member"
+msgstr "Failed to kick member"
+
+#: src/components/org/org-components.tsx
+msgid "Member kicked"
+msgstr "Member kicked"
+
+#: src/components/org/org-components.tsx
+msgid "Member invited successfully"
+msgstr "Member invited successfully"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to invite member"
+msgstr "Failed to invite member"
+
+#: src/components/org/org-components.tsx
+msgid "Inviting member..."
+msgstr "Inviting member..."
+
+#: src/components/org/org-components.tsx
+msgid "Invite Member"
+msgstr "Invite Member"
+
+#: src/components/org/org-components.tsx
+msgid "Email of the user you want to invite. <0/> They will be invited with the role \"Member\"."
+msgstr "Email of the user you want to invite. <0/> They will be invited with the role \"Member\"."
+
+#: src/components/org/org-components.tsx
+msgid "Invite"
+msgstr "Invite"
+
+#: src/components/org/org-components.tsx
+msgid "Projects"
+msgstr "Projects"
+
+#: src/components/org/org-components.tsx
+msgid "Project deleted"
+msgstr "Project deleted"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to delete project"
+msgstr "Failed to delete project"
+
+#: src/components/org/org-components.tsx
+msgid "Deleting project"
+msgstr "Deleting project"
+
+#: src/components/org/org-components.tsx
+msgid "Delete project"
+msgstr "Delete project"
+
+#. placeholder {0}: project.name
+#: src/components/org/org-components.tsx
+msgid "Are you sure you want to delete the project: \"{0}\"?"
+msgstr "Are you sure you want to delete the project: \"{0}\"?"
+
+#: src/components/org/org-components.tsx
+msgid "Project name must be at least 5 characters"
+msgstr "Project name must be at least 5 characters"
+
+#: src/components/org/org-components.tsx
+msgid "Description must be at least 5 characters"
+msgstr "Description must be at least 5 characters"
+
+#: src/components/org/org-components.tsx
+msgid "Description must be at most 100 characters"
+msgstr "Description must be at most 100 characters"
+
+#: src/components/org/org-components.tsx
+msgid "Project created successfully"
+msgstr "Project created successfully"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to create project"
+msgstr "Failed to create project"
+
+#: src/components/org/org-components.tsx
+msgid "Creating project..."
+msgstr "Creating project..."
+
+#: src/components/org/org-components.tsx
+msgid "Create Project"
+msgstr "Create Project"
+
+#: src/components/org/org-components.tsx
+msgid "Project Name"
+msgstr "Project Name"
+
+#: src/components/org/org-components.tsx
+msgid "The name of the project you want to create."
+msgstr "The name of the project you want to create."
+
+#: src/components/org/org-components.tsx
+msgid "Description"
+msgstr "Description"
+
+#: src/components/org/org-components.tsx
+msgid "A short description of the project you want to create."
+msgstr "A short description of the project you want to create."
+
+#: src/components/org/org-components.tsx
+msgid "Project updated"
+msgstr "Project updated"
+
+#: src/components/org/org-components.tsx
+msgid "Failed to update project"
+msgstr "Failed to update project"
+
+#: src/components/org/org-components.tsx
+msgid "Update project"
+msgstr "Update project"
+
+#: src/components/org/org-components.tsx
+msgid "Update Project"
+msgstr "Update Project"
+
+#: src/components/org/org-components.tsx
+msgid "The name of the organization project."
+msgstr "The name of the organization project."
+
+#: src/components/org/org-components.tsx
+msgid "A short description of the project."
+msgstr "A short description of the project."
+
+#: src/components/org/org-components.tsx
+msgid "Assigned"
+msgstr "Assigned"
+
+#: src/components/org/org-components.tsx
+msgid "Not assigned"
+msgstr "Not assigned"
+
+#. placeholder {0}: project.name
+#: src/components/org/org-components.tsx
+msgid "Assign Project: {0}"
+msgstr "Assign Project: {0}"
+
+#: src/components/org/org-components.tsx
+msgid "Select a project"
+msgstr "Select a project"
+
+#: src/components/org/org-components.tsx
+msgid "Select a personal project, to add its time to the org."
+msgstr "Select a personal project, to add its time to the org."
+
+#: src/components/org/org-components.tsx
+msgid "Assign Project"
+msgstr "Assign Project"
+
+#: src/components/org/org-components.tsx
+msgid "Unassign Project"
+msgstr "Unassign Project"
+
+#: src/components/overview/client-overview.tsx
+msgid "Working on"
+msgstr "Working on"
+
+#: src/components/overview/open-minimal.tsx
+msgid "Failed to open minimal view"
+msgstr "Failed to open minimal view"
+
+#: src/components/overview/open-minimal.tsx
+msgid "The popup could not be opened. Please check your browser settings."
+msgstr "The popup could not be opened. Please check your browser settings."
+
+#: src/components/overview/open-minimal.tsx
+msgid "Minimal View"
+msgstr "Minimal View"
+
+#: src/components/overview/overview-select.tsx
+msgid "Last 24 hours"
+msgstr "Last 24 hours"
+
+#: src/components/overview/overview-select.tsx
+msgid "Last 7 days"
+msgstr "Last 7 days"
+
+#: src/components/overview/overview-select.tsx
+msgid "Last 30 days"
+msgstr "Last 30 days"
+
+#: src/components/overview/overview-select.tsx
+msgid "Last 90 days"
+msgstr "Last 90 days"
+
+#: src/components/overview/overview-select.tsx
+msgid "Last 365 days"
+msgstr "Last 365 days"
+
+#: src/components/overview/overview-select.tsx
+msgid "Today"
+msgstr "Today"
+
+#: src/components/overview/overview-select.tsx
+msgid "This week"
+msgstr "This week"
+
+#: src/components/overview/overview-select.tsx
+msgid "This month"
+msgstr "This month"
+
+#: src/components/overview/overview-select.tsx
+msgid "This year"
+msgstr "This year"
+
+#: src/components/overview/overview-select.tsx
+msgid "All Time"
+msgstr "All Time"
+
+#: src/components/overview/overview-select.tsx
+msgid "Absolute"
+msgstr "Absolute"
+
+#: src/components/overview/overview-select.tsx
+msgid "Hour"
+msgstr "Hour"
+
+#: src/components/overview/overview-select.tsx
+msgid "Day"
+msgstr "Day"
+
+#: src/components/overview/overview-select.tsx
+msgid "Week"
+msgstr "Week"
+
+#: src/components/overview/overview-select.tsx
+msgid "Biggest Unit"
+msgstr "Biggest Unit"
+
+#: src/components/overview/top-element.tsx
+msgid "This user has not shared their all-time data. <0/>So the time shown is only for they assigned to the organization."
+msgstr "This user has not shared their all-time data. <0/>So the time shown is only for they assigned to the organization."
+
+#: src/components/settings/account-settings.tsx
+msgid "Settings saved"
+msgstr "Settings saved"
+
+#: src/components/settings/account-settings.tsx
+msgid "Unable to save settings"
+msgstr "Unable to save settings"
+
+#: src/components/settings/account-settings.tsx
+msgid "This setting is not supported by the server yet."
+msgstr "This setting is not supported by the server yet."
+
+#: src/components/settings/auth-settings.tsx
+msgid "Name must be at least 3 characters"
+msgstr "Name must be at least 3 characters"
+
+#: src/components/settings/auth-settings.tsx
+msgid "Api key created successfully"
+msgstr "Api key created successfully"
+
+#: src/components/settings/auth-settings.tsx
+msgid "Failed to create api key"
+msgstr "Failed to create api key"
+
+#: src/components/settings/auth-settings.tsx
+msgid "Creating api key"
+msgstr "Creating api key"
+
+#: src/components/settings/auth-settings.tsx
+#: src/components/settings/org-settings.tsx
+msgid "Created At"
+msgstr "Created At"
+
+#: src/components/settings/auth-settings.tsx
+msgid "Create Passkey"
+msgstr "Create Passkey"
+
+#: src/components/settings/auth-settings.tsx
+msgid "A passkey is required to verify sensitive actions."
+msgstr "A passkey is required to verify sensitive actions."
+
+#: src/components/settings/auth-settings.tsx
 msgid "Passkey created successfully"
 msgstr "Passkey created successfully"
 
-#: src/components/settings/auth-settings.tsx:174
-#: src/components/settings/auth-settings.tsx:271
+#: src/components/settings/auth-settings.tsx
+#: src/components/settings/org-settings.tsx
 msgid "Create"
 msgstr "Create"
 
-#: src/components/settings/auth-settings.tsx:195
+#: src/components/settings/auth-settings.tsx
 msgid "No Passkeys"
 msgstr "No Passkeys"
 
-#: src/components/settings/auth-settings.tsx:206
+#: src/components/settings/auth-settings.tsx
 msgid "Keys"
 msgstr "Keys"
 
-#: src/components/settings/auth-settings.tsx:212
+#: src/components/settings/auth-settings.tsx
 msgid "Name"
 msgstr "Name"
 
-#: src/components/settings/auth-settings.tsx:220
+#: src/components/settings/auth-settings.tsx
 msgid "Actions"
 msgstr "Actions"
 
-#: src/components/settings/auth-settings.tsx:225
-#: src/components/settings/auth-settings.tsx:230
+#: src/components/settings/auth-settings.tsx
 msgid "Create Api Key"
 msgstr "Create Api Key"
 
-#: src/components/settings/auth-settings.tsx:233
+#: src/components/settings/auth-settings.tsx
 msgid "A API key is required to verify sensitive actions."
 msgstr "A API key is required to verify sensitive actions."
 
-#: src/components/settings/auth-settings.tsx:292
+#: src/components/settings/auth-settings.tsx
 msgid "No Api Keys"
 msgstr "No Api Keys"
 
-#: src/components/settings/auth-settings.tsx:315
+#: src/components/settings/auth-settings.tsx
 msgid "Delete Passkey"
 msgstr "Delete Passkey"
 
 #. placeholder {0}: passkey.name
-#: src/components/settings/auth-settings.tsx:316
+#: src/components/settings/auth-settings.tsx
 msgid "Are you sure you want to delete the passkey \"{0}\"?"
 msgstr "Are you sure you want to delete the passkey \"{0}\"?"
 
-#: src/components/settings/auth-settings.tsx:324
+#: src/components/settings/auth-settings.tsx
 msgid "Failed to delete passkey"
 msgstr "Failed to delete passkey"
 
-#: src/components/settings/auth-settings.tsx:328
+#: src/components/settings/auth-settings.tsx
 msgid "Passkey deleted"
 msgstr "Passkey deleted"
 
-#: src/components/settings/auth-settings.tsx:375
+#: src/components/settings/auth-settings.tsx
 msgid "Api key copied to clipboard"
 msgstr "Api key copied to clipboard"
 
-#: src/components/settings/auth-settings.tsx:381
+#: src/components/settings/auth-settings.tsx
 msgid "Failed to copy api key"
 msgstr "Failed to copy api key"
 
 #. placeholder {0}: apiKey.name
-#: src/components/settings/auth-settings.tsx:404
+#: src/components/settings/auth-settings.tsx
 msgid "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
 msgstr "<0>Are you sure you want to delete the key: \"{0}\"?<1/>This action <2>cannot </2> be undone and the API key will no longer function.</0>"
 
-#: src/components/settings/auth-settings.tsx:421
+#: src/components/settings/auth-settings.tsx
 msgid "Failed to delete API key: "
 msgstr "Failed to delete API key: "
 
-#: src/components/settings/auth-settings.tsx:426
+#: src/components/settings/auth-settings.tsx
 msgid "API key deleted"
 msgstr "API key deleted"
 
-#: src/components/settings/auth-settings.tsx:442
-#: src/components/settings/auth-settings.tsx:453
+#: src/components/settings/auth-settings.tsx
 msgid "Copy API key"
 msgstr "Copy API key"
 
-#: src/components/settings/auth-settings.tsx:445
+#: src/components/settings/auth-settings.tsx
 msgid "You can copy this API key to your clipboard now."
 msgstr "You can copy this API key to your clipboard now."
 
-#: src/components/settings/data-settings.tsx:77
+#: src/components/settings/auto-config-settings.tsx
+msgid "On (Default)"
+msgstr "On (Default)"
+
+#: src/components/settings/auto-config-settings.tsx
+msgid "On"
+msgstr "On"
+
+#: src/components/settings/auto-config-settings.tsx
+msgid "Off (Default)"
+msgstr "Off (Default)"
+
+#: src/components/settings/auto-config-settings.tsx
+msgid "Off"
+msgstr "Off"
+
+#: src/components/settings/data-settings.tsx
 msgid "File size must be less than 64MB"
 msgstr "File size must be less than 64MB"
 
-#: src/components/settings/data-settings.tsx:164
+#: src/components/settings/data-settings.tsx
 msgid "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 msgstr "<0>Import CSV file from other sources. <1/><2>You can only upload one file at a time and it can't be larger than 64MB.</2></0>"
 
-#: src/components/settings/data-settings.tsx:176
-#: src/components/settings/data-settings.tsx:251
+#: src/components/settings/data-settings.tsx
 msgid "Import"
 msgstr "Import"
 
-#: src/components/settings/data-settings.tsx:190
+#: src/components/settings/data-settings.tsx
 msgid "Import CSV"
 msgstr "Import CSV"
 
-#: src/components/settings/data-settings.tsx:193
+#: src/components/settings/data-settings.tsx
 msgid "Currently we support the CSV format form:"
 msgstr "Currently we support the CSV format form:"
 
-#: src/components/settings/data-settings.tsx:194
+#: src/components/settings/data-settings.tsx
 msgid "<0/> - StarTime (this app)"
 msgstr "<0/> - StarTime (this app)"
 
-#: src/components/settings/data-settings.tsx:215
+#: src/components/settings/data-settings.tsx
 msgid "Drop your CSV file here or click to select one.<0/>"
 msgstr "Drop your CSV file here or click to select one.<0/>"
 
 #. placeholder {0}: file!.name
-#: src/components/settings/data-settings.tsx:222
+#: src/components/settings/data-settings.tsx
 msgid "Selected: {0}"
 msgstr "Selected: {0}"
 
-#: src/components/settings/data-settings.tsx:260
+#: src/components/settings/data-settings.tsx
 msgid "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 msgstr "<0>Export your data to a ZIP file. <1/><2>Export all of your data, associated with your account.</2></0>"
 
-#: src/components/settings/data-settings.tsx:294
+#: src/components/settings/data-settings.tsx
 msgid "Are you sure you want to export your data? This may take a few minutes."
 msgstr "Are you sure you want to export your data? This may take a few minutes."
 
-#: src/components/settings/data-settings.tsx:297
+#: src/components/settings/data-settings.tsx
 msgid "Export your data"
 msgstr "Export your data"
 
-#: src/components/settings/data-settings.tsx:316
+#: src/components/settings/data-settings.tsx
 msgid "Pending imports"
 msgstr "Pending imports"
 
-#: src/components/settings/data-settings.tsx:331
+#: src/components/settings/data-settings.tsx
 msgid "Past imports"
 msgstr "Past imports"
 
 #. placeholder {0}: imports.totalCount - 4
-#: src/components/settings/data-settings.tsx:341
+#: src/components/settings/data-settings.tsx
 msgid "<0>{0} more...</0>"
 msgstr "<0>{0} more...</0>"
 
-#: src/components/settings/data-settings.tsx:384
+#: src/components/settings/data-settings.tsx
 msgid "No file name available"
 msgstr "No file name available"
 
-#: src/components/settings/data-settings.tsx:392
+#: src/components/settings/data-settings.tsx
 msgid "The file was deleted after the import was completed"
 msgstr "The file was deleted after the import was completed"
 
-#: src/components/settings/data-settings.tsx:393
+#: src/components/settings/data-settings.tsx
 msgid "The file was deleted after the import failed"
 msgstr "The file was deleted after the import failed"
 
-#: src/components/settings/data-settings.tsx:397
+#: src/components/settings/data-settings.tsx
 msgid "(deleted)"
 msgstr "(deleted)"
 
-#: src/components/settings/data-settings.tsx:403
+#: src/components/settings/data-settings.tsx
 msgid "No message available"
 msgstr "No message available"
 
-#: src/components/settings/data-settings.tsx:406
+#: src/components/settings/data-settings.tsx
 msgid "Updated"
 msgstr "Updated"
 
-#: src/components/settings/data-settings.tsx:406
+#: src/components/settings/data-settings.tsx
 msgid "Created"
 msgstr "Created"
 
-#. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
-#: src/components/ui/confirm-modal.tsx:174
-msgid "Wait {remainingSeconds} {0}"
-msgstr "Wait {remainingSeconds} {0}"
+#: src/components/settings/org-settings.tsx
+msgid "Owner"
+msgstr "Owner"
 
-#: src/components/ui/confirm-modal.tsx:175
-msgid "second"
-msgstr "second"
+#: src/components/settings/org-settings.tsx
+msgid "Admin"
+msgstr "Admin"
 
-#: src/components/ui/confirm-modal.tsx:175
-msgid "seconds"
-msgstr "seconds"
+#: src/components/settings/org-settings.tsx
+msgid "Member"
+msgstr "Member"
 
-#: src/components/ui/confirm-modal.tsx:188
-msgid "Confirm"
-msgstr "Confirm"
+#: src/components/settings/org-settings.tsx
+msgid "Organization created successfully."
+msgstr "Organization created successfully."
 
-#: src/components/ui/footer.tsx:22
-msgid "Repository"
-msgstr "Repository"
+#: src/components/settings/org-settings.tsx
+msgid "Creating organization..."
+msgstr "Creating organization..."
 
-#: src/components/ui/header-bar.tsx:40
-msgid "Overview"
-msgstr "Overview"
+#: src/components/settings/org-settings.tsx
+msgid "Failed to create organization."
+msgstr "Failed to create organization."
 
-#: src/components/ui/header-bar.tsx:46
+#: src/components/settings/org-settings.tsx
+msgid "No active organization"
+msgstr "No active organization"
+
+#. placeholder {0}: invitations.length
+#: src/components/settings/org-settings.tsx
+msgid "Pending invitations: {0}"
+msgstr "Pending invitations: {0}"
+
+#: src/components/settings/org-settings.tsx
+msgid "Are you sure you want to accept this invitation?"
+msgstr "Are you sure you want to accept this invitation?"
+
+#. placeholder {0}: invitation.organization.name
+#: src/components/settings/org-settings.tsx
+msgid "Accept invitation to {0}"
+msgstr "Accept invitation to {0}"
+
+#: src/components/settings/org-settings.tsx
+msgid "Accepting invitation..."
+msgstr "Accepting invitation..."
+
+#: src/components/settings/org-settings.tsx
+msgid "Invitation accepted."
+msgstr "Invitation accepted."
+
+#: src/components/settings/org-settings.tsx
+msgid "Failed to accept invitation."
+msgstr "Failed to accept invitation."
+
+#: src/components/settings/org-settings.tsx
+msgid "Accept"
+msgstr "Accept"
+
+#: src/components/settings/org-settings.tsx
+msgid "Create Organization"
+msgstr "Create Organization"
+
+#: src/components/settings/org-settings.tsx
+msgid "You can only create one organization per account."
+msgstr "You can only create one organization per account."
+
+#: src/components/settings/org-settings.tsx
+#: src/components/ui/header-bar.tsx
 msgid "Your Organization"
 msgstr "Your Organization"
 
-#: src/components/uploadthing.tsx:38
+#: src/components/settings/org-settings.tsx
+msgid "Role: "
+msgstr "Role: "
+
+#. placeholder {0}: org?.members.length
+#: src/components/settings/org-settings.tsx
+msgid "{0} members"
+msgstr "{0} members"
+
+#. placeholder {0}: org?.members.length
+#: src/components/settings/org-settings.tsx
+msgid "{0} member"
+msgstr "{0} member"
+
+#: src/components/settings/org-settings.tsx
+msgid "Are you sure you want to leave this organization?"
+msgstr "Are you sure you want to leave this organization?"
+
+#: src/components/settings/org-settings.tsx
+msgid "Leave Organization"
+msgstr "Leave Organization"
+
+#: src/components/settings/org-settings.tsx
+msgid "Leave"
+msgstr "Leave"
+
+#: src/components/settings/org-settings.tsx
+msgid "Leaving organization..."
+msgstr "Leaving organization..."
+
+#: src/components/settings/org-settings.tsx
+msgid "Failed to leave organization."
+msgstr "Failed to leave organization."
+
+#: src/components/settings/org-settings.tsx
+msgid "You left the organization."
+msgstr "You left the organization."
+
+#: src/components/settings/org-settings.tsx
+msgid "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
+msgstr "You cannot leave this organization.<0/>Transfer ownership to another member or delete it."
+
+#. placeholder {0}: remainingSeconds === 1 ? t`second` : t`seconds`
+#: src/components/ui/confirm-modal.tsx
+msgid "Wait {remainingSeconds} {0}"
+msgstr "Wait {remainingSeconds} {0}"
+
+#: src/components/ui/confirm-modal.tsx
+msgid "second"
+msgstr "second"
+
+#: src/components/ui/confirm-modal.tsx
+msgid "seconds"
+msgstr "seconds"
+
+#: src/components/ui/confirm-modal.tsx
+msgid "Confirm"
+msgstr "Confirm"
+
+#: src/components/ui/footer.tsx
+msgid "Repository"
+msgstr "Repository"
+
+#: src/components/ui/header-bar.tsx
+msgid "Overview"
+msgstr "Overview"
+
+#: src/components/uploadthing.tsx
 msgid "You cant upload so many files at once."
 msgstr "You cant upload so many files at once."
 
-#: src/components/uploadthing.tsx:40
+#: src/components/uploadthing.tsx
 msgid "The file is too large."
 msgstr "The file is too large."
 
-#: src/components/uploadthing.tsx:42
+#: src/components/uploadthing.tsx
 msgid "This file type is not allowed."
 msgstr "This file type is not allowed."
 
-#: src/components/uploadthing.tsx:45
+#: src/components/uploadthing.tsx
 msgid "You do not have permission to upload files."
 msgstr "You do not have permission to upload files."
 
-#: src/components/uploadthing.tsx:50
+#: src/components/uploadthing.tsx
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
 
 #. placeholder {0}: percentage.toFixed(2)
-#: src/components/uploadthing.tsx:66
+#: src/components/uploadthing.tsx
 msgid "Uploading {0}%"
 msgstr "Uploading {0}%"
 
 #. placeholder {0}: parseUploadThingError(error)
-#: src/components/uploadthing.tsx:74
+#: src/components/uploadthing.tsx
 msgid "Upload failed: {0}"
 msgstr "Upload failed: {0}"
 
-#: src/components/uploadthing.tsx:81
+#: src/components/uploadthing.tsx
 msgid "Files uploaded successfully"
 msgstr "Files uploaded successfully"
 
-#: src/server/api/routers/overview.ts:55
+#: src/lib/account-config.ts
+msgid "Regional settings"
+msgstr "Regional settings"
+
+#: src/lib/account-config.ts
+msgid "Time zone"
+msgstr "Time zone"
+
+#: src/lib/account-config.ts
+msgid "Used to calculate daily and weekly activity ranges."
+msgstr "Used to calculate daily and weekly activity ranges."
+
+#: src/lib/account-config.ts
+msgid "Start of week"
+msgstr "Start of week"
+
+#: src/lib/account-config.ts
+msgid "Controls which day starts weekly activity ranges."
+msgstr "Controls which day starts weekly activity ranges."
+
+#: src/lib/account-config.ts
+msgid "Monday"
+msgstr "Monday"
+
+#: src/lib/account-config.ts
+msgid "Sunday"
+msgstr "Sunday"
+
+#: src/lib/account-config.ts
+msgid "Preferred interface language."
+msgstr "Preferred interface language."
+
+#: src/lib/account-config.ts
+msgid "English"
+msgstr "English"
+
+#: src/lib/account-config.ts
+msgid "German"
+msgstr "German"
+
+#: src/lib/account-config.ts
+msgid "Privacy settings"
+msgstr "Privacy settings"
+
+#: src/lib/account-config.ts
+msgid "Public profile"
+msgstr "Public profile"
+
+#: src/lib/account-config.ts
+msgid "Whether your profile is publicly visible."
+msgstr "Whether your profile is publicly visible."
+
+#: src/lib/account-config.ts
+msgid "UI settings"
+msgstr "UI settings"
+
+#: src/lib/account-config.ts
+msgid "Popup for reauthentication"
+msgstr "Popup for reauthentication"
+
+#: src/lib/account-config.ts
+msgid "Whether to show a popup for reauthentication, or show it in the main window."
+msgstr "Whether to show a popup for reauthentication, or show it in the main window."
+
+#: src/lib/account-config.ts
+msgid "Share all time"
+msgstr "Share all time"
+
+#: src/lib/account-config.ts
+msgid "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
+msgstr "Share all the time you spend coding with your organization. If off, only the time you spend on projects you assigned will be shared."
+
+#: src/lib/account-config.ts
+msgid "Personal Org Settings"
+msgstr "Personal Org Settings"
+
+#: src/lib/account-config.ts
+msgid "Account Settings"
+msgstr "Account Settings"
+
+#: src/server/api/routers/overview.ts
 msgid "1 day"
 msgstr "1 day"
 
-#: src/server/api/routers/overview.ts:56
+#: src/server/api/routers/overview.ts
 msgid "{days} days"
 msgstr "{days} days"

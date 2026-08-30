@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { usePathname, useRouter } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger } from "./tabs";
+import { usePathname } from "next/navigation";
 import AccountButton from "../auth/account-button";
 import { useSession } from "~/provider/session-provider";
 import { Avatar, AvatarImage } from "./avatar";
@@ -10,13 +10,31 @@ import { Separator } from "./separator";
 import { cn } from "~/lib/utils";
 import OpenMinimal from "../overview/open-minimal";
 import { Trans } from "@lingui/react/macro";
+import { ExternalLinkIcon } from "lucide-react";
+
+function resolveDocsUrl(pathname: string) {
+	const url = new URL("https://docs.starlightv.dev");
+
+	switch (pathname) {
+		case "/dash/org":
+			url.pathname = "/docs/startime/org";
+			break;
+		case "/dash/settings":
+			url.pathname = "/docs/startime/settings";
+			break;
+		default:
+			url.pathname = "/docs/startime/what-is-startime";
+	}
+
+	return url.toString();
+}
 
 export function HeaderBar({ showTabs = true, showUser = true }) {
 	const pathname = usePathname();
 	const { org } = useSession();
 
 	return (
-		<div className={cn("h-29.25", !showTabs && "h-20")}>
+		<div className={cn("mb-2 h-29.25", !showTabs && "h-20")}>
 			<header className="fixed top-0 left-1/2 z-50 flex h-fit w-[calc(100%-2.5rem)] max-w-240 -translate-x-1/2 flex-col rounded-b-xl bg-accent">
 				<div className={cn("flex items-center justify-between px-6 pt-3 pb-1", !showTabs && "pb-3")}>
 					<Link href="/" className="text-3xl text-white" prefetch={false}>
@@ -58,6 +76,14 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 										render={
 											<Link href="/dash/settings" className="h-8! text-sm">
 												<Trans>Settings</Trans>
+											</Link>
+										}
+									/>
+									<TabsTrigger
+										value="/dash/docs"
+										render={
+											<Link href={resolveDocsUrl(pathname)} target="_blank" rel="noopener noreferrer" className="h-8! text-sm">
+												Docs <ExternalLinkIcon className="inline-flex h-8!" />
 											</Link>
 										}
 									/>

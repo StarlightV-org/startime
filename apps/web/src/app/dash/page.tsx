@@ -68,11 +68,9 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	const regional = auth.user.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 
-	Print.Debug("[OVERVIEW]", "distribution", distribution?.historicalDates);
-
 	return (
 		<div>
-			<div className="flex w-full flex-col gap-4 pt-2">
+			<div className="flex w-full flex-col gap-4">
 				<Card>
 					<CardContent>
 						<CardHeader>

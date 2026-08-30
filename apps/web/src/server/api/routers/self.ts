@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure, reauthProcedure, trackMiddleware } from "~/server/api/trpc";
 
-import { eventImports, users, userExports, apiKeys } from "@startime/db";
-import { count, eq, and, or } from "drizzle-orm";
+import { eventImports, users, userExports, apiKeys, eventLogs } from "@startime/db";
+import { count, eq, and, or, desc } from "drizzle-orm";
 import {
 	checkAccountConfig,
 	normalizeAccountConfig,
@@ -195,4 +195,14 @@ export const selfRouter = createTRPCRouter({
 			await ctx.db.delete(apiKeys).where(and(eq(apiKeys.id, id), eq(apiKeys.userId, ctx.user.id)));
 			return { success: true };
 		}),
+
+	listProjects: protectedProcedure.query(async ({ ctx }) => {
+		const projects = await ctx.db
+			.selectDistinct({ project: eventLogs.project })
+			.from(eventLogs)
+			.where(eq(eventLogs.userId, ctx.user.id))
+			.orderBy(desc(eventLogs.project));
+
+		return projects.map((p) => p.project);
+	}),
 });

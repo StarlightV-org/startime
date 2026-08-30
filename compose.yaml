@@ -3,6 +3,7 @@ services:
   image: postgres:17-alpine
   container_name: startime-postgres
   restart: always
+  mem_limit: 256m
   environment:
    POSTGRES_DB: startime
    POSTGRES_USER: startime
@@ -33,6 +34,7 @@ services:
    interval: 5s
    timeout: 5s
    retries: 10
+  mem_limit: 256m
 
  redis-insight:
   image: redis/redisinsight:latest
@@ -44,6 +46,7 @@ services:
    - redis_insight_data:/data
   networks:
    - default
+  mem_limit: 256m
 
 volumes:
  postgres_data:
