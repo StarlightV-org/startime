@@ -1,36 +1,45 @@
 # StarTime for Visual Studio
 
-A Visual Studio 2026 extension that reports editor activity to StarTime and displays today's code time in the status bar.
+A Visual Studio 2026 extension that reports code-editor activity to StarTime.
 
 ## What it does
 
-- Reports edits, saves, and document activation as coding activity.
-- Limits activity requests to one every five seconds.
-- Authenticates with the `x-api-key` header.
-- Hashes absolute file paths with SHA-256.
-- Reads today's code time at most once per minute.
-- Provides `apiUrl`, `token`, and `projectOverride` under `Tools > Options > All Settings > StarTime > General`.
+- Uses the Visual Studio Extensibility SDK, not a VSSDK `AsyncPackage` or legacy option page.
+- Defines typed `apiUrl`, `token`, and `projectOverride` extension settings.
+- Reports code-editor changes as StarTime activity, limited to one event every five seconds.
+- Requests code time when the settings observer receives its initial snapshot, then at most once per minute.
+- Sends `projectOverride` for both activity and code-time requests when it is set.
+- Authenticates with `x-api-key` and hashes local file paths with SHA-256.
 
 The event payload matches the server's `fileHash` schema: `editor`, `language`, `project`, `eventTime`, `fileHash`, and `platform`.
 
-## Code-time indicator
+## Configure StarTime
 
-The Visual Studio status bar refreshes at most once per minute:
+Visual Studio's Extensibility settings API is currently experimental. It stores extension values in `extensibility.settings.json`, not **Tools > Options > All Settings**.
 
-- A valid token shows `<project>: <time>`.
-- An invalid token shows `StarTime | Invalid token`.
-- Missing settings and network failures do not add status-bar text.
+Open **Extensions > Extension Settings (experimental) > User Scope** and add:
 
-Changes to `apiUrl`, `token`, or `projectOverride` reload the sender and stats configuration after a 500 ms debounce. The stats request uses `projectOverride` when set.
+```json
+{
+	"startime.apiUrl": "https://time.starlightv.dev/",
+	"startime.token": "your-api-key",
+	"startime.projectOverride": "staitime"
+}
+```
+
+Save the file. The typed settings observer reloads the values without restarting Visual Studio. Treat the settings file as sensitive because it contains the API key.
 
 ## Requirements
 
 - Visual Studio 2026 with the Visual Studio extension development workload
-- .NET Framework 4.7.2 targeting pack
-- .NET 8 SDK for unit tests
+- .NET 8 SDK
 
 ## Build
 
-Open `StarTime.VisualStudio.sln` in Visual Studio 2026 and build the solution. Debug and Release builds write the package to `build/StarTime.VisualStudio.<version>.vsix`, using the version from `source.extension.vsixmanifest`.
+```powershell
+dotnet build .\src\StarTime.VisualStudio\StarTime.VisualStudio.csproj --configuration Debug
+```
 
-See `docs/testing.md` for the full test procedure.
+The debug VSIX is written to `src/StarTime.VisualStudio/bin/Debug/net8.0-windows8.0/StarTime.VisualStudio.vsix`. The build also writes the versioned distributable to `build/StarTime.VisualStudio.0.1.3.vsix`.
+
+See `docs/testing.md` for the test procedure.
