@@ -19,6 +19,9 @@ function resolveDocsUrl(pathname: string) {
 		case "/dash/org":
 			url.pathname = "/docs/startime/org";
 			break;
+		case "/dash/settings":
+			url.pathname = "/docs/startime/settings";
+			break;
 		default:
 			url.pathname = "/docs/startime/what-is-startime";
 	}

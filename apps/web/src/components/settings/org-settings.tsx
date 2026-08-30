@@ -126,7 +126,7 @@ export default function OrgSettings() {
 
 	if (!user.organizationId)
 		return (
-			<Card>
+			<Card data-docs="/docs/startime/settings#your-organisation">
 				<CardContent>
 					<Trans>No active organization</Trans>
 				</CardContent>
@@ -353,7 +353,7 @@ export default function OrgSettings() {
 		);
 
 	return (
-		<Card>
+		<Card data-docs="/docs/startime/settings#your-organisation">
 			<CardHeader>
 				<CardTitle>
 					<Trans>Your Organization</Trans>

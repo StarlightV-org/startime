@@ -85,7 +85,7 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 
 	return (
 		<div className="flex flex-col gap-5">
-			<Card className="w-full" data-docs="/docs/startime/org">
+			<Card className="w-full" data-docs="/docs/startime/org/manage-org">
 				<CardContent className="flex items-center justify-between gap-5">
 					<div className="flex items-center gap-5 align-baseline">
 						<Avatar size="lg">
