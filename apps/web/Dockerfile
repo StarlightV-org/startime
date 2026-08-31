@@ -18,7 +18,7 @@ RUN bun install --frozen-lockfile
 FROM dependencies AS builder
 COPY . .
 ENV SKIP_VALIDATION=false
-RUN bun run --filter @startime/web build
+RUN bun run --filter @startime/web --bun build
 
 FROM base AS runner
 ENV NODE_ENV=production
@@ -35,4 +35,6 @@ COPY --from=builder --chown=bunjs:bunjs /app/apps/web/package.json ./apps/web/pa
 
 USER bunjs
 EXPOSE 3000
-CMD ["bun", "apps/web/server.js"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+CMD ["bun", "--bun", "apps/web/server.js"]

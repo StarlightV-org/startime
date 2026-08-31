@@ -1,6 +1,6 @@
 {
 	"name": "@startime/web",
-	"version": "0.2.13",
+	"version": "0.2.14",
 	"private": true,
 	"type": "module",
 	"dependencies": {
@@ -32,7 +32,7 @@
 	"scripts": {
 		"build": "next build",
 		"check": "biome check .",
-		"dev": "bun --env-file ../../.env next dev --turbopack --experimental-https --port 3000",
+		"dev": "bun --env-file ../../.env --bun next dev --turbopack --experimental-https --port 3000",
 		"i18n:extract": "bun --bun ./node_modules/@lingui/cli/dist/lingui-extract.js --config ./lingui.config.ts --workers 1",
 		"i18n:compile": "bun --bun ./node_modules/@lingui/cli/dist/lingui-compile.js --config ./lingui.config.ts --namespace es --workers 1",
 		"i18n": "bun run i18n:extract && bun run i18n:compile",
