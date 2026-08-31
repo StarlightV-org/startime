@@ -30,4 +30,6 @@ COPY --from=builder --chown=bunjs:bunjs /app/dist ./
 
 USER bunjs
 EXPOSE 3001
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3001/health || exit 1
 CMD ["bun", "index.js"]
