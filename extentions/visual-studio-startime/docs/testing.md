@@ -60,4 +60,4 @@ Confirm the request uses:
 GET /api/users/self/stats?project=staitime
 ```
 
-The current editor Extensibility API does not provide the VSSDK status-bar integration used by the old package, so this version does not show code time in the Visual Studio status bar.
+The extension shows `<project>: <time>` in the active code editor's status bar. An HTTP `401` or `403` shows `StarTime | Invalid token` instead. Other configuration and network failures clear the StarTime text.

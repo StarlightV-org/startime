@@ -8,6 +8,8 @@ A Visual Studio 2026 extension that reports code-editor activity to StarTime.
 - Defines typed `apiUrl`, `token`, and `projectOverride` extension settings.
 - Reports code-editor changes as StarTime activity, limited to one event every five seconds.
 - Requests code time when the settings observer receives its initial snapshot, then at most once per minute.
+- Shows `<project>: <time>` in the active code editor's status bar.
+- Shows `StarTime | Invalid token` in that status bar when the API rejects the token.
 - Sends `projectOverride` for both activity and code-time requests when it is set.
 - Authenticates with `x-api-key` and hashes local file paths with SHA-256.
 
@@ -40,6 +42,6 @@ Save the file. The typed settings observer reloads the values without restarting
 dotnet build .\src\StarTime.VisualStudio\StarTime.VisualStudio.csproj --configuration Debug
 ```
 
-The debug VSIX is written to `src/StarTime.VisualStudio/bin/Debug/net8.0-windows8.0/StarTime.VisualStudio.vsix`. The build also writes the versioned distributable to `build/StarTime.VisualStudio.0.1.3.vsix`.
+The debug VSIX is written to `src/StarTime.VisualStudio/bin/Debug/net8.0-windows8.0/StarTime.VisualStudio.vsix`. The build also writes the versioned distributable to `build/StarTime.VisualStudio.0.1.5.vsix`.
 
 See `docs/testing.md` for the test procedure.
