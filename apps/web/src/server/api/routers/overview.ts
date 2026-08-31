@@ -5,6 +5,7 @@ import { addDays, differenceInCalendarWeeks, format, getDay, startOfWeek } from 
 import { eventLogs } from "@startime/db";
 import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
+import { getStreaks } from "~/lib/streaks";
 import { getTimeRange, normalizeTimeZone, timeRangeValues, toTimeString } from "~/lib/time-range";
 import { createTRPCRouter, protectedProcedure, serverOnlyMiddleware } from "~/server/api/trpc";
 import z from "zod";
@@ -14,34 +15,6 @@ import { differenceInMinutes } from "date-fns/fp";
 export { getTimeRange, type TimeRange } from "~/lib/time-range";
 
 const timeRangeSchema = z.enum(timeRangeValues);
-
-const millisecondsPerDay = 86_400_000;
-
-function toDayNumber(day: string): number {
-	return Math.floor(new Date(day).getTime() / millisecondsPerDay);
-}
-
-function getStreaks(activeDays: string[], today: string) {
-	const days = [...new Set(activeDays.map(toDayNumber))].sort((a, b) => a - b);
-	const activeDaySet = new Set(days);
-
-	let currentStreak = 0;
-	for (let day = toDayNumber(today); activeDaySet.has(day); day--) {
-		currentStreak++;
-	}
-
-	let allTimeStreak = 0;
-	let streak = 0;
-	let previousDay: number | undefined;
-
-	for (const day of days) {
-		streak = previousDay === day - 1 ? streak + 1 : 1;
-		allTimeStreak = Math.max(allTimeStreak, streak);
-		previousDay = day;
-	}
-
-	return { currentStreak, allTimeStreak };
-}
 
 function getLocalDate(timeZone: string): string {
 	const now = TZDate.tz(timeZone);
