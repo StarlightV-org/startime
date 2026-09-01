@@ -14,7 +14,7 @@ export const inputCodeTimeEventLogSchema = z.object({
 
 export const inputEventLogSchema = z.union([
 	z.object({
-		eventTime: z.coerce.date(),
+		eventTime: z.coerce.date().optional(),
 		language: z.string(),
 		project: z.string(),
 		fileHash: z.string(),

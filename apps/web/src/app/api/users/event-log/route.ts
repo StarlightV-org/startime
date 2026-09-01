@@ -7,6 +7,9 @@ import { createHmac } from "node:crypto";
 import { ENV } from "@startime/env";
 import { normalizeLanguageId, normalizePlatform } from "~/lib/api-lib";
 import { op } from "~/lib/op";
+import { checkRateLimit } from "~/server/redis/rate-limit";
+import { cacheKey } from "~/lib/cache-key";
+import { formatRetryAfter } from "~/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
 	const apiKey = await checkApiKey(req);
@@ -26,10 +29,29 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 });
 	}
 
+	const result = await checkRateLimit({
+		userId: apiKey.userId,
+		resource: `api:event-log:${cacheKey({ editor: parsed.data.editor })}`,
+		cooldownMs: 1_000,
+	});
+
+	if (!result.ok) {
+		Print.Fail({
+			message: "Rate limit exceeded",
+			userId: apiKey.userId,
+			resource: `api:event-log:${cacheKey({ editor: parsed.data.editor })}`,
+			retryAfterMs: formatRetryAfter(result.retryAfterMs),
+		});
+		return NextResponse.json(
+			{ error: "Rate limit exceeded", retryAfterMs: formatRetryAfter(result.retryAfterMs) },
+			{ status: 429, headers: { "Retry-After": String(result.retryAfterMs) } },
+		);
+	}
+
 	const fileName = "fileHash" in parsed.data ? parsed.data.fileHash : parsed.data.relativeFile;
 	const fileHash = createHmac("sha256", ENV.FILE_HASH_KEY).update(fileName).digest("hex");
 
-	const eventTime = new Date(parsed.data.eventTime);
+	const eventTime = new Date(parsed.data.eventTime ?? new Date());
 
 	const log = await db
 		.insert(eventLogs)

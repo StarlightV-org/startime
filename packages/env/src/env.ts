@@ -30,6 +30,8 @@ export const ENV = createEnv({
 		OPEN_PANEL_DISABLED: z.boolean().optional().catch(false),
 		// MISC
 		FILE_HASH_KEY: z.string(),
+
+		DISABLE_RATE_LIMITING: z.boolean().optional().catch(false),
 	},
 
 	/**
@@ -76,14 +78,15 @@ export const ENV = createEnv({
 
 		ALLOWED_EMAILS: process.env.ALLOWED_EMAILS,
 
-		// SUBSCRIPTIONS
-		NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV: process.env.NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV === "true",
-
 		// OPENPANEL
 		OPEN_PANEL_CLIENT_ID: process.env.OPEN_PANEL_CLIENT_ID,
 		OPEN_PANEL_CLIENT_SECRET: process.env.OPEN_PANEL_CLIENT_SECRET,
 		OPEN_PANEL_DISABLED: process.env.OPEN_PANEL_DISABLED === "true",
 		NEXT_PUBLIC_OPENPANEL_API_URL: process.env.NEXT_PUBLIC_OPENPANEL_API_URL,
+
+		// DEV
+		NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV: process.env.NEXT_PUBLIC_DISABLE_SUBSCRIPTIONS_IN_DEV === "true",
+		DISABLE_RATE_LIMITING: process.env.DISABLE_RATE_LIMITING === "true",
 	},
 
 	emptyStringAsUndefined: true,

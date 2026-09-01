@@ -18,19 +18,13 @@ import { addSeconds } from "date-fns/fp";
 import { op } from "~/lib/op";
 import { setRequestI18n } from "~/i18n/server";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
+import {
+	__createRateLimitMiddleware as createRateLimitHandler,
+	type RateLimitCause,
+	RATE_LIMIT_CAUSE_VALUE,
+	type RateLimitOptions,
+} from "~/server/redis/rate-limit";
 
-/**
- * 1. CONTEXT
- *
- * This section defines the "contexts" that are available in the backend API.
- *
- * These allow you to access things when processing a request, like the database, the session, etc.
- *
- * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
- * wrap this and provides the required context.
- *
- * @see https://trpc.io/docs/server/context
- */
 export const createTRPCContext = async (opts: { headers: Headers; source?: "http" | "server" }) => {
 	const { session, user, invitations, org } = await getAuth();
 	const i18n = await setRequestI18n(resolveLocale(user?.accountConfig?.regional.lang, fromHeader(opts.headers)));
@@ -48,13 +42,8 @@ export const createTRPCContext = async (opts: { headers: Headers; source?: "http
 	};
 };
 
-/**
- * 2. INITIALIZATION
- *
- * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
- * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
- * errors on the backend.
- */
+export type TRPCContext = typeof createTRPCContext extends (opts: any) => Promise<infer T> ? T : never;
+
 const t = initTRPC.context<typeof createTRPCContext>().create({
 	transformer: superjson,
 	errorFormatter({ shape, error }) {
@@ -68,25 +57,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 	},
 });
 
-/**
- * Create a server-side caller.
- *
- * @see https://trpc.io/docs/server/server-side-calls
- */
 export const createCallerFactory = t.createCallerFactory;
 
-/**
- * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
- *
- * These are the pieces you use to build your tRPC API. You should import these a lot in the
- * "/src/server/api/routers" directory.
- */
-
-/**
- * This is how you create new routers and sub-routers in your tRPC API.
- *
- * @see https://trpc.io/docs/router
- */
 export const createTRPCRouter = t.router;
 
 const timingMiddleware = t.middleware(async ({ next, path, ctx }) => {
@@ -185,6 +157,16 @@ export const serverOnlyMiddleware = t.middleware(({ ctx, next, path }) => {
 
 	return next();
 });
+
+/**
+ * Creates a rate limit middleware for use with protectedProcedure.
+ * @example
+ * revive: protectedProcedure
+ *   .use(createRateLimitMiddleware({ cooldownMs: 30_000, bypassPermission: "ADMIN" }))
+ *   .mutation(...)
+ */
+export const rateLimitMiddleware = (options: RateLimitOptions) =>
+	t.middleware(createRateLimitHandler(options) as Parameters<typeof t.middleware>[0]);
 
 /**
  * Public (unauthenticated) procedure
