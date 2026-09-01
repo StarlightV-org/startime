@@ -59,7 +59,8 @@ export async function POST(req: NextRequest) {
 	}
 
 	Print.API("[event-log]", {
-		userName: apiKey.user.email,
+		name: apiKey.user.name,
+		mail: apiKey.user.email,
 		editor: parsed.data.editor,
 		language: normalizeLanguageId(parsed.data.language),
 		project: parsed.data.project,

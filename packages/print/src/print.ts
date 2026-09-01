@@ -98,7 +98,7 @@ export type PrintFunction = {
       name: string;
       id: string;
       session: string;
-
+      ip: string;
       ok: boolean;
     },
   ) => void;
@@ -757,7 +757,7 @@ const createPrint = (() => {
   printFunc.TRPC = (
     route: string,
     time: number,
-    ctx: { name: string; id: string; session: string; ok: boolean },
+    ctx: { name: string; id: string; session: string; ok: boolean; ip: string },
   ) => {
     const date = formatPrintTime();
     if (useProdJsonLogs) {
@@ -767,7 +767,7 @@ const createPrint = (() => {
         name: ctx.name,
         id: ctx.id,
         session: ctx.session,
-
+        ip: ctx.ip,
         ok: ctx.ok,
       });
       return;

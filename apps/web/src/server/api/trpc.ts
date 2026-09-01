@@ -94,11 +94,15 @@ const timingMiddleware = t.middleware(async ({ next, path, ctx }) => {
 	const result = await next();
 	const end = Date.now();
 
+	const headers = ctx.headers;
+	const ip = headers.get("CF-Connecting-IP") ?? headers.get("X-Forwarded-For") ?? headers.get("X-Real-IP") ?? "no-ip";
+
 	Print.TRPC(path, end - start, {
 		name: ctx.user?.name ?? "no-name",
 		id: ctx.user?.id ?? "no-id",
 		session: ctx.session?.id ?? "no-session",
 		ok: result.ok,
+		ip,
 	});
 	return result;
 });
