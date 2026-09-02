@@ -13,7 +13,7 @@ import {
 } from "~/components/overview";
 import { getTimeRange, type BiggestUnit, type TimeRange } from "~/server/api/routers/overview";
 import { cookies, headers } from "next/headers";
-import { tryCatch } from "~/lib/utils";
+
 import { getAuth } from "~/server/better-auth";
 import { api } from "~/trpc/server";
 import { parseAsFloat, createLoader, parseAsString } from "nuqs/server";
@@ -24,6 +24,8 @@ import { withRedisCache } from "~/server/redis/cache";
 import { Trans } from "@lingui/react/macro";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
+import CodingTrendChart from "~/components/overview/coding-trend-chart";
+import { cacheKey } from "~/lib/cache-key";
 
 // Describe your search params, and reuse this in useQueryStates / createSerializer:
 export const coordinatesSearchParams = {
@@ -43,27 +45,32 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 	const timeRange = (cookieManager.get("startime_timeRange")?.value ?? "past30") as TimeRange;
 	const biggestUnit = (cookieManager.get("startime_biggestUnit")?.value ?? "hour") as BiggestUnit;
 
-	Print.Debug("timeRange", timeRange);
-	const { data: activity, error: activityError } = await tryCatch(api.overview.getActivity({ timeRange, biggestUnit }));
-	const { data: dailyActivity, error: dailyActivityError } = await tryCatch(
+	const [activityResult, dailyActivityResult, distributionResult, trendResult, topResult] = await Promise.allSettled([
+		api.overview.getActivity({ timeRange, biggestUnit }),
 		withRedisCache(`api:overview:getDailyActivity:${auth.user.id}`, 60 * 5, () => api.overview.getDailyActivity()),
-	);
-
-	const { data: distribution, error: distributionError } = await tryCatch(
 		api.overview.getDistribution({ workspace: workspace || undefined }),
-	);
-
-	// const { data: dailyActivity, error: dailyActivityError } = await tryCatch(api.overview.getDailyActivity());
-	const { data: top, error: topError } = await tryCatch(
+		withRedisCache(`api:overview:getTrend:${cacheKey({ timeRange, biggestUnit, user: auth.user.id })}`, 60 * 5, () =>
+			api.overview.getTrend({ timeRange, biggestUnit }),
+		),
 		api.overview.getTop({ timeRange, filter: { editor, workspace, language, platform }, biggestUnit }),
-	);
+	]);
 
-	if (activityError || dailyActivityError || distributionError || topError) {
-		activityError && Print.Error("[OVERVIEW]", "activityError", activityError);
-		dailyActivityError && Print.Error("[OVERVIEW]", "dailyActivityError", dailyActivityError);
-		distributionError && Print.Error("[OVERVIEW]", "distributionError", distributionError);
-		topError && Print.Error("[OVERVIEW]", "topError", topError);
-	}
+	const getResult = <T,>(result: PromiseSettledResult<T>) =>
+		result.status === "fulfilled"
+			? { data: result.value, error: undefined }
+			: { data: undefined, error: result.reason as Error };
+
+	const { data: activity, error: activityError } = getResult(activityResult);
+	const { data: dailyActivity, error: dailyActivityError } = getResult(dailyActivityResult);
+	const { data: distribution, error: distributionError } = getResult(distributionResult);
+	const { data: trend, error: trendError } = getResult(trendResult);
+	const { data: top, error: topError } = getResult(topResult);
+
+	activityError && Print.Error("[OVERVIEW]", "activityError", activityError);
+	dailyActivityError && Print.Error("[OVERVIEW]", "dailyActivityError", dailyActivityError);
+	distributionError && Print.Error("[OVERVIEW]", "distributionError", distributionError);
+	topError && Print.Error("[OVERVIEW]", "topError", topError);
+	trendError && Print.Error("[OVERVIEW]", "trendError", trendError);
 
 	const regional = auth.user.accountConfig.regional;
 	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
@@ -212,6 +219,16 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 										.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} filterKey="platform" />)}
 							</div>
 						</CardDescription>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardContent>
+						<CardHeader className="flex items-center justify-between">
+							<CardTitle>
+								<Trans>Coding Trend</Trans>
+							</CardTitle>
+						</CardHeader>
+						{trend && <CodingTrendChart data={trend} />}
 					</CardContent>
 				</Card>
 				<Card>

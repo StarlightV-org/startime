@@ -70,48 +70,51 @@ export default function ActivityCalendar({
 
 	const monthTicks = [...monthLabels.keys()];
 	const chart = defineChart({
-		marks: [
-			cell(rows, {
-				x: "week",
-				y: "weekday",
-				color: "activityLevel",
-				key: "date",
-				inset: 2,
-				radius: 2,
-			}),
-		],
-		x: {
-			scale: () => scaleBand<number>().paddingInner(0.08).paddingOuter(0.04),
-			axis: {
-				ticks: { values: monthTicks, format: (week) => monthLabels.get(week) ?? "" },
-				tickLabels: { anchor: "middle" },
-			},
-		},
-		y: {
-			// Use a scale instance: factories have their categorical domain inferred
-			// from the first data point, which would rotate the weekday rows.
-			scale: scaleBand<string>().domain(weekdays).paddingInner(0.08).paddingOuter(0.04),
-		},
-
-		color: {
-			domain: activityLevels,
-			range: [
-				"oklch(0.27 0.006 286)",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 60%, var(--primary))",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 50%, var(--primary))",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 40%, var(--primary))",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 30%, var(--primary))",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 20%, var(--primary))",
-				"color-mix(in oklch, oklch(0.27 0.006 286) 10%, var(--primary))",
-				"var(--primary)",
-				"var(--sidebar-primary)",
-			],
-		},
-		margin: { top: 8, right: 8, bottom: 28, left: 44 },
 		tooltip: {
 			use: tooltip,
 			sticky: false,
 		},
+		chart: () => ({
+			marks: [
+				cell(rows, {
+					x: "week",
+					y: "weekday",
+					color: "activityLevel",
+					key: "date",
+					inset: 2,
+					radius: 2,
+				}),
+			],
+			scales: {
+				x: {
+					scale: () => scaleBand<number>().paddingInner(0.08).paddingOuter(0.04),
+					axis: {
+						ticks: { values: monthTicks, format: (week: number) => monthLabels.get(week) ?? "" },
+					},
+				},
+				y: {
+					// Use a scale instance: factories have their categorical domain inferred
+					// from the first data point, which would rotate the weekday rows.
+					scale: scaleBand<string>().domain(weekdays).paddingInner(0.08).paddingOuter(0.04),
+				},
+			},
+
+			color: {
+				domain: activityLevels,
+				range: [
+					"oklch(0.27 0.006 286)",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 60%, var(--primary))",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 50%, var(--primary))",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 40%, var(--primary))",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 30%, var(--primary))",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 20%, var(--primary))",
+					"color-mix(in oklch, oklch(0.27 0.006 286) 10%, var(--primary))",
+					"var(--primary)",
+					"var(--sidebar-primary)",
+				],
+			},
+			margin: { top: 8, right: 8, bottom: 28, left: 44 },
+		}),
 	});
 
 	return (
@@ -138,5 +141,3 @@ export default function ActivityCalendar({
 		/>
 	);
 }
-
-
