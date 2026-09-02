@@ -40,12 +40,21 @@ export default function RefetchOverview({
 	const documentState = useDocumentVisibility();
 	const isMounted = useMounted();
 	const previousRefreshKey = useRef(refreshKey);
+	const previousDocumentState = useRef(documentState);
 	const hasStarted = useRef(false);
 
 	const isActive = differenceInSeconds(lastEvent?.eventTime ?? 0, new Date()) <= 120;
 
 	useEffect(() => {
+		const wasHidden = previousDocumentState.current === "hidden";
+		previousDocumentState.current = documentState;
+
 		if (!isMounted || documentState === "hidden") return;
+
+		if (wasHidden) {
+			Print.Debug("RefetchOverview", "Refreshing after visibility change");
+			router.refresh();
+		}
 
 		const filtersChanged = hasStarted.current && previousRefreshKey.current !== refreshKey;
 		previousRefreshKey.current = refreshKey;
