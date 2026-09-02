@@ -99,6 +99,10 @@ msgid "<0>Calculations</0><1>Total time counts each active minute once. <2/>If y
 msgstr "<0>Calculations</0><1>Total time counts each active minute once. <2/>If you switch workspace or language within a minute, that same minute is counted for every matching category. <3/>So category times and percentages can exceed 100%.</1>"
 
 #: src/app/dash/page.tsx
+msgid "Coding Trend"
+msgstr "Coding Trend"
+
+#: src/app/dash/page.tsx
 msgid "Daily Coding Distribution"
 msgstr "Daily Coding Distribution"
 
@@ -961,6 +965,31 @@ msgstr "No active organization"
 #: src/components/settings/org-settings.tsx
 msgid "Pending invitations: {0}"
 msgstr "Pending invitations: {0}"
+
+#: src/components/settings/org-settings.tsx
+msgid "Are you sure you want to decline this invitation? You will need to be invited again to join this organization."
+msgstr "Are you sure you want to decline this invitation? You will need to be invited again to join this organization."
+
+#. placeholder {0}: invitation.organization.name
+#: src/components/settings/org-settings.tsx
+msgid "Decline invitation to {0}"
+msgstr "Decline invitation to {0}"
+
+#: src/components/settings/org-settings.tsx
+msgid "Declining invitation..."
+msgstr "Declining invitation..."
+
+#: src/components/settings/org-settings.tsx
+msgid "Invitation declined."
+msgstr "Invitation declined."
+
+#: src/components/settings/org-settings.tsx
+msgid "Failed to decline invitation."
+msgstr "Failed to decline invitation."
+
+#: src/components/settings/org-settings.tsx
+msgid "Decline"
+msgstr "Decline"
 
 #: src/components/settings/org-settings.tsx
 msgid "Are you sure you want to accept this invitation?"

@@ -10,7 +10,7 @@ import type { API } from "~/trpc/server";
 const smoothingRadius = 3;
 type TrendRow = API["overview"]["getTrend"][number] & { date: Date };
 
-export const createTrendChart = (input: API["overview"]["getTrend"]) => {
+export const createTrendChart = (input: API["overview"]["getTrend"], dateFormatter: Intl.DateTimeFormat) => {
 	const rows = input.map((row) => ({ ...row, date: new Date(`${row.date}T00:00:00Z`) }));
 	const smoothedRows = rows.map((row, index) => {
 		const window = rows.slice(Math.max(0, index - smoothingRadius), index + smoothingRadius + 1);
@@ -33,12 +33,12 @@ export const createTrendChart = (input: API["overview"]["getTrend"]) => {
 				lineY(smoothedRows, {
 					x: "date",
 					y: "smoothedHours",
-					stroke: "var(--primary)",
+					stroke: "var(--sidebar-primary)",
 					strokeWidth: 2.25,
 				}),
 			],
 			scales: {
-				x: { scale: scaleUtc, axis: { label: "Date" } },
+				x: { scale: scaleUtc, axis: { label: "Date", ticks: { format: (date: Date) => dateFormatter.format(date) } } },
 				y: {
 					scale: () => scaleLinear().domain([0, maximumHours]),
 					grid: true,
@@ -65,16 +65,20 @@ export default function CodingTrendChart({ data }: { data: API["overview"]["getT
 		dateStyle: "medium",
 		timeZone: "UTC",
 	});
+	const axisDateFormatter = new Intl.DateTimeFormat(i18n.locale, {
+		month: "short",
+		day: "numeric",
+		timeZone: "UTC",
+	});
 
 	return (
 		<Chart
 			ariaLabel={"Trend Chart"}
 			className="outline-none! select-none focus:outline-none! focus-visible:outline-none! [&_*:focus]:outline-none! [&_*:focus-visible]:outline-none!"
 			tabIndex={0}
-			definition={createTrendChart(data)}
+			definition={createTrendChart(data, axisDateFormatter)}
 			height={300}
 			initialWidth={928}
-			width={928}
 			renderTooltipBody={({ points }) => {
 				const trend = points[0]?.datum as TrendRow | undefined;
 

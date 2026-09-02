@@ -317,7 +317,7 @@ export const overviewRouter = createTRPCRouter({
 				throw new Error("Unable to determine the minimum trend range");
 			}
 
-			if (!end) {
+			if (!end || end > defaultEnd) {
 				end = defaultEnd;
 			}
 
@@ -336,6 +336,7 @@ export const overviewRouter = createTRPCRouter({
 			const rangeDays = differenceInCalendarDays(TZDate.tz(timeZone, end), TZDate.tz(timeZone, start));
 			if (rangeDays < 7) {
 				start = minimumStart;
+				end = defaultEnd;
 			}
 
 			const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
