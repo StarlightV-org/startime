@@ -18,7 +18,7 @@ import { TopElement } from "~/components/overview";
 import { api } from "~/trpc/react";
 import { parseAsString, useQueryState, useQueryStates } from "nuqs";
 import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { FileIcons } from "~/components/overview/file-icons";
 import { useDocumentVisibility, useMounted } from "@mantine/hooks";
 import { Button } from "~/components/ui/button";
@@ -29,40 +29,49 @@ import { Trans } from "@lingui/react/macro";
 
 const isActiveFn = (isActive: boolean) => (isActive ? 1000 * 30 : 1000 * 60 * 2);
 
-export default function RefetchOverview({ lastEvent }: { lastEvent: API["overview"]["getActivity"]["lastEvent"] }) {
+export default function RefetchOverview({
+	lastEvent,
+	refreshKey,
+}: {
+	lastEvent: API["overview"]["getActivity"]["lastEvent"];
+	refreshKey: string;
+}) {
 	const router = useRouter();
 	const documentState = useDocumentVisibility();
 	const isMounted = useMounted();
-
-	const [interval, setIntervalState] = useState<NodeJS.Timeout | null>(null);
+	const previousRefreshKey = useRef(refreshKey);
+	const hasStarted = useRef(false);
 
 	const isActive = differenceInSeconds(lastEvent?.eventTime ?? 0, new Date()) <= 120;
 
 	useEffect(() => {
-		if (!isMounted) return;
-		interval && clearInterval(interval);
+		if (!isMounted || documentState === "hidden") return;
 
-		if (documentState === "hidden" && interval) {
-			Print.Debug("RefetchOverview", "Stopping interval");
-			clearInterval(interval);
-			setIntervalState(null);
-			return;
-		} else if (documentState === "visible") {
-			Print.Debug("RefetchOverview", "Refreshing after visibility change");
-			router.refresh();
+		const filtersChanged = hasStarted.current && previousRefreshKey.current !== refreshKey;
+		previousRefreshKey.current = refreshKey;
+		hasStarted.current = true;
+
+		if (filtersChanged) {
+			Print.Debug("RefetchOverview", "Restarting interval after filter change");
 		}
 
-		Print.Debug("RefetchOverview", "Starting interval");
-
-		setIntervalState(
-			setInterval(() => {
+		const startInterval = () => {
+			Print.Debug("RefetchOverview", "Starting interval");
+			return setInterval(() => {
 				Print.Debug("Refetching overview", { isActive });
 				router.refresh();
-			}, isActiveFn(isActive)),
-		);
+			}, isActiveFn(isActive));
+		};
 
-		return () => (interval ? clearInterval(interval) : void 0);
-	}, [isActive, documentState, isMounted]);
+		let interval: ReturnType<typeof setInterval> | null = null;
+		const debounceTimeout = filtersChanged ? setTimeout(() => (interval = startInterval()), 5000) : null;
+		if (!filtersChanged) interval = startInterval();
+
+		return () => {
+			if (debounceTimeout) clearTimeout(debounceTimeout);
+			if (interval) clearInterval(interval);
+		};
+	}, [documentState, isActive, isMounted, refreshKey, router]);
 
 	return null;
 }
@@ -116,5 +125,3 @@ export function RefetchOverviewButton() {
 		</Button>
 	);
 }
-
-

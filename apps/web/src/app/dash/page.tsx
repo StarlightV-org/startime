@@ -241,7 +241,10 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 						{distribution && <DistributionChart data={distribution} />}
 					</CardContent>
 				</Card>
-				<RefetchOverview lastEvent={activity?.lastEvent} />
+				<RefetchOverview
+					lastEvent={activity?.lastEvent}
+					refreshKey={JSON.stringify({ timeRange, biggestUnit, editor, workspace, language, platform })}
+				/>
 			</div>
 		</div>
 	);
