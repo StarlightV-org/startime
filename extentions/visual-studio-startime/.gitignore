@@ -1,0 +1,8 @@
+.vs/
+**/bin/
+**/obj/
+!build/
+!build/*.vsix
+TestResults/
+*.user
+*.suo
