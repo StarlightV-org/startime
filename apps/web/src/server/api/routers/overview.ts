@@ -1,7 +1,15 @@
 import { TZDate } from "@date-fns/tz";
 import type { I18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
-import { addDays, differenceInCalendarWeeks, format, getDay, startOfWeek } from "date-fns";
+import {
+	addDays,
+	differenceInCalendarDays,
+	differenceInCalendarWeeks,
+	format,
+	getDay,
+	startOfDay,
+	startOfWeek,
+} from "date-fns";
 import { eventLogs } from "@startime/db";
 import { and, desc, eq, gte, lt, sql } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
@@ -289,5 +297,80 @@ export const overviewRouter = createTRPCRouter({
 					label: format(now, "HH:mm"),
 				},
 			};
+		}),
+
+	getTrend: protectedProcedure
+		.use(serverOnlyMiddleware)
+		.input(
+			z.object({
+				timeRange: timeRangeSchema,
+				biggestUnit: biggestUnitSchema,
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const regional = ctx.user.accountConfig.regional;
+			const timeZone = normalizeTimeZone(regional.timeZone);
+			const [minimumStart, defaultEnd] = getTimeRange("past7", timeZone, undefined, regional.startOfWeek);
+			let [start, end] = getTimeRange(input.timeRange, timeZone, undefined, regional.startOfWeek);
+
+			if (!minimumStart || !defaultEnd) {
+				throw new Error("Unable to determine the minimum trend range");
+			}
+
+			if (!end || end > defaultEnd) {
+				end = defaultEnd;
+			}
+
+			if (!start) {
+				const firstEvent = await ctx.db
+					.select({ eventTime: eventLogs.eventTime })
+					.from(eventLogs)
+					.where(eq(eventLogs.userId, ctx.user.id))
+					.orderBy(eventLogs.eventTime)
+					.limit(1);
+				start = firstEvent[0]?.eventTime
+					? new Date(startOfDay(TZDate.tz(timeZone, firstEvent[0].eventTime)).getTime())
+					: minimumStart;
+			}
+
+			const rangeDays = differenceInCalendarDays(TZDate.tz(timeZone, end), TZDate.tz(timeZone, start));
+			if (rangeDays < 7) {
+				start = minimumStart;
+				end = defaultEnd;
+			}
+
+			const activeDay = sql<string>`(${eventLogs.eventTime} at time zone ${timeZone})::date`;
+			const rows = await ctx.db
+				.select({
+					day: activeDay,
+					minutes: sql<number>`count(distinct date_trunc('minute', ${eventLogs.eventTime}))`.mapWith(Number),
+				})
+				.from(eventLogs)
+				.where(and(eq(eventLogs.userId, ctx.user.id), gte(eventLogs.eventTime, start), lt(eventLogs.eventTime, end)))
+				.groupBy(sql`1`)
+				.orderBy(sql`1`);
+
+			const minutesByDay = new Map(rows.map(({ day, minutes }) => [day, minutes]));
+			const dayCount = differenceInCalendarDays(TZDate.tz(timeZone, end), TZDate.tz(timeZone, start));
+			const dailyTrend = Array.from({ length: dayCount }, (_, index) => {
+				const day = addDays(TZDate.tz(timeZone, start), index);
+				return { day, minutes: minutesByDay.get(format(day, "yyyy-MM-dd")) ?? 0 };
+			});
+
+			const groupSize = dayCount > 90 ? 2 : 1;
+			return Array.from({ length: Math.ceil(dailyTrend.length / groupSize) }, (_, index) => {
+				const days = dailyTrend.slice(index * groupSize, (index + 1) * groupSize);
+				const minutes = days.reduce((total, day) => total + day.minutes, 0) / days.length;
+
+				const roundedMinutes = Math.round(minutes);
+				const hours = Number((roundedMinutes / 60).toFixed(2));
+
+				return {
+					date: format(days[0]!.day, "yyyy-MM-dd"),
+					label: format(days[0]!.day, "dd.MM"),
+					hours: hours,
+					time: toTimeString(roundedMinutes, input.biggestUnit),
+				};
+			});
 		}),
 });

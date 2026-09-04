@@ -70,9 +70,7 @@ export default async function MinimalPage() {
 					</CardDescription>
 				</CardContent>
 			</Card>
-			<RefetchOverview lastEvent={activity?.lastEvent} />
+			<RefetchOverview lastEvent={activity?.lastEvent} refreshKey={JSON.stringify({ timeRange, biggestUnit })} />
 		</main>
 	);
 }
-
-

@@ -34,7 +34,7 @@ function getCurrentTime(timeZone: string) {
 }
 
 function createDistributionChart({ average, currentTime, historical, historicalDates }: DistributionData) {
-	return defineChart({
+	return defineChart(() => ({
 		focus: focusDisabled,
 		marks: [
 			lineY(historical, {
@@ -70,16 +70,18 @@ function createDistributionChart({ average, currentTime, historical, historicalD
 				dy: -10,
 			}),
 		],
-		x: {
-			scale: scaleLinear,
-			axis: {
-				ticks: { values: hourTicks, format: formatTime },
+		scales: {
+			x: {
+				scale: scaleLinear,
+				axis: {
+					ticks: { values: hourTicks, format: formatTime },
+				},
 			},
-		},
-		y: {
-			axis: { ticks: false },
-			scale: scaleSqrt,
-			domain: [0, 1.05],
+			y: {
+				axis: false as const,
+				scale: scaleSqrt,
+				domain: [0, 1.05],
+			},
 		},
 		color: {
 			domain: historicalDates,
@@ -89,7 +91,7 @@ function createDistributionChart({ average, currentTime, historical, historicalD
 			}),
 		},
 		margin: { top: 8, bottom: 28 },
-	});
+	}));
 }
 
 export default function DistributionChart({ data }: { data: DistributionData }) {
@@ -132,5 +134,3 @@ export default function DistributionChart({ data }: { data: DistributionData }) 
 		/>
 	);
 }
-
-
