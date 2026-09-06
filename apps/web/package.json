@@ -1,6 +1,6 @@
 {
 	"name": "@startime/web",
-	"version": "0.2.19",
+	"version": "0.2.23",
 	"private": true,
 	"type": "module",
 	"dependencies": {
