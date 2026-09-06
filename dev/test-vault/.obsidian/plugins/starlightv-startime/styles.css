@@ -1,0 +1,120 @@
+/*
+
+This CSS file will be included with your plugin, and
+available in the app when your plugin is enabled.
+
+If your plugin does not need CSS, delete this file.
+
+*/
+
+.startime-status-bar-item {
+	cursor: pointer;
+	&:hover {
+		background: var(--background-modifier-hover);
+	}
+}
+
+.modal.startime-activity-log-modal {
+	width: min(900px, 90vw);
+	height: min(760px, 85vh);
+}
+
+.startime-activity-log-modal .modal-content {
+	display: flex;
+	min-height: 0;
+	flex-direction: column;
+}
+
+.startime-log-toolbar {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.4rem;
+	margin-bottom: 1rem;
+}
+
+.startime-log-filter {
+	min-width: 5rem;
+}
+
+.startime-log-search {
+	width: 12rem;
+}
+
+.startime-log-output {
+	flex: 1;
+	min-height: 12rem;
+	overflow: auto;
+	padding: 1rem;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-s);
+	background: var(--background-primary);
+	font-family: var(--font-monospace);
+	font-size: var(--font-small);
+	white-space: pre-wrap;
+}
+
+.startime-log-line {
+	line-height: 1.5;
+}
+
+.startime-log-timestamp {
+	color: var(--text-faint);
+}
+
+.startime-log-category {
+	font-weight: var(--font-semibold);
+}
+
+.startime-log-category--loop {
+	color: var(--color-blue);
+}
+
+.startime-log-category--plugin {
+	color: var(--color-purple);
+}
+
+.startime-log-category--auth {
+	color: var(--color-green);
+}
+
+.startime-log-category--api {
+	color: var(--color-cyan);
+}
+
+.startime-log-category--event {
+	color: var(--color-yellow);
+}
+.startime-log-category--net {
+	color: var(--color-pink);
+}
+
+.startime-log-line.is-info {
+	color: var(--text-muted);
+}
+
+.startime-log-line.is-success {
+	color: var(--color-green);
+}
+
+.startime-log-line.is-warning {
+	color: var(--color-orange);
+}
+
+.startime-log-line.is-error {
+	color: var(--color-red);
+}
+
+.startime-log-footer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1rem;
+}
+
+.startime-log-state-control {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-right: auto;
+}

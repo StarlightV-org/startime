@@ -1,0 +1,9 @@
+{
+  "codeTimeToken": "",
+  "apiUrl": "https://localhost:3000",
+  "projectOveride": "",
+  "throttleTelemetry": 1,
+  "updateInterval": 1,
+  "pauseUpdateOnInactivity": true,
+  "pluginEnabled": true
+}
