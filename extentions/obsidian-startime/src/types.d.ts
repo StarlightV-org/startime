@@ -1,5 +1,8 @@
 import type { App } from 'obsidian';
 
+import type { inputEventLogSchema } from '@startime/zod';
+import type z from 'zod';
+
 export type SettingsApp = App & {
 	setting: {
 		open(): void;
@@ -23,6 +26,8 @@ export interface UserData {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export type EventPayload = Extract<z.infer<typeof inputEventLogSchema>, { eventTime?: Date | undefined }>;
 
 export interface Payload {
 	project: string;

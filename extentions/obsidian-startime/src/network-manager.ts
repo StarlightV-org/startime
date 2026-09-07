@@ -2,6 +2,7 @@ import type { App } from 'obsidian';
 import type StarTimePlugin from './main';
 import type { ActivityLogModal } from './activity-log';
 import { Platform, request, type TAbstractFile, type TFile } from 'obsidian';
+import { Stat } from './types';
 
 export class NetworkManager {
 	private plugin: StarTimePlugin;
@@ -74,5 +75,37 @@ export class NetworkManager {
 		// this.userData = typeof response === 'string' ? (JSON.parse(response) as UserData) : null;
 		this.activityLogModal.appendLine('[AUTH]: Successful', 'success');
 		return true;
+	}
+
+	private async fetchCurrentCodeTime(): Promise<void> {
+		const url = new URL(`/v3/users/self/stats`, this.plugin.settings.apiUrl);
+		url.searchParams.set('by', 'workspace');
+		url.searchParams.set('unit', 'days');
+		url.searchParams.set('limit', '1');
+		url.searchParams.set('project', this.plugin.starTime.project);
+
+		const response = await request({
+			url: url.toString(),
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'x-api-key': `${this.plugin.starTime.getTokenFromSettings()}`,
+				'User-Agent': 'obsidian-codetime',
+			},
+		}).catch((e: Error) => {
+			this.activityLogModal.appendLine(`[API]: Fetch failed - ${e?.message ?? 'Unknown error'}`, 'error');
+			return null;
+		});
+
+		if (!response) {
+			return;
+		}
+		const responseJson: Stat = JSON.parse(response) as Stat;
+		this.plugin.starTime.codeTimeData = { minutes: responseJson.data[0]?.duration ?? 0 };
+		this.activityLogModal.appendLine(
+			`[API]: Data fetched - ${this.convertMinutes(this.codeTimeData.minutes)} (${this.codeTimeData.minutes} minutes)`,
+			'success',
+		);
+		this.syncStatusBar();
 	}
 }

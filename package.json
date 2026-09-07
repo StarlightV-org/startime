@@ -33,6 +33,7 @@
 		"@startime/env": "workspace:*",
 		"@startime/print": "workspace:*",
 		"@startime/service-auth": "workspace:*",
+		"@startime/zod": "workspace:*",
 		"@t3-oss/env-core": "^0.13.11",
 		"@tanstack/charts": "^0.16.0",
 		"@tanstack/react-form": "^1.33.5",

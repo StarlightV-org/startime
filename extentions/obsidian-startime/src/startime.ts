@@ -6,16 +6,16 @@ import type { Payload, SettingsApp, Stat } from './types';
 
 export class StarTime {
 	public isActive: boolean = this.plugin.settings.pluginEnabled;
-	private project: string =
+	public project: string =
 		this.plugin.settings.projectOveride !== '' ? this.plugin.settings.projectOveride : this.plugin.app.vault.getName();
 	private readonly statusBarItemEl: HTMLElement;
 	public readonly activityLogModal: ActivityLogModal;
 	public state: 'loading' | 'connected' | 'disconnected' | 'no-token' | 'invalid-token' | 'error' | 'disabled' =
 		'disconnected';
-	private codeTimeData: { minutes: number } | null = null;
-	private lastTrackedAt: number | null = null;
-	private lastEventTime: number = 0;
-	private intervalId: number | null = null;
+	public codeTimeData: { minutes: number } | null = null;
+	public lastTrackedAt: number | null = null;
+	public lastEventTime: number = 0;
+	public intervalId: number | null = null;
 
 	constructor(
 		private readonly plugin: StarTimePlugin,
@@ -286,39 +286,6 @@ export class StarTime {
 			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? 'Unknown error'}`, 'error');
 			return null;
 		});
-	}
-
-	private async fetchCurrentCodeTime(): Promise<void> {
-		const url = new URL(`/v3/users/self/stats`, this.plugin.settings.apiUrl);
-		url.searchParams.set('by', 'workspace');
-		url.searchParams.set('unit', 'days');
-		url.searchParams.set('limit', '1');
-		url.searchParams.set('project', this.project);
-
-		const response = await request({
-			url: url.toString(),
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${this.getTokenFromSettings()}`,
-				'User-Agent': 'obsidian-codetime',
-			},
-		}).catch((e: Error) => {
-			this.activityLogModal.appendLine(`[API]: Fetch failed - ${e?.message ?? 'Unknown error'}`, 'error');
-			// void this.reload();
-			return null;
-		});
-
-		if (!response) {
-			return;
-		}
-		const responseJson: Stat = JSON.parse(response) as Stat;
-		this.codeTimeData = { minutes: responseJson.data[0]?.duration ?? 0 };
-		this.activityLogModal.appendLine(
-			`[API]: Data fetched - ${this.convertMinutes(this.codeTimeData.minutes)} (${this.codeTimeData.minutes} minutes)`,
-			'success',
-		);
-		this.syncStatusBar();
 	}
 
 	public syncStatusBar(): void {
