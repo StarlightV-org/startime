@@ -2,7 +2,8 @@ import { ViewPlugin, type ViewUpdate } from "@codemirror/view";
 import { Platform, request, type TAbstractFile, type TFile } from "obsidian";
 import { ActivityLogModal } from "./activity-log";
 import type StarTimePlugin from "./main";
-import type { Payload, SettingsApp } from "./types";
+import type { EventPayload, SettingsApp } from "./types";
+import { gzipSync, strToU8 } from "fflate";
 
 export class StarTime {
 	public isActive: boolean = this.plugin.settings.pluginEnabled;
@@ -110,11 +111,11 @@ export class StarTime {
 		}
 
 		this.activityLogModal.appendLine("[AUTH]: Token - configured");
-		if (!(await this.plugin.networkManager.testToken()) && this.plugin.networkManager.networkState) {
+		if (!(await this.plugin.networkManager.testToken()) && this.plugin.networkManager.isOnline) {
 			return;
 		}
 
-		if (this.plugin.networkManager.networkState) {
+		if (this.plugin.networkManager.isOnline) {
 			this.activityLogModal.appendLine("[API]: Connecting");
 
 			this.state = "connected";
@@ -126,10 +127,12 @@ export class StarTime {
 
 		await this.startLoop();
 		this.listenFor();
+
+		await this.sendBatch();
 	}
 
 	public async startLoop(): Promise<void> {
-		if (!this.plugin.networkManager.networkState) {
+		if (!this.plugin.networkManager.isOnline) {
 			return;
 		}
 		this.activityLogModal.appendLine("[LOOP]: Started");
@@ -256,11 +259,11 @@ export class StarTime {
 		};
 		const os = getOs();
 
-		const payload: Payload = {
+		const payload: EventPayload = {
 			editor: "Obsidian",
 			language: file && "extension" in file ? file.extension : "unknown",
 			project: this.project,
-			eventTime: Date.now(),
+			eventTime: new Date(),
 			fileHash: newName,
 			platform: os,
 		};
@@ -270,23 +273,57 @@ export class StarTime {
 		this.activityLogModal.appendLine(`[EVENT]: Sending - ${event} - ${file?.name ?? `unknown`}`, "success");
 
 		this.lastEventTime = Date.now();
-		if (this.intervalId === null) {
-			void this.startLoop();
-		}
 
-		await request({
-			url: url.toString(),
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"x-api-key": `${this.getTokenFromSettings()}`,
-				"User-Agent": "obsidian-codetime",
-			},
-			body: JSON.stringify(payload),
-		}).catch((e: Error) => {
-			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? "Unknown error"}`, "error");
-			return null;
-		});
+		if (this.plugin.networkManager.isOnline) {
+			if (this.intervalId === null) {
+				void this.startLoop();
+			}
+
+			await request({
+				url: url.toString(),
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"x-api-key": `${this.getTokenFromSettings()}`,
+					"User-Agent": "obsidian-codetime",
+				},
+				body: JSON.stringify(payload),
+			}).catch((e: Error) => {
+				this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? "Unknown error"}`, "error");
+				return null;
+			});
+		} else {
+			await this.offlineTrack(payload, { file, event });
+		}
+	}
+
+	private async offlineTrack(
+		eventPayload: EventPayload,
+		data: { file: TFile | TAbstractFile | undefined | null; event: string },
+	): Promise<void> {
+		this.activityLogModal.appendLine(`[EVENT]: Offline - ${data.event} - ${data.file?.name ?? `unknown`}`, "info");
+
+		await this.plugin.eventStore.append(eventPayload);
+
+		// this.activityLogModal.appendLine(`[OFFLINE]: ${eventPayload.event} - ${eventPayload.file?.name ?? `unknown`}`, "info");
+	}
+
+	public async sendBatch(): Promise<void> {
+		const events = await this.plugin.eventStore.getEvents();
+		if (events.length === 0) return;
+
+		const eventString = JSON.stringify(events);
+		const uncompressedBody = strToU8(eventString);
+		const compressedBody = gzipSync(uncompressedBody);
+
+		const savedBytes = uncompressedBody.byteLength - compressedBody.byteLength;
+		const savedPercent = (savedBytes / uncompressedBody.byteLength) * 100;
+
+		Print.Debug(
+			`Batch size: ${uncompressedBody.byteLength} B -> ` +
+				`${compressedBody.byteLength} B ` +
+				`(${savedBytes} B saved, ${savedPercent.toFixed(1)}%)`,
+		);
 	}
 
 	public syncStatusBar(): void {

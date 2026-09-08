@@ -1,11 +1,13 @@
-import { Plugin } from 'obsidian';
-import { StarTime } from './startime';
-import { type StarTimePluginSettings, StarTimeSettingTab, DEFAULT_SETTINGS } from './settings';
-import '@startime/print';
-import { NetworkManager } from './network-manager';
-import { ActivityLogModal } from './activity-log';
+import { Plugin } from "obsidian";
+import { StarTime } from "./startime";
+import { type StarTimePluginSettings, StarTimeSettingTab, DEFAULT_SETTINGS } from "./settings";
+import "@startime/print";
+import { NetworkManager } from "./network-manager";
+import { ActivityLogModal } from "./activity-log";
+import { EventStore } from "./event-store";
+import { EventPayload } from "./types";
 Print.Setup({
-	prefix: 'StarTime',
+	prefix: "StarTime",
 });
 
 export default class StarTimePlugin extends Plugin {
@@ -13,9 +15,11 @@ export default class StarTimePlugin extends Plugin {
 	starTime: StarTime = null as unknown as StarTime;
 	networkManager: NetworkManager = null as unknown as NetworkManager;
 	activityLogModal: ActivityLogModal = null as unknown as ActivityLogModal;
+	eventStore: EventStore = null as unknown as EventStore;
 
 	async onload() {
 		await this.loadSettings();
+		this.eventStore = new EventStore(this.app.vault.adapter, this.manifest.dir);
 
 		this.activityLogModal = new ActivityLogModal(this.app, this);
 		this.networkManager = new NetworkManager(this);

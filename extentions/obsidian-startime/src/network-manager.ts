@@ -6,7 +6,7 @@ import { Stat } from "./types";
 
 export class NetworkManager {
 	private plugin: StarTimePlugin;
-	public networkState: boolean = false;
+	public isOnline: boolean = false;
 	private activityLogModal: ActivityLogModal;
 
 	public tokenValid: boolean = false;
@@ -17,7 +17,7 @@ export class NetworkManager {
 	}
 
 	configure() {
-		this.networkState = navigator.onLine;
+		this.isOnline = navigator.onLine;
 
 		this.activityLogModal.appendLine(`[NET]: ${navigator.onLine ? "Online" : "Offline"}`);
 
@@ -29,17 +29,17 @@ export class NetworkManager {
 	}
 
 	onNetworkChange() {
-		this.networkState = navigator.onLine;
+		this.isOnline = navigator.onLine;
 
 		const onlineMessage = "[NET]: You are online, events will be synced with the server.";
 		const offlineMessage = "[NET]: You are offline, events will be saved locally and synced when you are back online.";
 
 		this.activityLogModal.appendLine(
-			`[NET]: ${this.networkState ? "Online" : "Offline"}`,
-			this.networkState ? "success" : "warning",
+			`[NET]: ${this.isOnline ? "Online" : "Offline"}`,
+			this.isOnline ? "success" : "warning",
 		);
 
-		if (this.networkState) {
+		if (this.isOnline) {
 			this.plugin.starTime.state = "connected";
 			this.activityLogModal.appendLine(onlineMessage, "success");
 			void this.plugin.starTime.startLoop();
@@ -53,7 +53,7 @@ export class NetworkManager {
 	}
 
 	public async testToken(): Promise<boolean> {
-		if (!this.networkState) {
+		if (!this.isOnline) {
 			this.activityLogModal.appendLine("[AUTH]: No network, skipping test", "warning");
 			return false;
 		}
@@ -113,10 +113,7 @@ export class NetworkManager {
 		}
 		const responseJson: Stat = JSON.parse(response) as Stat;
 		this.plugin.starTime.codeTimeData = { time: responseJson.time ?? "" };
-		// this.activityLogModal.appendLine(
-		// 	`[API]: Data fetched - ${this.convertMinutes(this.codeTimeData.minutes)} (${this.codeTimeData.minutes} minutes)`,
-		// 	'success',
-		// );
+		this.activityLogModal.appendLine(`[LOOP]: Data fetched - ${responseJson.time}`, "info");
 		this.plugin.starTime.syncStatusBar();
 	}
 }

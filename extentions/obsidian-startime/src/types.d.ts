@@ -29,15 +29,6 @@ export interface UserData {
 
 export type EventPayload = Extract<z.infer<typeof inputEventLogSchema>, { eventTime?: Date | undefined }>;
 
-export interface Payload {
-	editor: string;
-	language: string;
-	project: string;
-	eventTime: number;
-	fileHash: string;
-	platform: string;
-}
-
 export interface Stat {
 	time: `${number}h ${number}m`;
 }
