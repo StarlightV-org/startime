@@ -1,7 +1,7 @@
-import type { App } from 'obsidian';
+import type { App } from "obsidian";
 
-import type { inputEventLogSchema } from '@startime/zod';
-import type z from 'zod';
+import type { inputEventLogSchema } from "@startime/zod";
+import type z from "zod";
 
 export type SettingsApp = App & {
 	setting: {
@@ -30,34 +30,24 @@ export interface UserData {
 export type EventPayload = Extract<z.infer<typeof inputEventLogSchema>, { eventTime?: Date | undefined }>;
 
 export interface Payload {
-	project: string;
-	language: string;
-	relativeFile: string;
-	absoluteFile: string;
 	editor: string;
-	platform: string;
+	language: string;
+	project: string;
 	eventTime: number;
-	eventType: string;
-	platformArch: string;
-	gitOrigin: string;
-	gitBranch: string;
-	operationType: string;
+	fileHash: string;
+	platform: string;
 }
 
 export interface Stat {
-	data: Array<{
-		duration: number;
-		time: string;
-		by: string;
-	}>;
+	time: `${number}h ${number}m`;
 }
 
 export interface NetworkInformation extends EventTarget {
 	readonly downlink: number;
-	readonly effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
+	readonly effectiveType: "slow-2g" | "2g" | "3g" | "4g";
 	readonly rtt: number;
 	readonly saveData: boolean;
-	onchange: () => void;
+	onchange: () => void | Promise<void>;
 	type?: string;
 }
 
