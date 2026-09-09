@@ -43,6 +43,7 @@ export class NetworkManager {
 			this.plugin.starTime.state = "connected";
 			this.activityLogModal.appendLine(onlineMessage, "success");
 			void this.plugin.starTime.startLoop();
+			void this.plugin.starTime.sendBatch();
 		} else {
 			this.plugin.starTime.stopLoop();
 			this.plugin.starTime.state = "offline";

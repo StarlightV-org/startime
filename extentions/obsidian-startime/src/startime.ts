@@ -3,7 +3,7 @@ import { Platform, request, type TAbstractFile, type TFile } from "obsidian";
 import { ActivityLogModal } from "./activity-log";
 import type StarTimePlugin from "./main";
 import type { EventPayload, SettingsApp } from "./types";
-import { gzipSync, strToU8 } from "fflate";
+import { gzipSync, strToU8, zlibSync } from "fflate";
 
 export class StarTime {
 	public isActive: boolean = this.plugin.settings.pluginEnabled;
@@ -268,16 +268,14 @@ export class StarTime {
 			platform: os,
 		};
 
-		const url = new URL(`/api/users/event-log`, this.plugin.settings.apiUrl);
-
-		this.activityLogModal.appendLine(`[EVENT]: Sending - ${event} - ${file?.name ?? `unknown`}`, "success");
-
 		this.lastEventTime = Date.now();
 
 		if (this.plugin.networkManager.isOnline) {
 			if (this.intervalId === null) {
 				void this.startLoop();
 			}
+			this.activityLogModal.appendLine(`[EVENT]: Sending - ${event} - ${file?.name ?? `unknown`}`, "success");
+			const url = new URL(`/api/users/event-log`, this.plugin.settings.apiUrl);
 
 			await request({
 				url: url.toString(),
@@ -309,13 +307,15 @@ export class StarTime {
 	}
 
 	public async sendBatch(): Promise<void> {
+		if (!this.plugin.networkManager.isOnline) return;
+
 		const events = await this.plugin.eventStore.getEvents();
 		if (events.length === 0) return;
 
 		const eventString = JSON.stringify(events);
 		const uncompressedBody = strToU8(eventString);
-		const compressedBody = gzipSync(uncompressedBody);
-
+		const compressedBody = zlibSync(uncompressedBody, { level: 5 });
+		const requestBody = compressedBody.slice().buffer;
 		const savedBytes = uncompressedBody.byteLength - compressedBody.byteLength;
 		const savedPercent = (savedBytes / uncompressedBody.byteLength) * 100;
 
@@ -324,6 +324,22 @@ export class StarTime {
 				`${compressedBody.byteLength} B ` +
 				`(${savedBytes} B saved, ${savedPercent.toFixed(1)}%)`,
 		);
+		const url = new URL(`/api/users/event-log/batch`, this.plugin.settings.apiUrl);
+
+		await request({
+			url: url.toString(),
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"x-api-key": `${this.getTokenFromSettings()}`,
+				"User-Agent": "obsidian-startime",
+				"Content-Encoding": "zlib",
+			},
+			body: requestBody,
+		}).catch((e: Error) => {
+			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? "Unknown error"}`, "error");
+			return null;
+		});
 	}
 
 	public syncStatusBar(): void {
