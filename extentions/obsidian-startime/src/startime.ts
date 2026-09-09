@@ -3,7 +3,7 @@ import { Platform, request, type TAbstractFile, type TFile } from "obsidian";
 import { ActivityLogModal } from "./activity-log";
 import type StarTimePlugin from "./main";
 import type { EventPayload, SettingsApp } from "./types";
-import { gzipSync, strToU8, zlibSync } from "fflate";
+import { strToU8, zlibSync } from "fflate";
 
 export class StarTime {
 	public isActive: boolean = this.plugin.settings.pluginEnabled;
@@ -18,6 +18,8 @@ export class StarTime {
 	public lastTrackedAt: number | null = null;
 	public lastEventTime: number = 0;
 	public intervalId: number | null = null;
+
+	public drainAt = 25;
 
 	constructor(
 		private readonly plugin: StarTimePlugin,
@@ -274,6 +276,18 @@ export class StarTime {
 			if (this.intervalId === null) {
 				void this.startLoop();
 			}
+
+			if (this.plugin.settings.batchEvents) {
+				this.activityLogModal.appendLine(`[EVENT]: Storing for Batch - ${event} - ${file?.name ?? `unknown`}`, "info");
+
+				await this.offlineTrack(payload, { file, event });
+				const count = await this.plugin.eventStore.getEventsCount();
+				if (count >= this.drainAt) {
+					void this.sendBatch();
+				}
+				return;
+			}
+
 			this.activityLogModal.appendLine(`[EVENT]: Sending - ${event} - ${file?.name ?? `unknown`}`, "success");
 			const url = new URL(`/api/users/event-log`, this.plugin.settings.apiUrl);
 
@@ -291,6 +305,8 @@ export class StarTime {
 				return null;
 			});
 		} else {
+			this.activityLogModal.appendLine(`[EVENT]: Offline - ${event} - ${file?.name ?? `unknown`}`, "info");
+
 			await this.offlineTrack(payload, { file, event });
 		}
 	}
@@ -299,8 +315,6 @@ export class StarTime {
 		eventPayload: EventPayload,
 		data: { file: TFile | TAbstractFile | undefined | null; event: string },
 	): Promise<void> {
-		this.activityLogModal.appendLine(`[EVENT]: Offline - ${data.event} - ${data.file?.name ?? `unknown`}`, "info");
-
 		await this.plugin.eventStore.append(eventPayload);
 
 		// this.activityLogModal.appendLine(`[OFFLINE]: ${eventPayload.event} - ${eventPayload.file?.name ?? `unknown`}`, "info");
@@ -309,37 +323,44 @@ export class StarTime {
 	public async sendBatch(): Promise<void> {
 		if (!this.plugin.networkManager.isOnline) return;
 
-		const events = await this.plugin.eventStore.getEvents();
+		const events = await this.plugin.eventStore.drain();
 		if (events.length === 0) return;
 
-		const eventString = JSON.stringify(events);
-		const uncompressedBody = strToU8(eventString);
-		const compressedBody = zlibSync(uncompressedBody, { level: 5 });
-		const requestBody = compressedBody.slice().buffer;
-		const savedBytes = uncompressedBody.byteLength - compressedBody.byteLength;
-		const savedPercent = (savedBytes / uncompressedBody.byteLength) * 100;
+		try {
+			const eventString = JSON.stringify(events);
+			const uncompressedBody = strToU8(eventString);
+			const compressedBody = zlibSync(uncompressedBody, { level: 5 });
+			const requestBody = compressedBody.slice().buffer;
+			const savedBytes = uncompressedBody.byteLength - compressedBody.byteLength;
+			const savedPercent = (savedBytes / uncompressedBody.byteLength) * 100;
 
-		Print.Debug(
-			`Batch size: ${uncompressedBody.byteLength} B -> ` +
-				`${compressedBody.byteLength} B ` +
-				`(${savedBytes} B saved, ${savedPercent.toFixed(1)}%)`,
-		);
-		const url = new URL(`/api/users/event-log/batch`, this.plugin.settings.apiUrl);
+			Print.Debug(
+				`Batch size: ${uncompressedBody.byteLength} B -> ` +
+					`${compressedBody.byteLength} B ` +
+					`(${savedBytes} B saved, ${savedPercent.toFixed(1)}%)`,
+			);
+			const url = new URL(`/api/users/event-log/batch`, this.plugin.settings.apiUrl);
 
-		await request({
-			url: url.toString(),
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"x-api-key": `${this.getTokenFromSettings()}`,
-				"User-Agent": "obsidian-startime",
-				"Content-Encoding": "zlib",
-			},
-			body: requestBody,
-		}).catch((e: Error) => {
-			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? "Unknown error"}`, "error");
-			return null;
-		});
+			await request({
+				url: url.toString(),
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"x-api-key": `${this.getTokenFromSettings()}`,
+					"User-Agent": "obsidian-startime",
+					"Content-Encoding": "zlib",
+				},
+				body: requestBody,
+			});
+		} catch (e) {
+			await this.plugin.eventStore.restore(events);
+
+			const message = e instanceof Error ? e.message : "Unknown error";
+			Print.Error(`Batch send failed. Restored ${events.length} events: ${message}`);
+			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${message}`, "error");
+		}
+
+		void this.plugin.networkManager.fetchCurrentCodeTime();
 	}
 
 	public syncStatusBar(): void {

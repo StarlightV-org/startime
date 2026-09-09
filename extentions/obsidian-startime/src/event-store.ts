@@ -32,10 +32,56 @@ export class EventStore {
 		return JSON.parse(content) as EventPayload[];
 	}
 
+	private enqueue<T>(operation: () => Promise<T>): Promise<T> {
+		const result = this.writeQueue.then(operation);
+
+		// Keep processing later file operations when this operation fails.
+		this.writeQueue = result.then(
+			() => undefined,
+			() => undefined,
+		);
+
+		return result;
+	}
+
+	drain(): Promise<EventPayload[]> {
+		return this.enqueue(async () => {
+			await this.ensureExists();
+
+			const content = await this.adapter.read(this.path);
+			const events = JSON.parse(content) as EventPayload[];
+
+			await this.adapter.write(this.path, "[]\n");
+
+			return events;
+		});
+	}
+
+	restore(events: EventPayload[]): Promise<void> {
+		if (events.length === 0) return Promise.resolve();
+
+		return this.enqueue(async () => {
+			await this.ensureExists();
+
+			const content = await this.adapter.read(this.path);
+			const queuedEvents = JSON.parse(content) as EventPayload[];
+
+			await this.adapter.write(this.path, `${JSON.stringify([...events, ...queuedEvents], null, "\t")}\n`);
+		});
+	}
+
+	getEventsCount(): Promise<number> {
+		return this.enqueue(async () => {
+			await this.ensureExists();
+
+			const content = await this.adapter.read(this.path);
+			const events = JSON.parse(content) as EventPayload[];
+			return events.length;
+		});
+	}
+
 	append(event: EventPayload): Promise<void> {
-		// Serialize read-modify-write operations. Without this, simultaneous
-		// calls could overwrite each other's events.
-		this.writeQueue = this.writeQueue.then(async () => {
+		return this.enqueue(async () => {
 			await this.ensureExists();
 
 			const content = await this.adapter.read(this.path);
@@ -45,7 +91,5 @@ export class EventStore {
 
 			await this.adapter.write(this.path, `${JSON.stringify(events, null, "\t")}\n`);
 		});
-
-		return this.writeQueue;
 	}
 }

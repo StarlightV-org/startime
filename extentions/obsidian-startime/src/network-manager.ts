@@ -1,8 +1,7 @@
-import type { App } from "obsidian";
 import type StarTimePlugin from "./main";
 import type { ActivityLogModal } from "./activity-log";
-import { Platform, request, type TAbstractFile, type TFile } from "obsidian";
-import { Stat } from "./types";
+import { request } from "obsidian";
+import type { Stat } from "./types";
 
 export class NetworkManager {
 	private plugin: StarTimePlugin;
@@ -59,7 +58,7 @@ export class NetworkManager {
 			return false;
 		}
 
-		const url = new URL(`/api/users/self/`, this.plugin.settings.apiUrl);
+		const url = new URL(`/api/users/self`, this.plugin.settings.apiUrl);
 
 		this.activityLogModal.appendLine("[AUTH]: Testing");
 
