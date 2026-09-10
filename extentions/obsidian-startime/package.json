@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-startime",
-	"version": "1.0.21",
+	"version": "1.0.0",
 	"main": "main.js",
 	"description": "This is a plugin that integrates with StarTime to track your writing activity.",
 	"keywords": [],
