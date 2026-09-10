@@ -1,0 +1,26 @@
+[
+	{
+		"editor": "Obsidian",
+		"language": "md",
+		"project": "test-vault",
+		"eventTime": "2026-09-09T19:20:06.852Z",
+		"fileHash": "2b7ad73ebf162d31556c2d70bd73abdd978a094ad290fd5640b38b35773e4797",
+		"platform": "Windows 11"
+	},
+	{
+		"editor": "Obsidian",
+		"language": "md",
+		"project": "test-vault",
+		"eventTime": "2026-09-09T19:37:28.978Z",
+		"fileHash": "2b7ad73ebf162d31556c2d70bd73abdd978a094ad290fd5640b38b35773e4797",
+		"platform": "Windows 11"
+	},
+	{
+		"editor": "Obsidian",
+		"language": "unknown",
+		"project": "test-vault",
+		"eventTime": "2026-09-09T19:37:30.070Z",
+		"fileHash": "b6c8b4be5bbf89299dfad35085d237ec89e9bcb58c4cdf1d208cf9725e7c74d1",
+		"platform": "Windows 11"
+	}
+]
