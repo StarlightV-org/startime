@@ -64,7 +64,7 @@ export const accounts = createTable("accounts", {
 		.text("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
-	issuer: t.text("issuer").notNull(),
+	issuer: t.text("issuer"),
 	accountId: t.text("account_id").notNull(),
 	providerId: t.text("provider_id").notNull(),
 	accessToken: t.text("access_token"),
