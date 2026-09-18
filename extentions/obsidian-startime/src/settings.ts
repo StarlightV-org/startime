@@ -112,7 +112,7 @@ export class StarTimeSettingTab extends PluginSettingTab {
 		return [
 			{
 				type: "group",
-				heading: "CodeTime",
+				heading: "StarTime",
 				extraButtons: [
 					async (button) => {
 						button.setIcon("reset");
@@ -167,21 +167,6 @@ export class StarTimeSettingTab extends PluginSettingTab {
 							type: "text",
 							key: "projectOveride",
 							defaultValue: "",
-						},
-					},
-				],
-			},
-			{
-				type: "group",
-				heading: "Privacy",
-				items: [
-					{
-						name: "Hide File Names",
-						desc: "Hide file names in telemetry data.",
-						control: {
-							type: "toggle",
-							key: "hideFileNames",
-							defaultValue: true,
 						},
 					},
 				],
