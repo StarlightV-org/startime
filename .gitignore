@@ -1,6 +1,7 @@
 node_modules/
 .next/
 dist/
+!extentions/obsidian-startime/dist/
 target/
 .env
 .env.*

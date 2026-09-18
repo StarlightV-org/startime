@@ -1,0 +1,436 @@
+import { ViewPlugin, type ViewUpdate } from "@codemirror/view";
+import { Platform, request, type TAbstractFile, type TFile } from "obsidian";
+import { ActivityLogModal } from "./activity-log";
+import type StarTimePlugin from "./main";
+import type { EventPayload, SettingsApp } from "./types";
+import { strToU8, zlibSync } from "fflate";
+
+export class StarTime {
+	public isActive: boolean = this.plugin.settings.pluginEnabled;
+	public project: string =
+		this.plugin.settings.projectOveride !== "" ? this.plugin.settings.projectOveride : this.plugin.app.vault.getName();
+	private readonly statusBarItemEl: HTMLElement;
+	public readonly activityLogModal: ActivityLogModal;
+	public state:
+		"loading" | "connected" | "disconnected" | "no-token" | "invalid-token" | "error" | "disabled" | "offline" =
+		"disconnected";
+	public codeTimeData: { time: string } | null = null;
+	public lastTrackedAt: number | null = null;
+	public lastEventTime: number = 0;
+	public intervalId: number | null = null;
+
+	public drainAt = 25;
+
+	constructor(
+		private readonly plugin: StarTimePlugin,
+		activityLogModal: ActivityLogModal,
+	) {
+		this.statusBarItemEl = plugin.addStatusBarItem();
+		this.activityLogModal = activityLogModal;
+	}
+
+	async destroy(): Promise<void> {
+		// eslint-disable-next-line eslint-comments/no-restricted-disable -- allowed
+		// eslint-disable-next-line obsidianmd/ui/sentence-case -- The name of the service is written in PascalCase
+		this.statusBarItemEl.setText("StarTime: Disconnected");
+		this.state = "disconnected";
+		this.stopLoop();
+		// this.activityLogModal.close();
+	}
+
+	async reload(): Promise<void> {
+		await this.configure();
+	}
+
+	async configure(): Promise<void> {
+		await this.destroy();
+
+		this.project =
+			this.plugin.settings.projectOveride !== "" ? this.plugin.settings.projectOveride : this.plugin.app.vault.getName();
+
+		// Set the status bar click event once, so it doesn't get re-registered every time
+		this.statusBarItemEl.onClickEvent(() => {
+			if (this.state === "invalid-token" || this.state === "no-token") {
+				this.openSettings();
+			} else {
+				this.activityLogModal.open();
+			}
+		});
+		this.statusBarItemEl.classList.add("codetime-status-bar-item");
+
+		// MARK: Commands
+		this.plugin.addCommand({
+			id: "open-codetime-dashboard",
+			name: "Open dashboard in browser",
+			callback: () => {
+				const url = new URL("/dashboard", this.plugin.settings.apiUrl.toString().replace("api.", ""));
+				window.open(url.toString(), "_blank");
+			},
+		});
+		this.plugin.addCommand({
+			id: "open-startime-log",
+			name: "Open activity log",
+			callback: () => {
+				this.activityLogModal.open();
+			},
+		});
+
+		if (!this.isActive) {
+			this.state = "disabled";
+			this.syncStatusBar();
+			this.activityLogModal.appendLine("[PLUGIN]: Disabled");
+			this.activityLogModal.appendLine("[PLUGIN]: The plugin is currently disabled.");
+			return;
+		}
+
+		this.state = "loading";
+		this.syncStatusBar();
+		this.activityLogModal.appendLine(`[PLUGIN]: Vault - ${this.project}`);
+		this.activityLogModal.appendLine(
+			`[PLUGIN]: Project Override - ${this.plugin.settings.projectOveride === "" ? "Off" : "On"}`,
+			"warning",
+		);
+		// this.activityLogModal.appendLine(
+		// 	`[PLUGIN]: Filenames - ${this.plugin.settings.hideFileNames ? 'Hidden' : 'Visible'}`,
+		// 	!this.plugin.settings.hideFileNames ? 'warning' : 'success',
+		// );
+		this.activityLogModal.appendLine(
+			`[PLUGIN]: Throttle Telemetry - ${this.plugin.settings.throttleTelemetry} seconds`,
+			"info",
+		);
+		this.activityLogModal.appendLine(
+			`[PLUGIN]: Update Interval - ${this.plugin.settings.updateInterval} minutes`,
+			"info",
+		);
+
+		const token = this.getTokenFromSettings();
+
+		if (!token) {
+			this.state = "no-token";
+			this.syncStatusBar();
+			this.activityLogModal.appendLine("[AUTH]: Token - missing", "error");
+			return;
+		}
+
+		this.activityLogModal.appendLine("[AUTH]: Token - configured");
+		if (!(await this.plugin.networkManager.testToken()) && this.plugin.networkManager.isOnline) {
+			return;
+		}
+
+		if (this.plugin.networkManager.isOnline) {
+			this.activityLogModal.appendLine("[API]: Connecting");
+
+			this.state = "connected";
+		} else {
+			this.activityLogModal.appendLine("[PLUGIN]: Running in offline mode. Data will sync when online again.");
+			this.state = "offline";
+		}
+		this.syncStatusBar();
+
+		await this.startLoop();
+		this.listenFor();
+
+		await this.sendBatch();
+	}
+
+	public async startLoop(): Promise<void> {
+		if (!this.plugin.networkManager.isOnline) {
+			return;
+		}
+		this.activityLogModal.appendLine("[LOOP]: Started");
+		await this.plugin.networkManager.fetchCurrentCodeTime();
+		this.syncStatusBar();
+		this.intervalId = this.plugin.registerInterval(
+			window.setInterval(
+				async () => {
+					if (this.plugin.settings.pauseUpdateOnInactivity) {
+						const now = Date.now();
+						if (now - this.lastEventTime > this.plugin.settings.updateInterval * 60 * 1000) {
+							this.activityLogModal.appendLine("[LOOP]: No activity - stopping");
+							this.stopLoop();
+							return;
+						}
+					}
+
+					this.activityLogModal.appendLine("[LOOP]: Fetching data");
+					await this.plugin.networkManager.fetchCurrentCodeTime();
+				},
+				1000 * this.plugin.settings.updateInterval * 60,
+			),
+		);
+	}
+
+	public stopLoop(): void {
+		if (this.intervalId !== null) {
+			window.clearInterval(this.intervalId);
+			this.intervalId = null;
+			this.activityLogModal.appendLine("[LOOP]: Stopped");
+		}
+	}
+
+	private listenFor(): void {
+		this.plugin.app.workspace.onLayoutReady(() => {
+			this.plugin.registerEvent(
+				this.plugin.app.workspace.on("file-open", (file) => {
+					void this.track("activateFileChanged", file);
+				}),
+			);
+
+			this.plugin.registerEvent(
+				this.plugin.app.workspace.on("editor-change", (_editor, info) => {
+					void this.track("editorChanged", info.file);
+				}),
+			);
+
+			this.plugin.registerEvent(this.plugin.app.vault.on("create", (file) => void this.track("fileCreated", file)));
+			this.plugin.registerEvent(
+				this.plugin.app.vault.on("modify", (file) => {
+					void this.track("fileEdited", file);
+					// this.track('fileSaved', file); // best available public equivalent
+				}),
+			);
+
+			const track = this.track.bind(this);
+			const plugin = this.plugin;
+			// Get the current open file
+			this.plugin.registerEditorExtension(
+				ViewPlugin.fromClass(
+					class {
+						update(update: ViewUpdate) {
+							if (update.selectionSet) {
+								const file = plugin.app.workspace.getActiveFile();
+								void track("selectionChanged", file);
+							}
+						}
+					},
+				),
+			);
+		});
+	}
+
+	private async track(event: string, file: TFile | TAbstractFile | undefined | null) {
+		const originalFilePath = file?.path ?? "__no-file__";
+		const now = Date.now();
+		const lastTime = this.lastTrackedAt;
+		if (typeof lastTime === "number" && now - lastTime < this.plugin.settings.throttleTelemetry * 1000) {
+			// this.activityLogModal.appendLine(
+			// 	`Throttled: ${event} ${originalFilePath}` + ` (last tracked ${now - lastTime}ms ago)`,
+			// );
+			return;
+		}
+
+		this.lastTrackedAt = now;
+
+		async function hashFileName(fileName: string): Promise<string> {
+			const bytes = new TextEncoder().encode(fileName);
+
+			const hash = await window.crypto.subtle.digest("SHA-256", bytes);
+
+			return Array.from(new Uint8Array(hash))
+				.map((byte) => byte.toString(16).padStart(2, "0"))
+				.join("");
+		}
+
+		const newName = await hashFileName(originalFilePath);
+
+		const getOs = (): string => {
+			if (Platform.isDesktopApp) {
+				const desktopProcess = activeWindow as typeof activeWindow & {
+					process?: { getSystemVersion?: () => string };
+				};
+				const version = desktopProcess.process?.getSystemVersion?.();
+
+				if (Platform.isWin && version) {
+					const build = Number(version.split(".")[2]);
+
+					// Windows 11 reports NT 10.0 internally; builds 22000+ are Windows 11.
+					return build >= 22000 ? "Windows 11" : `Windows ${version}`;
+				}
+
+				if (Platform.isMacOS && version) {
+					const majorVersion = version.split(".")[0];
+					return `macOS ${majorVersion}`;
+				}
+			}
+
+			if (Platform.isLinux) return "Linux";
+			if (Platform.isIosApp) return "iOS";
+			if (Platform.isAndroidApp) return "Android";
+
+			return "Unknown";
+		};
+		const os = getOs();
+
+		const payload: EventPayload = {
+			editor: "Obsidian",
+			language: file && "extension" in file ? file.extension : "unknown",
+			project: this.project,
+			eventTime: new Date(),
+			fileHash: newName,
+			platform: os,
+		};
+
+		this.lastEventTime = Date.now();
+
+		if (this.plugin.networkManager.isOnline) {
+			if (this.intervalId === null) {
+				void this.startLoop();
+			}
+
+			if (this.plugin.settings.batchEvents) {
+				this.activityLogModal.appendLine(`[EVENT]: Storing for Batch - ${event} - ${file?.name ?? `unknown`}`, "info");
+
+				await this.offlineTrack(payload, { file, event });
+				const count = await this.plugin.eventStore.getEventsCount();
+				if (count >= this.drainAt) {
+					void this.sendBatch();
+				}
+				return;
+			}
+
+			this.activityLogModal.appendLine(`[EVENT]: Sending - ${event} - ${file?.name ?? `unknown`}`, "success");
+			const url = new URL(`/api/users/event-log`, this.plugin.settings.apiUrl);
+
+			await request({
+				url: url.toString(),
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"x-api-key": `${this.getTokenFromSettings()}`,
+					"User-Agent": "obsidian-codetime",
+				},
+				body: JSON.stringify(payload),
+			}).catch((e: Error) => {
+				this.activityLogModal.appendLine(`[EVENT]: Send failed - ${e?.message ?? "Unknown error"}`, "error");
+				return null;
+			});
+		} else {
+			this.activityLogModal.appendLine(`[EVENT]: Offline - ${event} - ${file?.name ?? `unknown`}`, "info");
+
+			await this.offlineTrack(payload, { file, event });
+		}
+	}
+
+	private async offlineTrack(
+		eventPayload: EventPayload,
+		data: { file: TFile | TAbstractFile | undefined | null; event: string },
+	): Promise<void> {
+		await this.plugin.eventStore.append(eventPayload);
+
+		// this.activityLogModal.appendLine(`[OFFLINE]: ${eventPayload.event} - ${eventPayload.file?.name ?? `unknown`}`, "info");
+	}
+
+	public async sendBatch(): Promise<void> {
+		if (!this.plugin.networkManager.isOnline) return;
+
+		const events = await this.plugin.eventStore.drain();
+		if (events.length === 0) return;
+
+		try {
+			const eventString = JSON.stringify(events);
+			const uncompressedBody = strToU8(eventString);
+			const compressedBody = zlibSync(uncompressedBody, { level: 5 });
+			const requestBody = compressedBody.slice().buffer;
+			const savedBytes = uncompressedBody.byteLength - compressedBody.byteLength;
+			const savedPercent = (savedBytes / uncompressedBody.byteLength) * 100;
+
+			Print.Debug(
+				`Batch size: ${uncompressedBody.byteLength} B -> ` +
+					`${compressedBody.byteLength} B ` +
+					`(${savedBytes} B saved, ${savedPercent.toFixed(1)}%)`,
+			);
+			const url = new URL(`/api/users/event-log/batch`, this.plugin.settings.apiUrl);
+
+			await request({
+				url: url.toString(),
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"x-api-key": `${this.getTokenFromSettings()}`,
+					"User-Agent": "obsidian-startime",
+					"Content-Encoding": "zlib",
+				},
+				body: requestBody,
+			});
+		} catch (e) {
+			await this.plugin.eventStore.restore(events);
+
+			const message = e instanceof Error ? e.message : "Unknown error";
+			Print.Error(`Batch send failed. Restored ${events.length} events: ${message}`);
+			this.activityLogModal.appendLine(`[EVENT]: Send failed - ${message}`, "error");
+		}
+
+		void this.plugin.networkManager.fetchCurrentCodeTime();
+	}
+
+	public syncStatusBar(): void {
+		let text = "";
+
+		const syncText = (text: string) => {
+			// this.activityLogModal.appendLine(`State: ${this.state}`);
+			this.statusBarItemEl.setText(text);
+		};
+
+		if (this.state === "offline") {
+			text += "StarTime: Offline Mode";
+			syncText(text);
+			return;
+		}
+		if (this.state === "disabled") {
+			text += "StarTime: Disabled";
+			syncText(text);
+			return;
+		}
+
+		if (this.state === "no-token" || this.state === "invalid-token") {
+			text += "StarTime";
+			if (this.state === "invalid-token") {
+				text += ": Invalid Token";
+			} else {
+				text += ": No Token Provided";
+			}
+			syncText(text);
+			return;
+		}
+
+		if (this.state === "error") {
+			text += "StarTime: Error";
+			syncText(text);
+			return;
+		}
+
+		if (this.state === "disconnected") {
+			text += "StarTime: Disconnected";
+			syncText(text);
+			return;
+		}
+
+		if (this.state === "loading") {
+			text += "StarTime: Loading...";
+			syncText(text);
+			return;
+		}
+
+		if (this.state === "connected") {
+			if (!this.codeTimeData) {
+				text += "StarTime: Fetching...";
+			} else {
+				text += `${this.project}: ${this.codeTimeData.time}`;
+			}
+			syncText(text);
+			return;
+		}
+	}
+
+	public getTokenFromSettings(): string | null {
+		return this.plugin.app.secretStorage.getSecret(this.plugin.settings.codeTimeToken);
+	}
+
+	private openSettings(): void {
+		const app = this.plugin.app as SettingsApp;
+		app.setting.open();
+		app.setting.openTabById(this.plugin.manifest.id);
+	}
+
+	//
+}
