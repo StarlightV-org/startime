@@ -1,0 +1,10 @@
+{
+  "StarTime.Settings.Category.DisplayName": "StarTime",
+  "StarTime.Settings.Category.Description": "StarTime connection and project settings.",
+  "StarTime.Settings.ApiUrl.DisplayName": "API URL",
+  "StarTime.Settings.ApiUrl.Description": "Base URL for the StarTime API.",
+  "StarTime.Settings.Token.DisplayName": "Token",
+  "StarTime.Settings.Token.Description": "API key from the StarTime dashboard.",
+  "StarTime.Settings.ProjectOverride.DisplayName": "Project override",
+  "StarTime.Settings.ProjectOverride.Description": "Optional project name sent instead of the solution name."
+}
