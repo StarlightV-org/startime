@@ -52,6 +52,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
 	memberships: many(members),
 	exports: many(userExports),
 	apiKeys: many(apiKeys),
+	shareKeys: many(shareKeys),
 	organizationProjectAssignments: many(organizationProjectAssignments),
 }));
 
@@ -181,6 +182,54 @@ export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
 	user: one(users, {
 		fields: [apiKeys.userId],
 		references: [users.id],
+	}),
+}));
+
+export const chartTypes = ["calendar", "lang", "trend"] as const;
+export type ChartType = (typeof chartTypes)[number];
+
+export const shareKeys = createTable("share_keys", {
+	id: t
+		.text("id")
+		.primaryKey()
+		.$defaultFn(() => generateShortId(16)),
+	userId: t
+		.text("user_id")
+		.notNull()
+		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
+	chartType: t.text("chart", { enum: chartTypes }),
+	createdAt: t.timestamp("created_at").notNull().defaultNow(),
+});
+
+export const shareKeyRelations = relations(shareKeys, ({ one, many }) => ({
+	user: one(users, {
+		fields: [shareKeys.userId],
+		references: [users.id],
+	}),
+	referrers: many(shareKeyReferrers),
+}));
+
+export const shareKeyReferrers = createTable(
+	"share_key_referrers",
+	{
+		id: t
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => generateShortId(16)),
+		shareKeyId: t
+			.text("share_key_id")
+			.notNull()
+			.references(() => shareKeys.id, { onDelete: "cascade", onUpdate: "cascade" }),
+		referrer: t.text("referrer").notNull(),
+		lastUsed: t.timestamp("last_used").notNull().defaultNow(),
+	},
+	(table) => [t.unique("one_ref_per_key").on(table.shareKeyId, table.referrer)],
+);
+
+export const shareKeyReferrerRelations = relations(shareKeyReferrers, ({ one }) => ({
+	shareKey: one(shareKeys, {
+		fields: [shareKeyReferrers.shareKeyId],
+		references: [shareKeys.id],
 	}),
 }));
 

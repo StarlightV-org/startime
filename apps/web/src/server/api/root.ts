@@ -4,6 +4,7 @@ import { orgRouter } from "./routers/org";
 import { overviewRouter } from "./routers/overview";
 import { miscRouter } from "./routers/misc";
 import { publicStatsRouter } from "./routers/public-stats";
+import { badgesRouter } from "./routers/badges";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
 	org: orgRouter,
 	overview: overviewRouter,
 	publicStats: publicStatsRouter,
+	badges: badgesRouter,
 });
 
 // export type definition of API
