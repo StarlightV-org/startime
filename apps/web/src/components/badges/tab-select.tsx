@@ -27,7 +27,48 @@ import { toast } from "sonner";
 import { ENV } from "@startime/env";
 import { useSession } from "~/provider/session-provider";
 import { msg, t } from "@lingui/core/macro";
-import { parseTranslate } from "~/lib/utils";
+import { cn, parseTranslate } from "~/lib/utils";
+import { Spinner } from "../ui/spinner";
+
+type BadgePreviewProps = {
+	src: string;
+	alt: string;
+	className?: string;
+	imageClassName?: string;
+};
+
+function BadgePreview({ src, alt, className, imageClassName }: BadgePreviewProps) {
+	const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
+
+	return (
+		<div className={cn("relative flex items-center justify-center", className)} aria-busy={status === "loading"}>
+			{status === "loading" && (
+				<div className="absolute inset-0 flex items-center justify-center gap-2 text-muted-foreground">
+					<Spinner />
+					<span>
+						<Trans>Loading preview...</Trans>
+					</span>
+				</div>
+			)}
+			{status === "error" && (
+				<span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+					<Trans>Unable to load preview.</Trans>
+				</span>
+			)}
+			<img
+				src={src}
+				alt={alt}
+				onLoad={() => setStatus("loaded")}
+				onError={() => setStatus("error")}
+				className={cn(
+					"max-w-full transition-opacity duration-200",
+					status === "loaded" ? "opacity-100" : "opacity-0",
+					imageClassName,
+				)}
+			/>
+		</div>
+	);
+}
 
 export default function TabSelect() {
 	const i18n = useLingui();
@@ -98,37 +139,27 @@ export default function TabSelect() {
 								<Trans>Trend</Trans>
 							</TabsTrigger>
 						</TabsList>
-						<TabsContent value="calendar">
-							<div className="relative flex min-h-45 items-center py-2">
-								<img
-									onProgress={(e) => {
-										Print.Debug(e);
-									}}
-									loading="eager"
+						<div className="flex min-h-45 items-center py-1">
+							<TabsContent value="calendar">
+								<BadgePreview
 									src="/api/badge/calendar?internal=true"
-									alt="Calandar Preview"
-									className="absolute inset-0 z-auto min-h-[176.062px] bg-transparent"
+									alt="Calendar Preview"
+									className="min-h-45"
+									imageClassName="min-h-[176.062px]"
 								/>
-								<span className="absolute inset-0 -z-10 flex items-center justify-center">Loading...</span>
-							</div>
-						</TabsContent>
-						<TabsContent value="lang">
-							<div className="mx-auto min-h-44.75 max-w-89.75">
-								<img
-									onProgress={(e) => {
-										Print.Debug(e);
-									}}
-									loading="eager"
+							</TabsContent>
+							<TabsContent value="lang">
+								<BadgePreview
 									src="/api/badge/lang?internal=true"
-									alt="Lang Preview"
-									className="aspect-auto w-fit"
+									alt="Language Preview"
+									className="mx-auto min-h-45 max-w-90"
+									imageClassName="aspect-auto "
 								/>
-								<span className="absolute inset-0 -z-10 flex items-center justify-center">Loading...</span>
-							</div>
-						</TabsContent>
-						<TabsContent value="trend">
-							<Trans>Trend</Trans>
-						</TabsContent>
+							</TabsContent>
+							<TabsContent value="trend">
+								<Trans>Trend</Trans>
+							</TabsContent>
+						</div>
 					</Tabs>
 				</CardContent>
 			</Card>

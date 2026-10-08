@@ -8,7 +8,7 @@
         "@better-auth/drizzle-adapter": "^1.7.7",
         "@better-auth/passkey": "^1.7.7",
         "@date-fns/tz": "^1.5.0",
-        "@mantine/hooks": "^9.7.0",
+        "@mantine/hooks": "^9.7.1",
         "@openpanel/nextjs": "^1.5.1",
         "@startime/db": "workspace:*",
         "@startime/env": "workspace:*",
@@ -67,7 +67,7 @@
     },
     "apps/web": {
       "name": "@startime/web",
-      "version": "0.2.23",
+      "version": "0.2.29",
       "dependencies": {
         "@base-ui/react": "^1.7.0",
         "@lingui/core": "^6.6.0",
@@ -430,7 +430,7 @@
 
     "@lingui/swc-plugin": ["@lingui/swc-plugin@6.6.0", "", { "dependencies": { "@lingui/conf": "5 || 6" }, "peerDependencies": { "@lingui/core": "5 || 6", "@swc/core": "*", "next": "*" }, "optionalPeers": ["@swc/core", "next"] }, "sha512-8D3dSUXGlxe8QnwPNbI1o8mgXgUnh4ExVqvYMrdZ0F/lHeR9Ao3+WyN38oghGnDA8Zq03+hZSQub/Vw05egpZg=="],
 
-    "@mantine/hooks": ["@mantine/hooks@9.7.0", "", { "peerDependencies": { "react": "^19.2.0" } }, "sha512-3a1w90f1OliaClGRlnPiviJtKxyMiKdVyM8Pd2h6se+LOm9/bgGI+pgoGw/tgv++BSQ4frqv+X7NBlqcY/S7KQ=="],
+    "@mantine/hooks": ["@mantine/hooks@9.7.1", "", { "peerDependencies": { "react": "^19.2.0" } }, "sha512-C1xD4A3bfB87nUsLHr42WqOabnK4G+fCyEf8FN14EEiZAcKjdcWJbK63qxhIXFKuHCc3acLbpm2ts9UqmLASTw=="],
 
     "@mdx-js/loader": ["@mdx-js/loader@3.1.1", "", { "dependencies": { "@mdx-js/mdx": "^3.0.0", "source-map": "^0.7.0" }, "peerDependencies": { "webpack": ">=5" }, "optionalPeers": ["webpack"] }, "sha512-0TTacJyZ9mDmY+VefuthVshaNIyCGZHJG2fMnGaDttCt8HmjUF7SizlHJpaCDoGnN635nK1wpzfpx/Xx5S4WnQ=="],
 

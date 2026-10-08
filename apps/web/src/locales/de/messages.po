@@ -332,6 +332,14 @@ msgid "Join our Discord"
 msgstr "Discord beitreten"
 
 #: src/components/badges/tab-select.tsx
+msgid "Loading preview..."
+msgstr "Vorschau wird geladen..."
+
+#: src/components/badges/tab-select.tsx
+msgid "Unable to load preview."
+msgstr "Fehler beim Laden der Vorschau."
+
+#: src/components/badges/tab-select.tsx
 #: src/lib/account-config.ts
 msgid "Calendar"
 msgstr "Kalender"

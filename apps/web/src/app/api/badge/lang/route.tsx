@@ -237,7 +237,7 @@ export async function GET(req: NextRequest) {
 	</g>`;
 	const svg = renderChartSvgWithResources(scene, {
 		ariaLabel: "Language activity over the last year",
-		ariaDescription: "A donut chart showing coding time by language during the last 365 days.",
+		ariaDescription: "A donut chart showing coding time by language during the last 90 days.",
 		idPrefix: `language-activity-${targetUser.id}`,
 		tabIndex: -1,
 	})
