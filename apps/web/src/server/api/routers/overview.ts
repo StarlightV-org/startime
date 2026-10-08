@@ -15,7 +15,7 @@ import { differenceInMinutes } from "date-fns/fp";
 
 export { getTimeRange, type TimeRange } from "~/lib/time-range";
 
-const timeRangeSchema = z.enum(timeRangeValues);
+export const timeRangeSchema = z.enum(timeRangeValues);
 
 function getLocalDate(timeZone: string): string {
 	const now = TZDate.tz(timeZone);
@@ -32,7 +32,7 @@ function toDayString(days: number, i18n: I18n): string {
 
 export type OverviewTopElement = API["overview"]["getTop"]["editor"]["p1"];
 
-const biggestUnitSchema = z.enum(["hour", "day", "week"]).optional();
+export const biggestUnitSchema = z.enum(["hour", "day", "week"]).optional();
 export type BiggestUnit = z.infer<typeof biggestUnitSchema>;
 
 export const overviewRouter = createTRPCRouter({

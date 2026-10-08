@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 		}
 
 		const shareKey = await db.query.shareKeys.findFirst({
-			where: (shareKeys, { eq }) => eq(shareKeys.id, shareKeyId),
+			where: (shareKeys, { eq, and }) => and(eq(shareKeys.id, shareKeyId), eq(shareKeys.chartType, "calendar")),
 		});
 
 		if (!shareKey) {
