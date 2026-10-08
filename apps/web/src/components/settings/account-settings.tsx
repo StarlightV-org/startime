@@ -15,6 +15,7 @@ import {
 } from "~/lib/account-config";
 import { useSession } from "~/provider/session-provider";
 import { api } from "~/trpc/react";
+import z from "zod";
 
 export default function AccountSettings() {
 	const { t } = useLingui();
@@ -36,9 +37,7 @@ export default function AccountSettings() {
 	};
 
 	const saveValue = (path: AccountConfigPath, value: unknown) => {
-		// if (path === "regional.lang" && (value === "en" || value === "de")) {
-		// 	document.cookie = `startime_locale=${value}; Path=/; Max-Age=31536000; SameSite=Lax`;
-		// }
+		Print.Debug("value", value, typeof value);
 		setLocalValue(path, value);
 		const input = setAccountConfigValueSchema.safeParse({ path, value });
 		if (!input.success) {
@@ -46,6 +45,7 @@ export default function AccountSettings() {
 				id: "account-settings",
 				description: t`This setting is not supported by the server yet.`,
 			});
+			Print.Warning(z.treeifyError(input.error).properties);
 			return;
 		}
 		mutate(input.data);
@@ -53,7 +53,3 @@ export default function AccountSettings() {
 
 	return <AutoConfigSettings config={config} onValueChange={setLocalValue} onValueCommit={saveValue} />;
 }
-
-
-
-

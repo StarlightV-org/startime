@@ -45,7 +45,6 @@ function getActivityLevel(minutes: number, lowestActiveMinutes: number, highestA
 
 export async function GET(req: NextRequest) {
 	const rawParams = loadSearchParams(req);
-	Print.Debug(req.headers.get("referer"));
 
 	let userId: string | undefined;
 	if (rawParams.internal) {
@@ -120,12 +119,9 @@ export async function GET(req: NextRequest) {
 
 	const accountConfig = checkAccountConfig(targetUser.accountConfig);
 
-	// if (!accountConfig.privacy.publicProfile) {
-	// 	const { user } = await getAuth();
-	// 	if (user?.id !== targetUser.id) {
-	// 		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-	// 	}
-	// }
+	if (!accountConfig.privacy.allowedBadges?.includes("calendar")) {
+		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
+	}
 
 	const dailyActivity = await withRedisCache(
 		cacheKey({ userId: targetUser.id, regional: accountConfig.regional }),

@@ -87,12 +87,26 @@ function AutoConfigField({
 				) : null}
 				{field.kind === "enum" ? (
 					<Select
-						value={String(value ?? "")}
+						multiple={field.multiple}
+						value={Array.isArray(value) ? value : [String(value ?? "")]}
 						disabled={disabled}
-						onValueChange={(nextValue: string | null) => onValueCommit(field.path, nextValue)}
+						onValueChange={(nextValue: string | string[] | null) => onValueCommit(field.path, nextValue)}
 					>
 						<SelectTrigger id={id} className="w-full">
-							<SelectValue fallback={enumLabel ? translate(i18n, enumLabel) : String(value)} />
+							<SelectValue
+								placeholder={translate(i18n, msg`Select an option`)}
+
+								fallback={
+									enumLabel
+										? translate(i18n, enumLabel)
+										: Array.isArray(value)
+											? value
+													.map((v) => translate(i18n, field.enumLabels[v] ?? v))
+													.sort((a, b) => a.localeCompare(b))
+													.join(", ")
+											: [String(value ?? "")]
+								}
+							/>
 						</SelectTrigger>
 						<SelectContent>
 							{field.values.map((option) => (

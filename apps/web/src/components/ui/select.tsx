@@ -26,7 +26,7 @@ function SelectValue({
 			placeholder={placeholder}
 			{...props}
 		>
-			{children ?? (fallback === undefined ? undefined : () => fallback)}
+			{children ?? (fallback === undefined || fallback === "" ? undefined : () => fallback)}
 		</SelectPrimitive.Value>
 	);
 }

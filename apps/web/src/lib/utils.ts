@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import ShortUniqueId from "short-unique-id";
+import type { I18n, MessageDescriptor } from "@lingui/core";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -47,4 +48,8 @@ export function generateShortId(totalLength = 16): string {
 		dictionary: "alpha_upper",
 	});
 	return `${uuidLetter()}${uuidNumber()}`;
+}
+
+export function parseTranslate(i18n: I18n, message: MessageDescriptor | string): string {
+	return typeof message === "string" ? i18n._(message) : i18n._(message);
 }

@@ -2,6 +2,9 @@ import z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { chartTypes, shareKeys } from "@startime/db";
 import { and, eq } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { msg } from "@lingui/core/macro";
+import { parseTranslate } from "~/lib/utils";
 
 export const badgesRouter = createTRPCRouter({
 	listShareKeys: protectedProcedure
@@ -29,6 +32,13 @@ export const badgesRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { chartType } = input;
+
+			if (!ctx.user.accountConfig.privacy.allowedBadges.includes(chartType)) {
+				throw new TRPCError({
+					code: "FORBIDDEN",
+					message: parseTranslate(ctx.i18n, msg`Badge "${chartType}" is not allowed. Enable it in your account settings.`),
+				});
+			}
 
 			const shareKey = await ctx.db
 				.insert(shareKeys)

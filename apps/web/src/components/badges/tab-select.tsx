@@ -25,15 +25,21 @@ import { CopyButton } from "../ui/copy-button";
 import { useConfirmModal } from "../ui/confirm-modal";
 import { toast } from "sonner";
 import { ENV } from "@startime/env";
+import { useSession } from "~/provider/session-provider";
+import { msg, t } from "@lingui/core/macro";
+import { parseTranslate } from "~/lib/utils";
 
 export default function TabSelect() {
 	const i18n = useLingui();
 	const confirmModal = useConfirmModal();
+	const { user } = useSession();
 
 	const [tab, setTab] = useQueryState(
 		"tab",
 		parseAsString.withDefault("calendar").withOptions({ clearOnDefault: true }),
 	);
+
+	const hasBadgeEnabled = user?.accountConfig.privacy.allowedBadges?.includes(tab as ChartType);
 
 	const [newShareKey, setNewShareKey] = useState<string | undefined>(undefined);
 
@@ -50,6 +56,15 @@ export default function TabSelect() {
 			url.pathname = `/api/badge/${tab}`;
 			url.searchParams.set("shareKey", data.id);
 			setNewShareKey(url.toString());
+		},
+		onError: (error) => {
+			toast.error("Failed to create share key.", { id: "create-share-key", description: error.message });
+		},
+		onMutate: () => {
+			toast.loading("Creating share key...", {
+				id: "create-share-key",
+				description: undefined,
+			});
 		},
 	});
 	const { mutate: deleteShareKey } = api.badges.deleteShareKey.useMutation({
@@ -109,12 +124,15 @@ export default function TabSelect() {
 			<Card>
 				<CardHeader>
 					<Button
+						disabled={!hasBadgeEnabled}
 						variant="outline"
 						onClick={() => {
 							mutate({ chartType: tab as ChartType });
 						}}
 					>
-						Create new Share Key
+						{hasBadgeEnabled
+							? parseTranslate(i18n.i18n, msg`Create new Share Key`)
+							: parseTranslate(i18n.i18n, msg`Badge not enabled, enable it to create a share key`)}
 					</Button>
 				</CardHeader>
 				<CardContent>
