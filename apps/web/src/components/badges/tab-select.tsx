@@ -29,19 +29,44 @@ import { useSession } from "~/provider/session-provider";
 import { msg, t } from "@lingui/core/macro";
 import { cn, parseTranslate } from "~/lib/utils";
 import { Spinner } from "../ui/spinner";
+import Link from "next/link";
 
 type BadgePreviewProps = {
 	src: string;
 	alt: string;
 	className?: string;
 	imageClassName?: string;
+	isBadgeEnabled: boolean;
 };
 
-function BadgePreview({ src, alt, className, imageClassName }: BadgePreviewProps) {
+function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: BadgePreviewProps) {
 	const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
 
+	if (!isBadgeEnabled) {
+		return (
+			<div className={cn("flex min-h-45 w-full items-center justify-center px-4 py-6", className)}>
+				<div className="flex max-w-sm flex-col items-center gap-3 text-center">
+					<p className="text-muted-foreground">
+						<Trans>Enable this badge in your settings to see its preview and create share keys.</Trans>
+					</p>
+					<Button
+						variant="outline"
+						render={
+							<Link href="/dash/settings">
+								<Trans>Open badge settings</Trans>
+							</Link>
+						}
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<div className={cn("relative flex items-center justify-center", className)} aria-busy={status === "loading"}>
+		<div
+			className={cn("relative flex min-h-45 w-full items-center justify-center", className)}
+			aria-busy={status === "loading"}
+		>
 			{status === "loading" && (
 				<div className="absolute inset-0 flex items-center justify-center gap-2 text-muted-foreground">
 					<Spinner />
@@ -51,7 +76,7 @@ function BadgePreview({ src, alt, className, imageClassName }: BadgePreviewProps
 				</div>
 			)}
 			{status === "error" && (
-				<span className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+				<span className="absolute inset-0 flex items-center justify-center px-4 text-center text-muted-foreground">
 					<Trans>Unable to load preview.</Trans>
 				</span>
 			)}
@@ -139,25 +164,26 @@ export default function TabSelect() {
 								<Trans>Trend</Trans>
 							</TabsTrigger>
 						</TabsList>
-						<div className="flex min-h-45 items-center py-1">
-							<TabsContent value="calendar">
+						<div className="min-h-45 py-1">
+							<TabsContent value="calendar" className="w-full">
 								<BadgePreview
+									isBadgeEnabled={Boolean(hasBadgeEnabled)}
 									src="/api/badge/calendar?internal=true"
 									alt="Calendar Preview"
-									className="min-h-45"
 									imageClassName="min-h-[176.062px]"
 								/>
 							</TabsContent>
-							<TabsContent value="lang">
+							<TabsContent value="lang" className="w-full">
 								<BadgePreview
+									isBadgeEnabled={Boolean(hasBadgeEnabled)}
 									src="/api/badge/lang?internal=true"
 									alt="Language Preview"
-									className="mx-auto min-h-45 max-w-90"
-									imageClassName="aspect-auto "
+									imageClassName="aspect-auto max-w-90"
 								/>
 							</TabsContent>
-							<TabsContent value="trend">
+							<TabsContent value="trend" className="flex min-h-45 w-full items-center justify-center">
 								<Trans>Trend</Trans>
+								This feature is not yet available.
 							</TabsContent>
 						</div>
 					</Tabs>
