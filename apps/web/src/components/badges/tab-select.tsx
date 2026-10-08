@@ -106,14 +106,25 @@ export default function TabSelect() {
 									}}
 									loading="eager"
 									src="/api/badge/calendar?internal=true"
-									alt="test"
+									alt="Calandar Preview"
 									className="absolute inset-0 z-auto min-h-[176.062px] bg-transparent"
 								/>
 								<span className="absolute inset-0 -z-10 flex items-center justify-center">Loading...</span>
 							</div>
 						</TabsContent>
 						<TabsContent value="lang">
-							<Trans>Language</Trans>
+							<div className="mx-auto min-h-44.75 max-w-89.75">
+								<img
+									onProgress={(e) => {
+										Print.Debug(e);
+									}}
+									loading="eager"
+									src="/api/badge/lang?internal=true"
+									alt="Lang Preview"
+									className="aspect-auto w-fit"
+								/>
+								<span className="absolute inset-0 -z-10 flex items-center justify-center">Loading...</span>
+							</div>
 						</TabsContent>
 						<TabsContent value="trend">
 							<Trans>Trend</Trans>

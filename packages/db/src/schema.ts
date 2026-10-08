@@ -199,6 +199,8 @@ export const shareKeys = createTable("share_keys", {
 		.references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
 	chartType: t.text("chart", { enum: chartTypes }),
 	createdAt: t.timestamp("created_at").notNull().defaultNow(),
+	// @ts-expect-error
+	timeRange: t.text().$type<TimeRange>(),
 });
 
 export const shareKeyRelations = relations(shareKeys, ({ one, many }) => ({

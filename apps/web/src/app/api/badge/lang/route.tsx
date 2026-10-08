@@ -125,7 +125,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	const regional = accountConfig.regional;
-	const [start, end] = getTimeRange("past365", regional.timeZone, undefined, regional.startOfWeek);
+	const [start, end] = getTimeRange("past90", regional.timeZone, undefined, regional.startOfWeek);
 
 	const where = and(
 		eq(eventLogs.userId, targetUser.id),
@@ -133,15 +133,10 @@ export async function GET(req: NextRequest) {
 		end ? lt(eventLogs.eventTime, end) : undefined,
 	);
 
-	// Print.Debug("where", where?.getSQL());
-
 	const events = await db
 		.select({
 			eventTime: eventLogs.eventTime,
-			// editor: eventLogs.editor,
-			// workspace: eventLogs.project,
 			language: eventLogs.language,
-			// platform: eventLogs.platform,
 		})
 		.from(eventLogs)
 		.where(where);
@@ -201,7 +196,7 @@ export async function GET(req: NextRequest) {
 		'<rect x="0.5" y="0.5" width="359" height="179" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />';
 	const centerLabel = `<g text-anchor="middle">
 		<text x="92" y="87" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
-		<text x="92" y="105" fill="currentColor" font-size="9">last 365d</text>
+		<text x="92" y="105" fill="currentColor" font-size="9">last 90d</text>
 	</g>`;
 	const legend = rankedLanguages
 		.map(({ value, percentage }, index) => {
