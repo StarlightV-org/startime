@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { NextResponse, type NextRequest } from "next/server";
 import { createLoader, parseAsBoolean, parseAsString } from "nuqs/server";
 import { z } from "zod";
@@ -8,6 +10,7 @@ import { checkAccountConfig } from "~/lib/account-config";
 import { getTimeRange, toTimeString } from "~/lib/time-range";
 import { and, eq, gte, lt } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
+import { getLanguageIconSrc } from "~/lib/languageIcons";
 import { createChartScene, defineChart } from "@tanstack/charts";
 import { pie, polar, radialArc } from "@tanstack/charts/polar";
 import { renderChartSvgWithResources } from "@tanstack/charts/svg/resources";
@@ -42,6 +45,18 @@ function escapeXml(value: string): string {
 				return "&apos;";
 		}
 	});
+}
+
+async function getLanguageIconDataUri(language: string): Promise<string | undefined> {
+	const iconSrc = getLanguageIconSrc(language);
+	if (!iconSrc) return undefined;
+
+	try {
+		const icon = await readFile(join(process.cwd(), "public", iconSrc.replace(/^\//, "")));
+		return `data:image/svg+xml;base64,${icon.toString("base64")}`;
+	} catch {
+		return undefined;
+	}
 }
 
 export async function GET(req: NextRequest) {
@@ -145,6 +160,7 @@ export async function GET(req: NextRequest) {
 	const totalMinutes = new Set(events.map(({ eventTime }) => Math.floor(eventTime.getTime() / 60_000))).size;
 	const arcs = pie(rankedLanguages, { value: "minutes" });
 	const languageNames = rankedLanguages.map(({ value }) => value);
+	const languageIconDataUris = await Promise.all(rankedLanguages.map(({ value }) => getLanguageIconDataUri(value)));
 
 	const chart = defineChart({
 		marks: [
@@ -201,9 +217,14 @@ export async function GET(req: NextRequest) {
 	const legend = rankedLanguages
 		.map(({ value, percentage }, index) => {
 			const y = 43 + index * 19;
+			const iconDataUri = languageIconDataUris[index];
+			const icon = iconDataUri
+				? `<image x="206" y="${y - 11}" width="14" height="14" href="${iconDataUri}" preserveAspectRatio="xMidYMid meet" />`
+				: "";
 			return `<g>
 				<rect x="190" y="${y - 9}" width="10" height="10" rx="1.5" fill="${languageColors[index]}" />
-				<text x="206" y="${y}" fill="var(--foreground)" font-size="11">${escapeXml(getLanguageLabel(value))}</text>
+				${icon}
+				<text x="225" y="${y}" fill="var(--foreground)" font-size="11">${escapeXml(getLanguageLabel(value))}</text>
 				<text x="350" y="${y}" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">${percentage.toFixed(1)}%</text>
 			</g>`;
 		})

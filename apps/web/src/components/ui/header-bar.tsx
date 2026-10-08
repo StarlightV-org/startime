@@ -11,6 +11,7 @@ import { cn } from "~/lib/utils";
 import OpenMinimal from "../overview/open-minimal";
 import { Trans } from "@lingui/react/macro";
 import { ExternalLinkIcon } from "lucide-react";
+import type { Route } from "next";
 
 function resolveDocsUrl(pathname: string) {
 	const url = new URL("https://docs.starlightv.dev");
@@ -90,7 +91,12 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 									<TabsTrigger
 										value="/dash/docs"
 										render={
-											<Link href={resolveDocsUrl(pathname)} target="_blank" rel="noopener noreferrer" className="h-8! text-sm">
+											<Link
+												href={resolveDocsUrl(pathname) as Route}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="h-8! text-sm"
+											>
 												Docs <ExternalLinkIcon className="inline-flex h-8!" />
 											</Link>
 										}
