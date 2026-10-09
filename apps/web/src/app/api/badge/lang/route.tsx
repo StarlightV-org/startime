@@ -233,7 +233,7 @@ export async function GET(req: NextRequest) {
 		<text x="190" y="23" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">LANGUAGES</text>
 		${centerLabel}
 		${legend}
-		<text x="350" y="166" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="8" text-anchor="end">time.starlightv.dev</text>
+		<text x="350" y="166" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">time.starlightv.dev @${targetUser.name}</text>
 	</g>`;
 	const svg = renderChartSvgWithResources(scene, {
 		ariaLabel: "Language activity over the last year",
