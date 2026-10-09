@@ -182,7 +182,6 @@ export default function TabSelect() {
 								/>
 							</TabsContent>
 							<TabsContent value="trend" className="flex min-h-45 w-full items-center justify-center">
-								<Trans>Trend</Trans>
 								This feature is not yet available.
 							</TabsContent>
 						</div>
