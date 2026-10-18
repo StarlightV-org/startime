@@ -8,7 +8,7 @@
 	],
 	"scripts": {
 		"config:githooks": "git config core.hooksPath .githooks",
-		"build": "turbo run build",
+		"build": "bun run --cwd apps/web build",
 		"check": "turbo run check",
 		"check:unsafe": "turbo run check:unsafe",
 		"check:write": "turbo run check:write",

@@ -31,11 +31,15 @@ export const badgesRouter = createTRPCRouter({
 		.input(
 			z.object({
 				chartType: z.enum(chartTypes, `chartType must be one of ${chartTypes.join(", ")}`),
-				timeRange: timeRangeSchema.optional(),
+				data: z
+					.object({
+						timeRange: timeRangeSchema,
+					})
+					.optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { chartType, timeRange } = input;
+			const { chartType, data } = input;
 
 			if (!ctx.user.accountConfig.privacy.allowedBadges.includes(chartType)) {
 				throw new TRPCError({
@@ -49,7 +53,7 @@ export const badgesRouter = createTRPCRouter({
 				.values({
 					userId: ctx.user.id,
 					chartType,
-					timeRange,
+					timeRange: data?.timeRange,
 				})
 				.returning();
 

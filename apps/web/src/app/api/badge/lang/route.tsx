@@ -7,7 +7,7 @@ import { getAuth } from "~/server/better-auth";
 
 import { db, shareKeyReferrers, eventLogs } from "@startime/db";
 import { checkAccountConfig } from "~/lib/account-config";
-import { getTimeRange, toTimeString } from "~/lib/time-range";
+import { getTimeRange, timeRangeLabels, toTimeString, type TimeRange } from "~/lib/time-range";
 import { and, eq, gte, lt } from "drizzle-orm";
 import { rankByActiveMinutes } from "~/lib/overview-ranking";
 import { getLanguageIconSrc } from "~/lib/languageIcons";
@@ -15,10 +15,14 @@ import { createChartScene, defineChart } from "@tanstack/charts";
 import { pie, polar, radialArc } from "@tanstack/charts/polar";
 import { renderChartSvgWithResources } from "@tanstack/charts/svg/resources";
 import { getLanguageLabel } from "~/components/overview/language-lable";
+import { setRequestI18n } from "~/i18n/server";
+import { fromHeader, resolveLocale } from "~/i18n/locales";
+import { parseTranslate } from "~/lib/utils";
 
 const coordinatesSearchParams = {
 	shareKey: parseAsString,
 	internal: parseAsBoolean,
+	timeRange: parseAsString,
 };
 const loadSearchParams = createLoader(coordinatesSearchParams);
 
@@ -61,14 +65,18 @@ async function getLanguageIconDataUri(language: string): Promise<string | undefi
 
 export async function GET(req: NextRequest) {
 	const rawParams = loadSearchParams(req);
+	const i18n = await setRequestI18n(resolveLocale(fromHeader(req.headers)));
 
 	let userId: string | undefined;
+	let timeRange: TimeRange = "past90";
+
 	if (rawParams.internal) {
 		const { user, session } = await getAuth();
 		if (!session?.id) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 		userId = user.id;
+		timeRange = (rawParams.timeRange ?? "past90") as TimeRange;
 	}
 
 	if (!rawParams.internal) {
@@ -99,6 +107,7 @@ export async function GET(req: NextRequest) {
 		}
 
 		userId = shareKey.userId;
+		timeRange = (shareKey.timeRange ?? "past90") as TimeRange;
 
 		if (!userId) {
 			const { user } = await getAuth();
@@ -140,7 +149,8 @@ export async function GET(req: NextRequest) {
 	}
 
 	const regional = accountConfig.regional;
-	const [start, end] = getTimeRange("past90", regional.timeZone, undefined, regional.startOfWeek);
+	const translatedTimeRange = parseTranslate(i18n, timeRangeLabels[timeRange]);
+	const [start, end] = getTimeRange(timeRange, regional.timeZone, undefined, regional.startOfWeek);
 
 	const where = and(
 		eq(eventLogs.userId, targetUser.id),
@@ -212,7 +222,7 @@ export async function GET(req: NextRequest) {
 		'<rect x="0.5" y="0.5" width="359" height="179" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />';
 	const centerLabel = `<g text-anchor="middle">
 		<text x="92" y="87" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
-		<text x="92" y="105" fill="currentColor" font-size="9">last 90d</text>
+		<text x="92" y="105" fill="currentColor" font-size="9">${translatedTimeRange}</text>
 	</g>`;
 	const legend = rankedLanguages
 		.map(({ value, percentage }, index) => {
@@ -230,7 +240,7 @@ export async function GET(req: NextRequest) {
 		})
 		.join("");
 	const overlay = `<g>
-		<text x="190" y="23" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">LANGUAGES</text>
+		<text x="190" y="23" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
 		${centerLabel}
 		${legend}
 		<text x="350" y="166" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">time.starlightv.dev @${escapeXml(targetUser.name)}</text>

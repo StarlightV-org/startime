@@ -13,6 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-explicit-id
+#: src/app/api/badge/lang/route.tsx
+msgid "LANGUAGES"
+msgstr "SPRACHEN"
+
 #: src/app/dash/badges/page.tsx
 #: src/components/ui/header-bar.tsx
 msgid "Badges"
@@ -332,6 +337,14 @@ msgid "Join our Discord"
 msgstr "Discord beitreten"
 
 #: src/components/badges/tab-select.tsx
+msgid "Enable this badge in your settings to see its preview and create share keys."
+msgstr "Aktiviere dieses Badge in den Einstellungen, um eine Vorschau zu sehen und Teilen-Schlüssel zu erstellen."
+
+#: src/components/badges/tab-select.tsx
+msgid "Open badge settings"
+msgstr "Badge-Einstellungen öffnen"
+
+#: src/components/badges/tab-select.tsx
 msgid "Loading preview..."
 msgstr "Vorschau wird geladen..."
 
@@ -377,6 +390,16 @@ msgstr "Seiten"
 #: src/components/settings/auth-settings.tsx
 msgid "Actions"
 msgstr "Aktionen"
+
+#. js-lingui-explicit-id
+#: src/components/badges/tab-select.tsx
+msgid "Delete Share Key"
+msgstr "Lösche den Teilen-Schlüssel"
+
+#. js-lingui-explicit-id
+#: src/components/badges/tab-select.tsx
+msgid "Are you sure you want to delete this share key? The Badge will no longer load on any website."
+msgstr "Bist du sicher, dass du diesen Teilen-Schlüssel löschen möchtest? Diese Badge wird auf keiner Website mehr laden."
 
 #: src/components/org/edit-org.tsx
 msgid "Organization updated successfully."
@@ -701,48 +724,58 @@ msgid "Minimal View"
 msgstr "Minimale Ansicht"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Last 24 hours"
 msgstr "Letzten 24 Stunden"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Last 7 days"
 msgstr "Letzten 7 Tage"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Last 30 days"
 msgstr "Letzten 30 Tage"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Last 90 days"
 msgstr "Letzten 90 Tage"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Last 365 days"
 msgstr "Letzten 365 Tage"
 
 #: src/components/overview/overview-select.tsx
+msgid "Absolute"
+msgstr "Absolut"
+
+#: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "Today"
 msgstr "Heute"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "This week"
 msgstr "Diese Woche"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "This month"
 msgstr "Dieser Monat"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "This year"
 msgstr "Dieses Jahr"
 
 #: src/components/overview/overview-select.tsx
+#: src/lib/time-range.ts
 msgid "All Time"
 msgstr "Gesamte Zeit"
-
-#: src/components/overview/overview-select.tsx
-msgid "Absolute"
-msgstr "Absolut"
 
 #: src/components/overview/overview-select.tsx
 msgid "Hour"

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Trans } from "@lingui/react/macro";
 import { api } from "~/trpc/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChartType } from "@startime/db";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -30,6 +30,13 @@ import { msg, t } from "@lingui/core/macro";
 import { cn, parseTranslate } from "~/lib/utils";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
+import z from "zod";
+import { timeRangeValues, type TimeRange } from "~/lib/time-range";
+import { useForm } from "@tanstack/react-form";
+import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "../ui/select";
+import { TimeSelect } from "../overview";
 
 type BadgePreviewProps = {
 	src: string;
@@ -83,8 +90,15 @@ function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: B
 			<img
 				src={src}
 				alt={alt}
-				onLoad={() => setStatus("loaded")}
-				onError={() => setStatus("error")}
+				onLoad={() => {
+					Print.Debug("loaded", { src, alt });
+					setStatus("loaded");
+				}}
+				onError={() => {
+					Print.Debug("error", { src, alt });
+					setStatus("error");
+				}}
+
 				className={cn(
 					"max-w-full transition-opacity duration-200",
 					status === "loaded" ? "opacity-100" : "opacity-0",
@@ -95,8 +109,25 @@ function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: B
 	);
 }
 
+const badgeInputSchema: { [key in ChartType]?: z.ZodType | undefined } = {
+	calendar: undefined,
+	lang: z.object({
+		timeRange: z.enum(timeRangeValues).default("past90") as z.ZodType<TimeRange>,
+	}),
+	trend: undefined,
+};
+
+function getDefaultValues(tab: ChartType) {
+	switch (tab) {
+		case "lang":
+			return { timeRange: "past90" as TimeRange } as const;
+		default:
+			return undefined;
+	}
+}
+
 export default function TabSelect() {
-	const i18n = useLingui();
+	const { i18n } = useLingui();
 	const confirmModal = useConfirmModal();
 	const { user } = useSession();
 
@@ -127,6 +158,7 @@ export default function TabSelect() {
 			url.pathname = `/api/badge/${tab}`;
 			url.searchParams.set("shareKey", data.id);
 			setNewShareKey(url.toString());
+			toast.success("Share key created successfully.", { id: "create-share-key" });
 		},
 		onError: (error) => {
 			toast.error("Failed to create share key.", { id: "create-share-key", description: error.message });
@@ -152,6 +184,22 @@ export default function TabSelect() {
 			});
 		},
 	});
+
+	const badgeInput = badgeInputSchema[tab as ChartType];
+
+	const badgeInputForm = useForm({
+		defaultValues: getDefaultValues(tab as ChartType),
+		validators: {
+			onSubmit: badgeInput as any,
+		},
+	});
+
+	useEffect(() => {
+		Print.Debug("tab", tab);
+		const defaultValues = getDefaultValues(tab as ChartType);
+		Print.Debug("defaultValues", defaultValues);
+		badgeInputForm.reset(defaultValues);
+	}, [tab]);
 
 	return (
 		<>
@@ -181,7 +229,7 @@ export default function TabSelect() {
 							<TabsContent value="lang" className="w-full">
 								<BadgePreview
 									isBadgeEnabled={Boolean(hasBadgeEnabled)}
-									src="/api/badge/lang?internal=true"
+									src={`/api/badge/lang?internal=true&timeRange=${badgeInputForm.state.values.timeRange ?? "past90"}`}
 									alt="Language Preview"
 									imageClassName="aspect-auto max-w-90"
 								/>
@@ -195,16 +243,49 @@ export default function TabSelect() {
 			</Card>
 			<Card>
 				<CardHeader className="pb-0">
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							badgeInputForm.handleSubmit();
+						}}
+					>
+						{tab === "lang" && (
+							<FieldGroup>
+								{
+									<badgeInputForm.Field
+										name="timeRange"
+										children={(field) => {
+											const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+											return (
+												<Field orientation="responsive" data-invalid={isInvalid}>
+													<FieldContent>
+														<FieldLabel htmlFor="form-tanstack-select-time-range">Time Range</FieldLabel>
+														<FieldDescription>The time range to display in the badge.</FieldDescription>
+
+														{isInvalid && <FieldError errors={field.state.meta.errors} />}
+													</FieldContent>
+
+													<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} />
+												</Field>
+											);
+										}}
+									/>
+								}
+							</FieldGroup>
+						)}
+					</form>
 					<Button
 						disabled={!hasBadgeEnabled}
 						variant="outline"
 						onClick={() => {
-							mutate({ chartType: tab as ChartType });
+							badgeInputForm.update();
+							const data = badgeInputForm.state.values;
+							mutate({ chartType: tab as ChartType, data: data });
 						}}
 					>
 						{hasBadgeEnabled
-							? parseTranslate(i18n.i18n, msg`Create new Share Key`)
-							: parseTranslate(i18n.i18n, msg`Badge not enabled, enable it to create a share key`)}
+							? parseTranslate(i18n, msg`Create new Share Key`)
+							: parseTranslate(i18n, msg`Badge not enabled, enable it to create a share key`)}
 					</Button>
 				</CardHeader>
 				{hasBadgeEnabled && (
@@ -240,7 +321,7 @@ export default function TabSelect() {
 											<TableCell>
 												{key.referrers
 													.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())[0]
-													?.lastUsed?.toLocaleString(i18n.i18n.locale) ?? "-"}
+													?.lastUsed?.toLocaleString(i18n.locale) ?? "-"}
 											</TableCell>
 											<TableCell className="text-center">
 												<Dialog>
@@ -261,7 +342,7 @@ export default function TabSelect() {
 																{key.referrers.map((referrer) => (
 																	<TableRow key={referrer.id}>
 																		<TableCell>{referrer.referrer}</TableCell>
-																		<TableCell>{referrer.lastUsed?.toLocaleString(i18n.i18n.locale)}</TableCell>
+																		<TableCell>{referrer.lastUsed?.toLocaleString(i18n.locale)}</TableCell>
 																	</TableRow>
 																))}
 															</TableBody>
@@ -292,9 +373,11 @@ export default function TabSelect() {
 													variant="destructive"
 													onClick={async () => {
 														const confirmed = await confirmModal({
-															title: "Delete Share Key",
-															content: "Are you sure you want to delete this share key? The Badge will no longer load on any website.",
-															requiredValue: `delete ${key.id}`,
+															title: i18n.t(`Delete Share Key`),
+															content: i18n.t(
+																`Are you sure you want to delete this share key? The Badge will no longer load on any website.`,
+															),
+															delay: 1000,
 															variant: "destructive",
 															confirmLabel: "Delete",
 														});
