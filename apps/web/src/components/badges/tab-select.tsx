@@ -109,7 +109,12 @@ export default function TabSelect() {
 
 	const [newShareKey, setNewShareKey] = useState<string | undefined>(undefined);
 
-	const { data: shareKeys, refetch } = api.badges.listShareKeys.useQuery({ chartType: tab as ChartType });
+	const { data: shareKeys, refetch } = api.badges.listShareKeys.useQuery(
+		{ chartType: tab as ChartType },
+		{
+			refetchOnMount: true,
+		},
+	);
 
 	const { mutate } = api.badges.createShareKey.useMutation({
 		onSuccess: (data) => {
@@ -189,7 +194,7 @@ export default function TabSelect() {
 				</CardContent>
 			</Card>
 			<Card>
-				<CardHeader>
+				<CardHeader className="pb-0">
 					<Button
 						disabled={!hasBadgeEnabled}
 						variant="outline"
@@ -202,111 +207,113 @@ export default function TabSelect() {
 							: parseTranslate(i18n.i18n, msg`Badge not enabled, enable it to create a share key`)}
 					</Button>
 				</CardHeader>
-				<CardContent>
-					<Table>
-						<TableCaption>
-							<Trans>Showing share keys for the Selected Tab</Trans>
-						</TableCaption>
-						<TableHeader>
-							<TableRow className="hover:bg-transparent">
-								<TableHead>
-									<Trans>Share Key</Trans>
-								</TableHead>
-								<TableHead>
-									<Trans>Last Accessed</Trans>
-								</TableHead>
-								<TableHead className="text-center">
-									<Trans>Referrers</Trans>
-								</TableHead>
-								<TableHead className="text-end">
-									<Trans>Actions</Trans>
-								</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{shareKeys?.map((key) => {
-								const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
-								url.pathname = `/api/badge/${tab}`;
-								if (key?.id) url.searchParams.set("shareKey", key.id);
-								return (
-									<TableRow key={key.id}>
-										<TableCell>{key.id}</TableCell>
-										<TableCell>
-											{key.referrers
-												.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())[0]
-												?.lastUsed?.toLocaleString(i18n.i18n.locale) ?? "-"}
-										</TableCell>
-										<TableCell className="text-center">
-											<Dialog>
-												<DialogTrigger
-													disabled={key.referrers.length === 0}
-													nativeButton={false}
-													render={<Badge>{key.referrers.length}</Badge>}
-												/>
-												<DialogContent>
-													<Table>
-														<TableHeader>
-															<TableRow>
-																<TableHead>Referrer</TableHead>
-																<TableHead>Last Accessed</TableHead>
-															</TableRow>
-														</TableHeader>
-														<TableBody>
-															{key.referrers.map((referrer) => (
-																<TableRow key={referrer.id}>
-																	<TableCell>{referrer.referrer}</TableCell>
-																	<TableCell>{referrer.lastUsed?.toLocaleString(i18n.i18n.locale)}</TableCell>
+				{hasBadgeEnabled && (
+					<CardContent>
+						<Table>
+							<TableCaption>
+								<Trans>Showing share keys for the Selected Tab</Trans>
+							</TableCaption>
+							<TableHeader>
+								<TableRow className="hover:bg-transparent">
+									<TableHead>
+										<Trans>Share Key</Trans>
+									</TableHead>
+									<TableHead>
+										<Trans>Last Accessed</Trans>
+									</TableHead>
+									<TableHead className="text-center">
+										<Trans>Referrers</Trans>
+									</TableHead>
+									<TableHead className="text-end">
+										<Trans>Actions</Trans>
+									</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{shareKeys?.map((key) => {
+									const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
+									url.pathname = `/api/badge/${tab}`;
+									if (key?.id) url.searchParams.set("shareKey", key.id);
+									return (
+										<TableRow key={key.id}>
+											<TableCell>{key.id}</TableCell>
+											<TableCell>
+												{key.referrers
+													.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())[0]
+													?.lastUsed?.toLocaleString(i18n.i18n.locale) ?? "-"}
+											</TableCell>
+											<TableCell className="text-center">
+												<Dialog>
+													<DialogTrigger
+														disabled={key.referrers.length === 0}
+														nativeButton={false}
+														render={<Badge>{key.referrers.length}</Badge>}
+													/>
+													<DialogContent>
+														<Table>
+															<TableHeader>
+																<TableRow>
+																	<TableHead>Referrer</TableHead>
+																	<TableHead>Last Accessed</TableHead>
 																</TableRow>
-															))}
-														</TableBody>
-													</Table>
-												</DialogContent>
-											</Dialog>
-										</TableCell>
-										<TableCell className="flex justify-end gap-1">
-											{/*<CopyButton
+															</TableHeader>
+															<TableBody>
+																{key.referrers.map((referrer) => (
+																	<TableRow key={referrer.id}>
+																		<TableCell>{referrer.referrer}</TableCell>
+																		<TableCell>{referrer.lastUsed?.toLocaleString(i18n.i18n.locale)}</TableCell>
+																	</TableRow>
+																))}
+															</TableBody>
+														</Table>
+													</DialogContent>
+												</Dialog>
+											</TableCell>
+											<TableCell className="flex justify-end gap-1">
+												{/*<CopyButton
 												value={url.toString()}
 
 												className="size-7"
 											/>*/}
-											<Button
-												variant="outline"
-												size="icon-sm"
-												onClick={() => {
-													const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
-													url.pathname = `/api/badge/${tab}`;
-													url.searchParams.set("shareKey", key.id);
-													setNewShareKey(url.toString());
-												}}
-											>
-												<Copy className="size-4" />
-											</Button>
-											<Button
-												size="icon-sm"
-												variant="destructive"
-												onClick={async () => {
-													const confirmed = await confirmModal({
-														title: "Delete Share Key",
-														content: "Are you sure you want to delete this share key? The Badge will no longer load on any website.",
-														requiredValue: `delete ${key.id}`,
-														variant: "destructive",
-														confirmLabel: "Delete",
-													});
+												<Button
+													variant="outline"
+													size="icon-sm"
+													onClick={() => {
+														const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
+														url.pathname = `/api/badge/${tab}`;
+														url.searchParams.set("shareKey", key.id);
+														setNewShareKey(url.toString());
+													}}
+												>
+													<Copy className="size-4" />
+												</Button>
+												<Button
+													size="icon-sm"
+													variant="destructive"
+													onClick={async () => {
+														const confirmed = await confirmModal({
+															title: "Delete Share Key",
+															content: "Are you sure you want to delete this share key? The Badge will no longer load on any website.",
+															requiredValue: `delete ${key.id}`,
+															variant: "destructive",
+															confirmLabel: "Delete",
+														});
 
-													if (confirmed) {
-														deleteShareKey({ id: key.id });
-													}
-												}}
-											>
-												<TrashIcon className="size-4" />
-											</Button>
-										</TableCell>
-									</TableRow>
-								);
-							})}
-						</TableBody>
-					</Table>
-				</CardContent>
+														if (confirmed) {
+															deleteShareKey({ id: key.id });
+														}
+													}}
+												>
+													<TrashIcon className="size-4" />
+												</Button>
+											</TableCell>
+										</TableRow>
+									);
+								})}
+							</TableBody>
+						</Table>
+					</CardContent>
+				)}
 			</Card>
 			<Dialog
 				closeOnOutsideClick={false}

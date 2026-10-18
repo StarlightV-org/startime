@@ -257,9 +257,6 @@ export async function GET(req: NextRequest) {
 
 	return new Response(svg, {
 		headers: {
-			"Cache-Control": accountConfig.privacy.publicProfile
-				? "public, max-age=300, s-maxage=300, stale-while-revalidate=3600"
-				: "private, no-store",
 			"Content-Type": "image/svg+xml; charset=utf-8",
 			"X-Content-Type-Options": "nosniff",
 		},
