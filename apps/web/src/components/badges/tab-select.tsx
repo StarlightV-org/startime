@@ -35,8 +35,18 @@ import { timeRangeValues, type TimeRange } from "~/lib/time-range";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "../ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectSeparator,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
 import { TimeSelect } from "../overview";
+
+import { useSelector } from "@tanstack/react-form";
 
 type BadgePreviewProps = {
 	src: string;
@@ -120,7 +130,7 @@ const badgeInputSchema: { [key in ChartType]?: z.ZodType | undefined } = {
 function getDefaultValues(tab: ChartType) {
 	switch (tab) {
 		case "lang":
-			return { timeRange: "past90" as TimeRange } as const;
+			return { timeRange: "past90" as TimeRange, inMinutes: false as boolean };
 		default:
 			return undefined;
 	}
@@ -194,6 +204,9 @@ export default function TabSelect() {
 		},
 	});
 
+	const timeRange = useSelector(badgeInputForm.store, (state) => state.values.timeRange);
+	const inMinutes = useSelector(badgeInputForm.store, (state) => state.values.inMinutes);
+
 	useEffect(() => {
 		Print.Debug("tab", tab);
 		const defaultValues = getDefaultValues(tab as ChartType);
@@ -229,9 +242,9 @@ export default function TabSelect() {
 							<TabsContent value="lang" className="w-full">
 								<BadgePreview
 									isBadgeEnabled={Boolean(hasBadgeEnabled)}
-									src={`/api/badge/lang?internal=true&timeRange=${badgeInputForm.state.values.timeRange ?? "past90"}`}
+									src={`/api/badge/lang?internal=true&timeRange=${timeRange ?? "past90"}&inMinutes=${Boolean(inMinutes)}`}
 									alt="Language Preview"
-									imageClassName="aspect-auto max-w-90"
+									imageClassName="aspect-auto max-h-[180px]"
 								/>
 							</TabsContent>
 							<TabsContent value="trend" className="flex min-h-45 w-full items-center justify-center">
@@ -251,26 +264,57 @@ export default function TabSelect() {
 					>
 						{tab === "lang" && (
 							<FieldGroup>
-								{
-									<badgeInputForm.Field
-										name="timeRange"
-										children={(field) => {
-											const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-											return (
-												<Field orientation="responsive" data-invalid={isInvalid}>
-													<FieldContent>
-														<FieldLabel htmlFor="form-tanstack-select-time-range">Time Range</FieldLabel>
-														<FieldDescription>The time range to display in the badge.</FieldDescription>
+								<badgeInputForm.Field
+									name="timeRange"
+									children={(field) => {
+										const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+										return (
+											<Field orientation="responsive" data-invalid={isInvalid}>
+												<FieldContent>
+													<FieldLabel htmlFor="form-tanstack-select-time-range">Time Range</FieldLabel>
+													<FieldDescription>The time range to display in the badge.</FieldDescription>
 
-														{isInvalid && <FieldError errors={field.state.meta.errors} />}
-													</FieldContent>
+													{isInvalid && <FieldError errors={field.state.meta.errors} />}
+												</FieldContent>
 
-													<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} />
-												</Field>
-											);
-										}}
-									/>
-								}
+												<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} />
+											</Field>
+										);
+									}}
+								/>
+								<badgeInputForm.Field
+									name="inMinutes"
+									children={(field) => {
+										const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+										return (
+											<Field orientation="responsive" data-invalid={isInvalid}>
+												<FieldContent>
+													<FieldLabel htmlFor="form-tanstack-select-unit">Unit</FieldLabel>
+													<FieldDescription>Show language activity as time or a percentage.</FieldDescription>
+
+													{isInvalid && <FieldError errors={field.state.meta.errors} />}
+												</FieldContent>
+
+												<Select
+													value={Boolean(field.state.value)}
+													onValueChange={(value) => {
+														if (value !== null) field.setValue(value);
+													}}
+												>
+													<SelectTrigger id="form-tanstack-select-unit" aria-invalid={isInvalid}>
+														<SelectValue fallback={field.state.value ? "Minutes" : "Percentage"} />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectGroup>
+															<SelectItem value={false}>Percentage</SelectItem>
+															<SelectItem value={true}>Minutes</SelectItem>
+														</SelectGroup>
+													</SelectContent>
+												</Select>
+											</Field>
+										);
+									}}
+								/>
 							</FieldGroup>
 						)}
 					</form>

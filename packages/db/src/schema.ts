@@ -200,6 +200,7 @@ export const shareKeys = createTable("share_keys", {
 	chartType: t.text("chart", { enum: chartTypes }),
 	createdAt: t.timestamp("created_at").notNull().defaultNow(),
 	timeRange: t.text(),
+	inMinutes: t.boolean().default(false),
 });
 
 export const shareKeyRelations = relations(shareKeys, ({ one, many }) => ({

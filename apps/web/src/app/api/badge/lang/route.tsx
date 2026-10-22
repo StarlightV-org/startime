@@ -23,6 +23,7 @@ const coordinatesSearchParams = {
 	shareKey: parseAsString,
 	internal: parseAsBoolean,
 	timeRange: parseAsString,
+	inMinutes: parseAsBoolean,
 };
 const loadSearchParams = createLoader(coordinatesSearchParams);
 
@@ -69,6 +70,7 @@ export async function GET(req: NextRequest) {
 
 	let userId: string | undefined;
 	let timeRange: TimeRange = "past90";
+	let inMinutes: boolean = false;
 
 	if (rawParams.internal) {
 		const { user, session } = await getAuth();
@@ -77,6 +79,7 @@ export async function GET(req: NextRequest) {
 		}
 		userId = user.id;
 		timeRange = (rawParams.timeRange ?? "past90") as TimeRange;
+		inMinutes = rawParams.inMinutes ?? false;
 	}
 
 	if (!rawParams.internal) {
@@ -108,6 +111,7 @@ export async function GET(req: NextRequest) {
 
 		userId = shareKey.userId;
 		timeRange = (shareKey.timeRange ?? "past90") as TimeRange;
+		inMinutes = shareKey.inMinutes ?? false;
 
 		if (!userId) {
 			const { user } = await getAuth();
@@ -172,6 +176,9 @@ export async function GET(req: NextRequest) {
 	const languageNames = rankedLanguages.map(({ value }) => value);
 	const languageIconDataUris = await Promise.all(rankedLanguages.map(({ value }) => getLanguageIconDataUri(value)));
 
+	const badgeWidth = 400;
+	const legendRight = badgeWidth - 10;
+
 	const chart = defineChart({
 		marks: [
 			polar({
@@ -200,11 +207,11 @@ export async function GET(req: NextRequest) {
 			domain: languageNames,
 			range: languageColors,
 		},
-		margin: { top: 18, right: 184, bottom: 18, left: 8 },
+		margin: { top: 18, right: badgeWidth - 176, bottom: 18, left: 8 },
 	});
 
 	const scene = createChartScene(chart, {
-		width: 360,
+		width: badgeWidth,
 		height: 180,
 	});
 	const styles = `<style>
@@ -218,15 +225,14 @@ export async function GET(req: NextRequest) {
 		--sidebar-primary: oklch(0.645 0.246 16.439);
 	}
 	</style>`;
-	const background =
-		'<rect x="0.5" y="0.5" width="359" height="179" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />';
+	const background = `<rect x="0.5" y="0.5" width="${badgeWidth - 1}" height="179" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />`;
 	const centerLabel = `<g text-anchor="middle">
 		<text x="92" y="87" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
 		<text x="92" y="105" fill="currentColor" font-size="9">${translatedTimeRange}</text>
 	</g>`;
 	const legend = rankedLanguages
-		.map(({ value, percentage }, index) => {
-			const y = 43 + index * 19;
+		.map(({ value, minutes, percentage }, index) => {
+			const y = 62 + index * 19;
 			const iconDataUri = languageIconDataUris[index];
 			const icon = iconDataUri
 				? `<image x="206" y="${y - 11}" width="14" height="14" href="${iconDataUri}" preserveAspectRatio="xMidYMid meet" />`
@@ -235,15 +241,16 @@ export async function GET(req: NextRequest) {
 				<rect x="190" y="${y - 9}" width="10" height="10" rx="1.5" fill="${languageColors[index]}" />
 				${icon}
 				<text x="225" y="${y}" fill="var(--foreground)" font-size="11">${escapeXml(getLanguageLabel(value))}</text>
-				<text x="350" y="${y}" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">${percentage.toFixed(1)}%</text>
+				<text x="${legendRight}" y="${y}" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">${inMinutes ? escapeXml(toTimeString(minutes)) : `${percentage.toFixed(1)}%`}</text>
 			</g>`;
 		})
 		.join("");
 	const overlay = `<g>
-		<text x="190" y="23" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
+		<text x="10" y="18" fill="currentColor" font-size="10" font-weight="600">time.starlightv.dev</text>
+		<text x="${legendRight}" y="18" fill="currentColor" font-size="10" font-weight="600" text-anchor="end">@${escapeXml(targetUser.name)}</text>
+		<text x="190" y="43" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
 		${centerLabel}
 		${legend}
-		<text x="350" y="166" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" font-size="10" text-anchor="end">time.starlightv.dev @${escapeXml(targetUser.name)}</text>
 	</g>`;
 	const svg = renderChartSvgWithResources(scene, {
 		ariaLabel: "Language activity over the last year",

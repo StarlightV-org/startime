@@ -33,7 +33,8 @@ export const badgesRouter = createTRPCRouter({
 				chartType: z.enum(chartTypes, `chartType must be one of ${chartTypes.join(", ")}`),
 				data: z
 					.object({
-						timeRange: timeRangeSchema,
+						timeRange: timeRangeSchema.optional(),
+						inMinutes: z.boolean().optional(),
 					})
 					.optional(),
 			}),
@@ -54,6 +55,7 @@ export const badgesRouter = createTRPCRouter({
 					userId: ctx.user.id,
 					chartType,
 					timeRange: data?.timeRange,
+					inMinutes: data?.inMinutes ?? false,
 				})
 				.returning();
 
