@@ -207,12 +207,12 @@ export async function GET(req: NextRequest) {
 			domain: languageNames,
 			range: languageColors,
 		},
-		margin: { top: 18, right: badgeWidth - 176, bottom: 18, left: 8 },
+		margin: { top: 34, right: badgeWidth - 176, bottom: 8, left: 8 },
 	});
 
 	const scene = createChartScene(chart, {
 		width: badgeWidth,
-		height: 180,
+		height: 174,
 	});
 	const styles = `<style>
 	svg {
@@ -225,14 +225,14 @@ export async function GET(req: NextRequest) {
 		--sidebar-primary: oklch(0.645 0.246 16.439);
 	}
 	</style>`;
-	const background = `<rect x="0.5" y="0.5" width="${badgeWidth - 1}" height="179" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />`;
+	const background = `<rect x="0.5" y="0.5" width="${badgeWidth - 1}" height="173" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />`;
 	const centerLabel = `<g text-anchor="middle">
-		<text x="92" y="87" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
-		<text x="92" y="105" fill="currentColor" font-size="9">${translatedTimeRange}</text>
+		<text x="92" y="97" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
+		<text x="92" y="115" fill="currentColor" font-size="9">${translatedTimeRange}</text>
 	</g>`;
 	const legend = rankedLanguages
 		.map(({ value, minutes, percentage }, index) => {
-			const y = 62 + index * 19;
+			const y = 72 + index * 19;
 			const iconDataUri = languageIconDataUris[index];
 			const icon = iconDataUri
 				? `<image x="206" y="${y - 11}" width="14" height="14" href="${iconDataUri}" preserveAspectRatio="xMidYMid meet" />`
@@ -248,7 +248,7 @@ export async function GET(req: NextRequest) {
 	const overlay = `<g>
 		<text x="10" y="18" fill="currentColor" font-size="10" font-weight="600">time.starlightv.dev</text>
 		<text x="${legendRight}" y="18" fill="currentColor" font-size="10" font-weight="600" text-anchor="end">@${escapeXml(targetUser.name)}</text>
-		<text x="190" y="43" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
+		<text x="190" y="53" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
 		${centerLabel}
 		${legend}
 	</g>`;
