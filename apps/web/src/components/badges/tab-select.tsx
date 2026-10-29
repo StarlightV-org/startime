@@ -277,7 +277,7 @@ export default function TabSelect() {
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
 												</FieldContent>
 
-												<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} />
+												<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} useCookie={false} />
 											</Field>
 										);
 									}}
