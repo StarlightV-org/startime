@@ -88,7 +88,7 @@ function AutoConfigField({
 				{field.kind === "enum" ? (
 					<Select
 						multiple={field.multiple}
-						value={Array.isArray(value) ? value : [String(value ?? "")]}
+						value={field.multiple ? (Array.isArray(value) ? value : [String(value ?? "")]) : String(value ?? "")}
 						disabled={disabled}
 						onValueChange={(nextValue: string | string[] | null) => onValueCommit(field.path, nextValue)}
 					>
