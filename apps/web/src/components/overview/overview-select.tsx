@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { msg } from "@lingui/core/macro";
-import type { MessageDescriptor } from "@lingui/core";
 import { parseTranslate } from "~/lib/utils";
 import { timeRangeLabels } from "~/lib/time-range";
 
@@ -17,14 +14,17 @@ export function TimeSelect({
 	onChange,
 	className,
 	useCookie = true,
+	id,
 }: {
 	timeRange: TimeRange;
 	cookieSuffix?: string;
 	onChange?: (value: TimeRange) => void;
 	className?: string;
 	useCookie?: boolean;
+	id?: string;
 }) {
 	const [value, setValue] = useState(timeRange);
+	useEffect(() => setValue(timeRange), [timeRange]);
 	const router = useRouter();
 	const { i18n } = useLingui();
 
@@ -33,13 +33,13 @@ export function TimeSelect({
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
 		if (useCookie) document.cookie = `startime_timeRange${cookieSuffix ? `_${cookieSuffix}` : ""}=${value}; path=/`;
-		router.refresh();
+		if (useCookie) router.refresh();
 		if (onChange) onChange(value);
 	};
 
 	return (
 		<Select value={value} onValueChange={handleChange}>
-			<SelectTrigger className={className}>
+			<SelectTrigger id={id} className={className}>
 				<SelectValue fallback={parseTranslate(i18n, timeRangeLabels[value])} />
 			</SelectTrigger>
 			<SelectContent className="w-full">

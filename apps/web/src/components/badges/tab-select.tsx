@@ -1,12 +1,11 @@
 "use client";
 
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Trans } from "@lingui/react/macro";
 import { api } from "~/trpc/react";
 import { useEffect, useState } from "react";
-import type { ChartType } from "@startime/db";
 import { Button } from "../ui/button";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Badge } from "../ui/badge";
@@ -26,21 +25,18 @@ import { useConfirmModal } from "../ui/confirm-modal";
 import { toast } from "sonner";
 import { ENV } from "@startime/env";
 import { useSession } from "~/provider/session-provider";
-import { msg, t } from "@lingui/core/macro";
+import { msg } from "@lingui/core/macro";
 import { cn, parseTranslate } from "~/lib/utils";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
-import z from "zod";
-import { timeRangeValues, type TimeRange } from "~/lib/time-range";
+import { badgeOptionsSchema, defaultBadgeOptions, supportedBadgeTypes } from "~/lib/badge-options";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
 } from "../ui/select";
@@ -56,7 +52,11 @@ type BadgePreviewProps = {
 	isBadgeEnabled: boolean;
 };
 
-function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: BadgePreviewProps) {
+function BadgePreview(props: BadgePreviewProps) {
+	return <BadgePreviewImage key={`${props.src}:${props.isBadgeEnabled}`} {...props} />;
+}
+
+function BadgePreviewImage({ src, alt, className, imageClassName, isBadgeEnabled }: BadgePreviewProps) {
 	const [status, setStatus] = useState<"loading" | "loaded" | "error">("loading");
 
 	if (!isBadgeEnabled) {
@@ -101,11 +101,9 @@ function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: B
 				src={src}
 				alt={alt}
 				onLoad={() => {
-					Print.Debug("loaded", { src, alt });
 					setStatus("loaded");
 				}}
 				onError={() => {
-					Print.Debug("error", { src, alt });
 					setStatus("error");
 				}}
 
@@ -119,23 +117,6 @@ function BadgePreview({ src, alt, className, imageClassName, isBadgeEnabled }: B
 	);
 }
 
-const badgeInputSchema: { [key in ChartType]?: z.ZodType | undefined } = {
-	calendar: undefined,
-	lang: z.object({
-		timeRange: z.enum(timeRangeValues).default("past90") as z.ZodType<TimeRange>,
-	}),
-	trend: undefined,
-};
-
-function getDefaultValues(tab: ChartType) {
-	switch (tab) {
-		case "lang":
-			return { timeRange: "past90" as TimeRange, inMinutes: false as boolean };
-		default:
-			return undefined;
-	}
-}
-
 export default function TabSelect() {
 	const { i18n } = useLingui();
 	const confirmModal = useConfirmModal();
@@ -143,21 +124,21 @@ export default function TabSelect() {
 
 	const [tab, setTab] = useQueryState(
 		"tab",
-		parseAsString.withDefault("calendar").withOptions({ clearOnDefault: true }),
+		parseAsStringLiteral(supportedBadgeTypes).withDefault("calendar").withOptions({ clearOnDefault: true }),
 	);
 
-	const hasBadgeEnabled = user?.accountConfig.privacy.allowedBadges?.includes(tab as ChartType);
+	const hasBadgeEnabled = user?.accountConfig.privacy.allowedBadges?.includes(tab);
 
 	const [newShareKey, setNewShareKey] = useState<string | undefined>(undefined);
 
 	const { data: shareKeys, refetch } = api.badges.listShareKeys.useQuery(
-		{ chartType: tab as ChartType },
+		{ chartType: tab },
 		{
 			refetchOnMount: true,
 		},
 	);
 
-	const { mutate } = api.badges.createShareKey.useMutation({
+	const { mutate, isPending } = api.badges.createShareKey.useMutation({
 		onSuccess: (data) => {
 			refetch();
 			if (!data?.id) {
@@ -165,7 +146,7 @@ export default function TabSelect() {
 				return;
 			}
 			const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
-			url.pathname = `/api/badge/${tab}`;
+			url.pathname = `/api/badge/${data.chartType}`;
 			url.searchParams.set("shareKey", data.id);
 			setNewShareKey(url.toString());
 			toast.success("Share key created successfully.", { id: "create-share-key" });
@@ -195,12 +176,13 @@ export default function TabSelect() {
 		},
 	});
 
-	const badgeInput = badgeInputSchema[tab as ChartType];
-
 	const badgeInputForm = useForm({
-		defaultValues: getDefaultValues(tab as ChartType),
+		defaultValues: defaultBadgeOptions(),
 		validators: {
-			onSubmit: badgeInput as any,
+			onSubmit: badgeOptionsSchema,
+		},
+		onSubmit: ({ value }) => {
+			if (hasBadgeEnabled && !isPending) mutate({ chartType: tab, data: value });
 		},
 	});
 
@@ -208,10 +190,8 @@ export default function TabSelect() {
 	const inMinutes = useSelector(badgeInputForm.store, (state) => state.values.inMinutes);
 
 	useEffect(() => {
-		Print.Debug("tab", tab);
-		const defaultValues = getDefaultValues(tab as ChartType);
-		Print.Debug("defaultValues", defaultValues);
-		badgeInputForm.reset(defaultValues);
+		badgeInputForm.reset(defaultBadgeOptions());
+		setNewShareKey(undefined);
 	}, [tab]);
 
 	return (
@@ -225,9 +205,6 @@ export default function TabSelect() {
 							</TabsTrigger>
 							<TabsTrigger value="lang">
 								<Trans>Language</Trans>
-							</TabsTrigger>
-							<TabsTrigger value="trend">
-								<Trans>Trend</Trans>
 							</TabsTrigger>
 						</TabsList>
 						<div className="min-h-45 py-1">
@@ -247,9 +224,6 @@ export default function TabSelect() {
 									imageClassName="aspect-auto max-h-[180px]"
 								/>
 							</TabsContent>
-							<TabsContent value="trend" className="flex min-h-45 w-full items-center justify-center">
-								This feature is not yet available.
-							</TabsContent>
 						</div>
 					</Tabs>
 				</CardContent>
@@ -257,6 +231,7 @@ export default function TabSelect() {
 			<Card>
 				<CardHeader className="pb-0">
 					<form
+						id="badge-options"
 						onSubmit={(e) => {
 							e.preventDefault();
 							badgeInputForm.handleSubmit();
@@ -277,7 +252,12 @@ export default function TabSelect() {
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
 												</FieldContent>
 
-												<TimeSelect timeRange={field.state.value ?? "past90"} onChange={(value) => field.setValue(value)} useCookie={false} />
+												<TimeSelect
+													id="form-tanstack-select-time-range"
+													timeRange={field.state.value}
+													onChange={(value) => field.setValue(value)}
+													useCookie={false}
+												/>
 											</Field>
 										);
 									}}
@@ -290,7 +270,9 @@ export default function TabSelect() {
 											<Field orientation="responsive" data-invalid={isInvalid}>
 												<FieldContent>
 													<FieldLabel htmlFor="form-tanstack-select-unit">Unit</FieldLabel>
-													<FieldDescription>Show language activity as time or a percentage.</FieldDescription>
+													<FieldDescription>
+														Percentages use language-minutes, counting overlaps separately. The center shows distinct active time.
+													</FieldDescription>
 
 													{isInvalid && <FieldError errors={field.state.meta.errors} />}
 												</FieldContent>
@@ -319,13 +301,10 @@ export default function TabSelect() {
 						)}
 					</form>
 					<Button
-						disabled={!hasBadgeEnabled}
+						disabled={!hasBadgeEnabled || isPending}
+						type="submit"
+						form="badge-options"
 						variant="outline"
-						onClick={() => {
-							badgeInputForm.update();
-							const data = badgeInputForm.state.values;
-							mutate({ chartType: tab as ChartType, data: data });
-						}}
 					>
 						{hasBadgeEnabled
 							? parseTranslate(i18n, msg`Create new Share Key`)
@@ -344,7 +323,7 @@ export default function TabSelect() {
 										<Trans>Share Key</Trans>
 									</TableHead>
 									<TableHead>
-										<Trans>Last Accessed</Trans>
+										<Trans>Last observed referrer</Trans>
 									</TableHead>
 									<TableHead className="text-center">
 										<Trans>Referrers</Trans>
@@ -356,14 +335,11 @@ export default function TabSelect() {
 							</TableHeader>
 							<TableBody>
 								{shareKeys?.map((key) => {
-									const url = new URL(ENV.NEXT_PUBLIC_BETTER_AUTH_URL);
-									url.pathname = `/api/badge/${tab}`;
-									if (key?.id) url.searchParams.set("shareKey", key.id);
 									return (
 										<TableRow key={key.id}>
 											<TableCell>{key.id}</TableCell>
 											<TableCell>
-												{key.referrers
+												{[...key.referrers]
 													.sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())[0]
 													?.lastUsed?.toLocaleString(i18n.locale) ?? "-"}
 											</TableCell>
@@ -373,13 +349,20 @@ export default function TabSelect() {
 														disabled={key.referrers.length === 0}
 														nativeButton={false}
 														render={<Badge>{key.referrers.length}</Badge>}
+														aria-label="View observed referrer origins"
 													/>
 													<DialogContent>
+														<DialogHeader>
+															<DialogTitle>Observed referrer origins</DialogTitle>
+															<DialogDescription>
+																Only HTTP origins are stored. Headers may be missing or spoofed; image proxies can hide visits.
+															</DialogDescription>
+														</DialogHeader>
 														<Table>
 															<TableHeader>
 																<TableRow>
 																	<TableHead>Referrer</TableHead>
-																	<TableHead>Last Accessed</TableHead>
+																	<TableHead>Last observed</TableHead>
 																</TableRow>
 															</TableHeader>
 															<TableBody>
@@ -395,12 +378,8 @@ export default function TabSelect() {
 												</Dialog>
 											</TableCell>
 											<TableCell className="flex justify-end gap-1">
-												{/*<CopyButton
-												value={url.toString()}
-
-												className="size-7"
-											/>*/}
 												<Button
+													aria-label="Copy badge embed"
 													variant="outline"
 													size="icon-sm"
 													onClick={() => {
@@ -413,13 +392,14 @@ export default function TabSelect() {
 													<Copy className="size-4" />
 												</Button>
 												<Button
+													aria-label="Delete share key"
 													size="icon-sm"
 													variant="destructive"
 													onClick={async () => {
 														const confirmed = await confirmModal({
 															title: i18n.t(`Delete Share Key`),
 															content: i18n.t(
-																`Are you sure you want to delete this share key? The Badge will no longer load on any website.`,
+																`Delete this share key? New requests will fail, but websites and image proxies may retain copies.`,
 															),
 															delay: 1000,
 															variant: "destructive",
@@ -459,9 +439,12 @@ export default function TabSelect() {
 						</DialogHeader>
 						<div className="flex flex-col gap-2">
 							<CopyButton value={newShareKey} label={"Permalink"} />
-							<CopyButton value={`![Startime Calendar Badge](${newShareKey})`} label={"Embed in Markdown"} />
 							<CopyButton
-								value={`<a href="${ENV.NEXT_PUBLIC_BETTER_AUTH_URL}"><img alt="Startime Calendar Badge" src="${newShareKey}"></a>`}
+								value={`![Startime ${new URL(newShareKey).pathname.endsWith("/lang") ? "Language" : "Calendar"} Badge](${newShareKey})`}
+								label={"Embed in Markdown"}
+							/>
+							<CopyButton
+								value={`<a href="${ENV.NEXT_PUBLIC_BETTER_AUTH_URL}"><img alt="Startime ${new URL(newShareKey).pathname.endsWith("/lang") ? "Language" : "Calendar"} Badge" src="${newShareKey}"></a>`}
 								label={"Embed in HTML"}
 							/>
 						</div>

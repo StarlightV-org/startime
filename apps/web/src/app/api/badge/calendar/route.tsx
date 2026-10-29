@@ -1,13 +1,9 @@
-import { cell, createChartScene, defineChart, renderChartSvg, text } from "@tanstack/charts";
+import { cell, createChartScene, defineChart, text } from "@tanstack/charts";
 import { scaleBand } from "@tanstack/charts/scales/band";
-import { db, shareKeyReferrers } from "@startime/db";
-import { NextResponse, type NextRequest } from "next/server";
-import { createLoader, parseAsBoolean, parseAsString } from "nuqs/server";
+import type { NextRequest } from "next/server";
+import { badgeResponse, recordBadgeReferrer, resolveBadgeAccess } from "~/server/badge-access";
 
-import { checkAccountConfig } from "~/lib/account-config";
 import { getDailyActivityForUser } from "~/server/activity-calendar";
-import { getAuth } from "~/server/better-auth";
-import z from "zod";
 import { renderChartSvgWithResources } from "@tanstack/charts/svg/resources";
 import { tooltip } from "@tanstack/charts/tooltip";
 import { withRedisCache } from "~/server/redis/cache";
@@ -27,11 +23,7 @@ const activityLevels = [
 
 type ActivityLevel = (typeof activityLevels)[number];
 
-const coordinatesSearchParams = {
-	shareKey: parseAsString,
-	internal: parseAsBoolean,
-};
-const loadSearchParams = createLoader(coordinatesSearchParams);
+export const dynamic = "force-dynamic";
 
 function getActivityLevel(minutes: number, lowestActiveMinutes: number, highestActiveMinutes: number): ActivityLevel {
 	if (minutes === 0) return "None";
@@ -44,87 +36,20 @@ function getActivityLevel(minutes: number, lowestActiveMinutes: number, highestA
 }
 
 export async function GET(req: NextRequest) {
-	const rawParams = loadSearchParams(req);
+	return badgeResponse(() => renderBadge(req));
+}
 
-	let userId: string | undefined;
-	if (rawParams.internal) {
-		const { user, session } = await getAuth();
-		if (!session?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
-		userId = user.id;
-	}
-
-	if (!rawParams.internal) {
-		const { data, success, error } = z
-			.object({
-				shareKey: z.string("Share key is required").regex(/^[A-Z]{8}\d{8}$/, "Share does not match the required format"),
-			})
-			.safeParse(rawParams);
-
-		if (!success) {
-			return NextResponse.json(z.treeifyError(error).properties, { status: 400 });
-		}
-
-		const { shareKey: shareKeyId } = data;
-
-		if (!shareKeyId) {
-			Print.Debug("Share key not found 1");
-			return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-		}
-
-		const shareKey = await db.query.shareKeys.findFirst({
-			where: (shareKeys, { eq, and }) => and(eq(shareKeys.id, shareKeyId), eq(shareKeys.chartType, "calendar")),
-		});
-
-		if (!shareKey) {
-			Print.Debug("Share key not found 2");
-			return NextResponse.json({ error: "Key not found" }, { status: 404 });
-		}
-
-		userId = shareKey.userId;
-
-		if (!userId) {
-			const { user } = await getAuth();
-			if (!user) {
-				return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-			}
-			userId = user.id;
-		}
-	}
-
-	const targetUser = await db.query.users.findFirst({
-		where: (users, { eq }) => eq(users.id, userId!),
-		columns: { id: true, accountConfig: true, name: true },
-	});
-
-	if (!targetUser) {
-		Print.Debug("Target user not found");
-		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-	}
-
-	const referrer = req.headers.get("referer");
-	if (referrer && rawParams.shareKey) {
-		void db
-			.insert(shareKeyReferrers)
-			.values({ shareKeyId: rawParams.shareKey, referrer: referrer.toString() })
-			.onConflictDoUpdate({
-				target: [shareKeyReferrers.shareKeyId, shareKeyReferrers.referrer],
-				set: { referrer: referrer.toString(), lastUsed: new Date() },
-			})
-			.then(() => {
-				Print.Debug("Referrer logged", { referrer: referrer.toString() });
-			});
-	}
-
-	const accountConfig = checkAccountConfig(targetUser.accountConfig);
-
-	if (!accountConfig.privacy.allowedBadges?.includes("calendar")) {
-		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-	}
+async function renderBadge(req: NextRequest) {
+	const access = await resolveBadgeAccess(req, "calendar");
+	if (access instanceof Response) return access;
+	const { targetUser, accountConfig, shareKey } = access;
 
 	const dailyActivity = await withRedisCache(
-		cacheKey({ userId: targetUser.id, regional: accountConfig.regional }),
+		cacheKey({
+			userId: targetUser.id,
+			regional: accountConfig.regional,
+			date: new Date().toLocaleDateString("en-CA", { timeZone: accountConfig.regional.timeZone }),
+		}),
 		3600,
 		() => getDailyActivityForUser(targetUser.id, accountConfig.regional),
 	);
@@ -255,6 +180,7 @@ export async function GET(req: NextRequest) {
 		.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" ')
 		.replace(">", `>${styles}${background}`);
 
+	await recordBadgeReferrer(req, shareKey);
 	return new Response(svg, {
 		headers: {
 			"Content-Type": "image/svg+xml; charset=utf-8",

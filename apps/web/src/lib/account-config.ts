@@ -2,7 +2,7 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import z, { globalRegistry } from "zod";
 
-export const chartTypes = ["calendar", "lang", "trend"] as const;
+export const chartTypes = ["calendar", "lang"] as const;
 export type ChartType = (typeof chartTypes)[number];
 import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
 
@@ -125,7 +125,6 @@ const privacySchema = z
 					enumLabels: {
 						calendar: msg`Calendar`,
 						lang: msg`Languages`,
-						trend: msg`Trend`,
 					},
 					groupTitle: msg`Privacy settings`,
 					label: msg`Allowed badges`,
@@ -449,6 +448,16 @@ export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
 ]);
 
 export function checkAccountConfig(config: unknown): AccountConfig {
+	// Ignore retired badge types without resetting unrelated privacy settings.
+	if (config && typeof config === "object" && "privacy" in config) {
+		const privacy = config.privacy;
+		if (privacy && typeof privacy === "object" && "allowedBadges" in privacy && Array.isArray(privacy.allowedBadges)) {
+			config = {
+				...config,
+				privacy: { ...privacy, allowedBadges: privacy.allowedBadges.filter((value) => value !== "trend") },
+			};
+		}
+	}
 	if (config && typeof config === "object") {
 		const accountConfig = config as { regional?: { lang?: unknown } };
 		const lang = accountConfig.regional?.lang;

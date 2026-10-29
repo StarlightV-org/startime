@@ -3,7 +3,6 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { addDays, addMonths, addWeeks, addYears, startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 import { subHours } from "date-fns/fp";
-import { LucideAlignHorizontalJustifyCenter } from "lucide-react";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 
 export const timeRangeValues = [

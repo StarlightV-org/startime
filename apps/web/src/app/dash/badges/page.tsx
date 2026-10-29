@@ -2,20 +2,19 @@ import { Trans } from "@lingui/react/macro";
 import { headers } from "next/headers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { GithubDark } from "~/components/ui/svgs/githubDark";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { setRequestI18n } from "~/i18n/server";
 import { getAuth } from "~/server/better-auth";
 import TabSelect from "~/components/badges/tab-select";
 
-import { chartTypes } from "@startime/db";
+import { supportedBadgeTypes } from "~/lib/badge-options";
 import { api } from "~/trpc/server";
 
 export default async function BadgesPage() {
 	const auth = await getAuth();
 	await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers())));
 
-	for (const chartType of chartTypes) {
+	for (const chartType of supportedBadgeTypes) {
 		await api.badges.listShareKeys.prefetch({ chartType });
 	}
 

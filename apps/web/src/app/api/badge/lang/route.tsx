@@ -1,15 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { NextResponse, type NextRequest } from "next/server";
-import { createLoader, parseAsBoolean, parseAsString } from "nuqs/server";
-import { z } from "zod";
-import { getAuth } from "~/server/better-auth";
+import type { NextRequest } from "next/server";
+import { badgeResponse, recordBadgeReferrer, resolveBadgeAccess } from "~/server/badge-access";
 
-import { db, shareKeyReferrers, eventLogs } from "@startime/db";
-import { checkAccountConfig } from "~/lib/account-config";
-import { getTimeRange, timeRangeLabels, toTimeString, type TimeRange } from "~/lib/time-range";
+import { db, eventLogs } from "@startime/db";
+import { getTimeRange, timeRangeLabels, toTimeString } from "~/lib/time-range";
 import { and, eq, gte, lt } from "drizzle-orm";
-import { rankByActiveMinutes } from "~/lib/overview-ranking";
+import { rankBadgeLanguages } from "~/lib/overview-ranking";
 import { getLanguageIconSrc } from "~/lib/languageIcons";
 import { createChartScene, defineChart } from "@tanstack/charts";
 import { pie, polar, radialArc } from "@tanstack/charts/polar";
@@ -19,13 +16,7 @@ import { setRequestI18n } from "~/i18n/server";
 import { fromHeader, resolveLocale } from "~/i18n/locales";
 import { parseTranslate } from "~/lib/utils";
 
-const coordinatesSearchParams = {
-	shareKey: parseAsString,
-	internal: parseAsBoolean,
-	timeRange: parseAsString,
-	inMinutes: parseAsBoolean,
-};
-const loadSearchParams = createLoader(coordinatesSearchParams);
+export const dynamic = "force-dynamic";
 
 const languageColors = [
 	"var(--sidebar-primary)",
@@ -65,92 +56,14 @@ async function getLanguageIconDataUri(language: string): Promise<string | undefi
 }
 
 export async function GET(req: NextRequest) {
-	const rawParams = loadSearchParams(req);
+	return badgeResponse(() => renderBadge(req));
+}
+
+async function renderBadge(req: NextRequest) {
+	const access = await resolveBadgeAccess(req, "lang");
+	if (access instanceof Response) return access;
+	const { targetUser, accountConfig, options: { timeRange, inMinutes }, shareKey } = access;
 	const i18n = await setRequestI18n(resolveLocale(fromHeader(req.headers)));
-
-	let userId: string | undefined;
-	let timeRange: TimeRange = "past90";
-	let inMinutes: boolean = false;
-
-	if (rawParams.internal) {
-		const { user, session } = await getAuth();
-		if (!session?.id) {
-			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-		}
-		userId = user.id;
-		timeRange = (rawParams.timeRange ?? "past90") as TimeRange;
-		inMinutes = rawParams.inMinutes ?? false;
-	}
-
-	if (!rawParams.internal) {
-		const { data, success, error } = z
-			.object({
-				shareKey: z.string("Share key is required").regex(/^[A-Z]{8}\d{8}$/, "Share does not match the required format"),
-			})
-			.safeParse(rawParams);
-
-		if (!success) {
-			return NextResponse.json(z.treeifyError(error).properties, { status: 400 });
-		}
-
-		const { shareKey: shareKeyId } = data;
-
-		if (!shareKeyId) {
-			Print.Debug("Share key not found 1");
-			return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-		}
-
-		const shareKey = await db.query.shareKeys.findFirst({
-			where: (shareKeys, { eq, and }) => and(eq(shareKeys.id, shareKeyId), eq(shareKeys.chartType, "lang")),
-		});
-
-		if (!shareKey) {
-			Print.Debug("Share key not found 2");
-			return NextResponse.json({ error: "Key not found" }, { status: 404 });
-		}
-
-		userId = shareKey.userId;
-		timeRange = (shareKey.timeRange ?? "past90") as TimeRange;
-		inMinutes = shareKey.inMinutes ?? false;
-
-		if (!userId) {
-			const { user } = await getAuth();
-			if (!user) {
-				return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-			}
-			userId = user.id;
-		}
-	}
-
-	const targetUser = await db.query.users.findFirst({
-		where: (users, { eq }) => eq(users.id, userId!),
-		columns: { id: true, accountConfig: true, name: true },
-	});
-
-	if (!targetUser) {
-		Print.Debug("Target user not found");
-		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-	}
-
-	const referrer = req.headers.get("referer");
-	if (referrer && rawParams.shareKey) {
-		void db
-			.insert(shareKeyReferrers)
-			.values({ shareKeyId: rawParams.shareKey, referrer: referrer.toString() })
-			.onConflictDoUpdate({
-				target: [shareKeyReferrers.shareKeyId, shareKeyReferrers.referrer],
-				set: { referrer: referrer.toString(), lastUsed: new Date() },
-			})
-			.then(() => {
-				Print.Debug("Referrer logged", { referrer: referrer.toString() });
-			});
-	}
-
-	const accountConfig = checkAccountConfig(targetUser.accountConfig);
-
-	if (!accountConfig.privacy.allowedBadges?.includes("lang")) {
-		return NextResponse.json({ error: "Badge not found" }, { status: 404 });
-	}
 
 	const regional = accountConfig.regional;
 	const translatedTimeRange = parseTranslate(i18n, timeRangeLabels[timeRange]);
@@ -170,7 +83,7 @@ export async function GET(req: NextRequest) {
 		.from(eventLogs)
 		.where(where);
 
-	const rankedLanguages = rankByActiveMinutes(events.map(({ language, eventTime }) => ({ value: language, eventTime })));
+	const rankedLanguages = rankBadgeLanguages(events.map(({ language, eventTime }) => ({ value: language, eventTime })));
 	const totalMinutes = new Set(events.map(({ eventTime }) => Math.floor(eventTime.getTime() / 60_000))).size;
 	const arcs = pie(rankedLanguages, { value: "minutes" });
 	const languageNames = rankedLanguages.map(({ value }) => value);
@@ -228,7 +141,7 @@ export async function GET(req: NextRequest) {
 	const background = `<rect x="0.5" y="0.5" width="${badgeWidth - 1}" height="173" rx="10" fill="oklch(0.212 0.019 322.12)" stroke="oklch(1 0 0 / 10%)" />`;
 	const centerLabel = `<g text-anchor="middle">
 		<text x="92" y="97" fill="var(--foreground)" font-size="14" font-weight="700">${escapeXml(toTimeString(totalMinutes, "hour"))}</text>
-		<text x="92" y="115" fill="currentColor" font-size="9">${translatedTimeRange}</text>
+		<text x="92" y="115" fill="currentColor" font-size="9">${escapeXml(translatedTimeRange)}</text>
 	</g>`;
 	const legend = rankedLanguages
 		.map(({ value, minutes, percentage }, index) => {
@@ -250,11 +163,11 @@ export async function GET(req: NextRequest) {
 		<text x="${legendRight}" y="18" fill="currentColor" font-size="10" font-weight="600" text-anchor="end">@${escapeXml(targetUser.name)}</text>
 		<text x="190" y="53" fill="var(--sidebar-primary)" font-size="9" font-weight="600" letter-spacing="1.2">${escapeXml(i18n.t(`LANGUAGES`))}</text>
 		${centerLabel}
-		${legend}
+		${legend || '<text x="190" y="80" fill="currentColor" font-size="12">No activity</text>'}
 	</g>`;
 	const svg = renderChartSvgWithResources(scene, {
-		ariaLabel: "Language activity over the last year",
-		ariaDescription: "A donut chart showing coding time by language during the last 90 days.",
+		ariaLabel: `Language activity: ${translatedTimeRange}`,
+		ariaDescription: "Share of language-minutes in the selected range; the center shows distinct active time.",
 		idPrefix: `language-activity-${targetUser.id}`,
 		tabIndex: -1,
 	})
@@ -262,6 +175,7 @@ export async function GET(req: NextRequest) {
 		.replace(">", `>${styles}${background}`)
 		.replace("</svg>", `${overlay}</svg>`);
 
+	await recordBadgeReferrer(req, shareKey);
 	return new Response(svg, {
 		headers: {
 			"Content-Type": "image/svg+xml; charset=utf-8",
