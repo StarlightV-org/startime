@@ -42,18 +42,22 @@ export async function GET(req: NextRequest) {
 async function renderBadge(req: NextRequest) {
 	const access = await resolveBadgeAccess(req, "calendar");
 	if (access instanceof Response) return access;
-	const { targetUser, accountConfig, shareKey } = access;
+	const { targetUser, accountConfig, options, shareKey } = access;
+	const regional = {
+		...accountConfig.regional,
+		startOfWeek: options.startOfWeek ?? accountConfig.regional.startOfWeek,
+	};
 
 	const dailyActivity = await withRedisCache(
 		cacheKey({
 			userId: targetUser.id,
-			regional: accountConfig.regional,
-			date: new Date().toLocaleDateString("en-CA", { timeZone: accountConfig.regional.timeZone }),
+			regional,
+			date: new Date().toLocaleDateString("en-CA", { timeZone: regional.timeZone }),
 		}),
 		3600,
-		() => getDailyActivityForUser(targetUser.id, accountConfig.regional),
+		() => getDailyActivityForUser(targetUser.id, regional),
 	);
-	const weekStartsOn = accountConfig.regional.startOfWeek === "monday" ? 1 : 0;
+	const weekStartsOn = regional.startOfWeek === "monday" ? 1 : 0;
 	const weekdays =
 		weekStartsOn === 1
 			? ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]

@@ -201,6 +201,7 @@ export const shareKeys = createTable("share_keys", {
 	createdAt: t.timestamp("created_at").notNull().defaultNow(),
 	timeRange: t.text(),
 	inMinutes: t.boolean().default(false),
+	startOfWeek: t.text({ enum: ["monday", "sunday"] }),
 });
 
 export const shareKeyRelations = relations(shareKeys, ({ one, many }) => ({

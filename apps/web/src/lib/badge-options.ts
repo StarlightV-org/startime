@@ -6,10 +6,11 @@ export type BadgeType = (typeof supportedBadgeTypes)[number];
 export const badgeOptionsSchema = z.object({
 	timeRange: z.enum(timeRangeValues),
 	inMinutes: z.boolean(),
+	startOfWeek: z.enum(["monday", "sunday"]).optional(),
 });
 export type BadgeOptions = z.infer<typeof badgeOptionsSchema>;
-export function defaultBadgeOptions(): BadgeOptions {
-	return { timeRange: "past90", inMinutes: false };
+export function defaultBadgeOptions(startOfWeek: "monday" | "sunday" = "monday"): BadgeOptions {
+	return { timeRange: "past90", inMinutes: false, startOfWeek };
 }
 
 const queryBoolean = z.enum(["true", "false"]).transform((value) => value === "true");
@@ -22,6 +23,7 @@ export const badgeQuerySchema = z
 			.optional(),
 		timeRange: z.enum(timeRangeValues).optional().default("past90"),
 		inMinutes: queryBoolean.optional().default(false),
+		startOfWeek: z.enum(["monday", "sunday"]).optional(),
 	})
 	.superRefine((value, ctx) => {
 		if (!value.internal && !value.shareKey) ctx.addIssue({ code: "custom", message: "Share key is required" });

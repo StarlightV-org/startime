@@ -5,6 +5,7 @@ import {
 	badgeQuerySchema,
 	badgeResponseHeaders,
 	referrerOrigin,
+	type BadgeOptions,
 	type BadgeType,
 } from "~/lib/badge-options";
 import { getAuth } from "./better-auth";
@@ -18,7 +19,7 @@ export async function resolveBadgeAccess(req: Request, chartType: BadgeType) {
 	if (!parsed.success) return badgeError(400, "Invalid badge parameters");
 	const params = parsed.data;
 	let userId: string;
-	let options = { timeRange: params.timeRange, inMinutes: params.inMinutes };
+	let options: BadgeOptions = { timeRange: params.timeRange, inMinutes: params.inMinutes, startOfWeek: params.startOfWeek };
 	if (params.internal) {
 		const { user, session } = await getAuth();
 		if (!session?.id || !user) return badgeError(401, "Unauthorized");
@@ -34,6 +35,7 @@ export async function resolveBadgeAccess(req: Request, chartType: BadgeType) {
 		const storedOptions = badgeOptionsSchema.safeParse({
 			timeRange: key.timeRange ?? "past90",
 			inMinutes: key.inMinutes ?? false,
+			startOfWeek: key.startOfWeek ?? undefined,
 		});
 		if (!storedOptions.success) return badgeError(404, "Badge not found");
 		options = storedOptions.data;

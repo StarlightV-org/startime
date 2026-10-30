@@ -49,6 +49,7 @@ export const badgesRouter = createTRPCRouter({
 					chartType,
 					timeRange: chartType === "lang" ? data.timeRange : null,
 					inMinutes: chartType === "lang" && data.inMinutes,
+					startOfWeek: chartType === "calendar" ? data.startOfWeek ?? ctx.user.accountConfig.regional.startOfWeek : null,
 				})
 				.returning();
 

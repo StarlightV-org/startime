@@ -177,7 +177,7 @@ export default function TabSelect() {
 	});
 
 	const badgeInputForm = useForm({
-		defaultValues: defaultBadgeOptions(),
+		defaultValues: defaultBadgeOptions(user?.accountConfig.regional.startOfWeek),
 		validators: {
 			onSubmit: badgeOptionsSchema,
 		},
@@ -188,11 +188,12 @@ export default function TabSelect() {
 
 	const timeRange = useSelector(badgeInputForm.store, (state) => state.values.timeRange);
 	const inMinutes = useSelector(badgeInputForm.store, (state) => state.values.inMinutes);
+	const startOfWeek = useSelector(badgeInputForm.store, (state) => state.values.startOfWeek);
 
 	useEffect(() => {
-		badgeInputForm.reset(defaultBadgeOptions());
+		badgeInputForm.reset(defaultBadgeOptions(user?.accountConfig.regional.startOfWeek));
 		setNewShareKey(undefined);
-	}, [tab]);
+	}, [tab, user?.accountConfig.regional.startOfWeek]);
 
 	return (
 		<>
@@ -211,7 +212,7 @@ export default function TabSelect() {
 							<TabsContent value="calendar" className="w-full">
 								<BadgePreview
 									isBadgeEnabled={Boolean(hasBadgeEnabled)}
-									src="/api/badge/calendar?internal=true"
+										src={`/api/badge/calendar?internal=true&startOfWeek=${startOfWeek ?? "monday"}`}
 									alt="Calendar Preview"
 									imageClassName="min-h-[176.062px]"
 								/>
@@ -237,6 +238,41 @@ export default function TabSelect() {
 							badgeInputForm.handleSubmit();
 						}}
 					>
+						{tab === "calendar" && (
+							<FieldGroup>
+								<badgeInputForm.Field
+									name="startOfWeek"
+									children={(field) => {
+										const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+										return (
+											<Field orientation="responsive" data-invalid={isInvalid}>
+												<FieldContent>
+													<FieldLabel htmlFor="form-tanstack-select-start-of-week">Start of week</FieldLabel>
+													<FieldDescription>The first day of the week in the calendar badge.</FieldDescription>
+													{isInvalid && <FieldError errors={field.state.meta.errors} />}
+												</FieldContent>
+												<Select
+													value={field.state.value ?? "monday"}
+													onValueChange={(value) => {
+														if (value !== null) field.setValue(value);
+													}}
+												>
+													<SelectTrigger id="form-tanstack-select-start-of-week" aria-invalid={isInvalid}>
+														<SelectValue fallback={field.state.value === "sunday" ? "Sunday" : "Monday"} />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectGroup>
+															<SelectItem value="monday">Monday</SelectItem>
+															<SelectItem value="sunday">Sunday</SelectItem>
+														</SelectGroup>
+													</SelectContent>
+												</Select>
+											</Field>
+										);
+									}}
+								/>
+							</FieldGroup>
+						)}
 						{tab === "lang" && (
 							<FieldGroup>
 								<badgeInputForm.Field
