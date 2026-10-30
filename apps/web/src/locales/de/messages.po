@@ -358,11 +358,6 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #: src/components/badges/tab-select.tsx
-#: src/lib/account-config.ts
-msgid "Trend"
-msgstr "Trend"
-
-#: src/components/badges/tab-select.tsx
 msgid "Create new Share Key"
 msgstr "Neuen Teilen-Schlüssel erstellen"
 
@@ -379,8 +374,8 @@ msgid "Share Key"
 msgstr "Teilen-Schlüssel"
 
 #: src/components/badges/tab-select.tsx
-msgid "Last Accessed"
-msgstr "Zuletzt zugegriffen"
+msgid "Last observed referrer"
+msgstr "letzte beobachtete Seite"
 
 #: src/components/badges/tab-select.tsx
 msgid "Referrers"
@@ -398,8 +393,8 @@ msgstr "Lösche den Teilen-Schlüssel"
 
 #. js-lingui-explicit-id
 #: src/components/badges/tab-select.tsx
-msgid "Are you sure you want to delete this share key? The Badge will no longer load on any website."
-msgstr "Bist du sicher, dass du diesen Teilen-Schlüssel löschen möchtest? Diese Badge wird auf keiner Website mehr laden."
+msgid "Delete this share key? New requests will fail, but websites and image proxies may retain copies."
+msgstr "Möchtest du diesen Teilen-Schlüssel löschen? Neue Anfragen werden fehlschlagen, aber Websites und Bildproxies können Kopien behalten."
 
 #: src/components/org/edit-org.tsx
 msgid "Organization updated successfully."
