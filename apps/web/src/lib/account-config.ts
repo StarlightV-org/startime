@@ -2,6 +2,8 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import z, { globalRegistry } from "zod";
 
+export const chartTypes = ["calendar", "lang"] as const;
+export type ChartType = (typeof chartTypes)[number];
 import { isValidTimeZone, normalizeTimeZone } from "~/lib/time-range";
 
 /** Metadata for auto-generated settings UI; attach via `.meta({ configUI: … })`. */
@@ -13,6 +15,7 @@ export type AccountConfigUIMeta = {
 	label?: MessageDescriptor;
 	description?: MessageDescriptor;
 	enumLabels?: Partial<Record<string, MessageDescriptor>>;
+	multiple?: boolean;
 	defaultBadge?: "On" | "Off";
 	excludeFromAutoSettings?: boolean;
 	numberMin?: number;
@@ -34,6 +37,7 @@ export const defaultAccountConfig = {
 	},
 	privacy: {
 		publicProfile: false,
+		allowedBadges: [] as ChartType[],
 	},
 	ui: {
 		popupForReauth: true,
@@ -109,6 +113,22 @@ const privacySchema = z
 					groupTitle: msg`Privacy settings`,
 					label: msg`Public profile`,
 					description: msg`Whether your profile is publicly visible.`,
+				}),
+			),
+		allowedBadges: z
+			.array(z.enum(chartTypes))
+			.optional()
+			.default(defaultAccountConfig.privacy.allowedBadges)
+			.meta(
+				createMeta({
+					multiple: true,
+					enumLabels: {
+						calendar: msg`Calendar`,
+						lang: msg`Languages`,
+					},
+					groupTitle: msg`Privacy settings`,
+					label: msg`Allowed badges`,
+					description: msg`List of Badges that are publicly accessible.`,
 				}),
 			),
 	})
@@ -212,6 +232,7 @@ export type SchemaSettingsFieldBoolean = SchemaSettingsFieldBase & {
 };
 export type SchemaSettingsFieldEnum = SchemaSettingsFieldBase & {
 	kind: "enum";
+	multiple?: boolean;
 	values: readonly string[];
 	enumLabels: Partial<Record<string, Translatable>>;
 	schemaDefaultEnum?: string;
@@ -328,6 +349,7 @@ function buildField(
 		const values = (core as { options?: readonly unknown[] }).options?.map(String) ?? [];
 		return {
 			kind: "enum",
+			multiple: meta?.multiple,
 			path,
 			label,
 			description: meta?.description,
@@ -420,11 +442,22 @@ export const setAccountConfigValueSchema = z.discriminatedUnion("path", [
 	z.object({ path: z.literal("regional.startOfWeek"), value: z.enum(["monday", "sunday"]) }),
 	z.object({ path: z.literal("regional.lang"), value: z.enum(["en", "de"]) }),
 	z.object({ path: z.literal("privacy.publicProfile"), value: z.boolean() }),
+	z.object({ path: z.literal("privacy.allowedBadges"), value: z.array(z.enum(chartTypes)) }),
 	z.object({ path: z.literal("ui.popupForReauth"), value: z.boolean() }),
 	z.object({ path: z.literal("personalOrg.shareAllTime"), value: z.boolean() }),
 ]);
 
 export function checkAccountConfig(config: unknown): AccountConfig {
+	// Ignore retired badge types without resetting unrelated privacy settings.
+	if (config && typeof config === "object" && "privacy" in config) {
+		const privacy = config.privacy;
+		if (privacy && typeof privacy === "object" && "allowedBadges" in privacy && Array.isArray(privacy.allowedBadges)) {
+			config = {
+				...config,
+				privacy: { ...privacy, allowedBadges: privacy.allowedBadges.filter((value) => value !== "trend") },
+			};
+		}
+	}
 	if (config && typeof config === "object") {
 		const accountConfig = config as { regional?: { lang?: unknown } };
 		const lang = accountConfig.regional?.lang;

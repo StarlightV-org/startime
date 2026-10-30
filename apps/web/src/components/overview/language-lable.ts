@@ -45,6 +45,7 @@ export const languageLabel = {
 	javascriptreact: "JavaScript React",
 	jinja: "Jinja",
 	json: "JSON",
+	jsonc: "JSONC",
 	julia: "Julia",
 	kotlin: "Kotlin",
 	latex: "LaTeX",

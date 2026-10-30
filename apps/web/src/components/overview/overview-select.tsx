@@ -1,42 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import type { BiggestUnit, TimeRange } from "~/server/api/routers/overview";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 import { Trans, useLingui } from "@lingui/react/macro";
+import { parseTranslate } from "~/lib/utils";
+import { timeRangeLabels } from "~/lib/time-range";
 
-export function TimeSelect({ timeRange, cookieSuffix }: { timeRange: TimeRange; cookieSuffix?: string }) {
+export function TimeSelect({
+	timeRange,
+	cookieSuffix,
+	onChange,
+	className,
+	useCookie = true,
+	id,
+}: {
+	timeRange: TimeRange;
+	cookieSuffix?: string;
+	onChange?: (value: TimeRange) => void;
+	className?: string;
+	useCookie?: boolean;
+	id?: string;
+}) {
 	const [value, setValue] = useState(timeRange);
+	useEffect(() => setValue(timeRange), [timeRange]);
 	const router = useRouter();
-	const { t } = useLingui();
+	const { i18n } = useLingui();
 
 	const handleChange = (value: TimeRange | null) => {
 		if (value === null) return;
 		setValue(value);
 		// biome-ignore lint/suspicious/noDocumentCookie: i want to set a cookie so the client has access to the value
-		document.cookie = `startime_timeRange${cookieSuffix ? `_${cookieSuffix}` : ""}=${value}; path=/`;
-		router.refresh();
-	};
-
-	const timeRangeLabels: Record<TimeRange, string> = {
-		past1: t`Last 24 hours`,
-		past7: t`Last 7 days`,
-		past30: t`Last 30 days`,
-		past90: t`Last 90 days`,
-		past365: t`Last 365 days`,
-		thisDay: t`Today`,
-		thisWeek: t`This week`,
-		thisMonth: t`This month`,
-		thisYear: t`This year`,
-		allTime: t`All Time`,
+		if (useCookie) document.cookie = `startime_timeRange${cookieSuffix ? `_${cookieSuffix}` : ""}=${value}; path=/`;
+		if (useCookie) router.refresh();
+		if (onChange) onChange(value);
 	};
 
 	return (
 		<Select value={value} onValueChange={handleChange}>
-			<SelectTrigger>
-				<SelectValue fallback={timeRangeLabels[value]} />
+			<SelectTrigger id={id} className={className}>
+				<SelectValue fallback={parseTranslate(i18n, timeRangeLabels[value])} />
 			</SelectTrigger>
 			<SelectContent className="w-full">
 				<SelectGroup>

@@ -1,7 +1,8 @@
 import { TZDate } from "@date-fns/tz";
+import type { MessageDescriptor } from "@lingui/core";
+import { msg } from "@lingui/core/macro";
 import { addDays, addMonths, addWeeks, addYears, startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 import { subHours } from "date-fns/fp";
-import { LucideAlignHorizontalJustifyCenter } from "lucide-react";
 import type { BiggestUnit } from "~/server/api/routers/overview";
 
 export const timeRangeValues = [
@@ -16,6 +17,19 @@ export const timeRangeValues = [
 	"thisYear",
 	"allTime",
 ] as const;
+
+export const timeRangeLabels: Record<TimeRange, MessageDescriptor> = {
+	past1: msg`Last 24 hours`,
+	past7: msg`Last 7 days`,
+	past30: msg`Last 30 days`,
+	past90: msg`Last 90 days`,
+	past365: msg`Last 365 days`,
+	thisDay: msg`Today`,
+	thisWeek: msg`This week`,
+	thisMonth: msg`This month`,
+	thisYear: msg`This year`,
+	allTime: msg`All Time`,
+};
 
 export type TimeRange = (typeof timeRangeValues)[number];
 export type StartOfWeek = "monday" | "sunday" | "manual-monday" | "manual-sunday" | null | undefined;
