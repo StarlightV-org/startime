@@ -56,6 +56,11 @@ msgid "Top"
 msgstr "Top"
 
 #: src/app/dash/org/page.tsx
+#: src/app/dash/page.tsx
+msgid "About these statistics"
+msgstr "Über diese Statistiken"
+
+#: src/app/dash/org/page.tsx
 msgid "<0>What is shown</0><1>In this section, only projects and time are shown, that users have assigned.</1>"
 msgstr "<0>Was angezeigt wird</0><1>In diesem Bereich werden nur Projekte und Zeit angezeigt, die zugewiesen sind.</1>"
 
@@ -705,6 +710,15 @@ msgstr "Projekt abweisen"
 #: src/components/overview/client-overview.tsx
 msgid "Working on"
 msgstr "Arbeitet an"
+
+#: src/components/overview/client-overview.tsx
+msgid "Refresh overview"
+msgstr "Übersicht aktualisieren"
+
+#. placeholder {0}: i18n._(filterLabels[filter])
+#: src/components/overview/filter-view.tsx
+msgid "Remove {0} filter: {val}"
+msgstr "Filter entfernen: {0}, {val}"
 
 #: src/components/overview/open-minimal.tsx
 msgid "Failed to open minimal view"

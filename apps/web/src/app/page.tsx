@@ -206,7 +206,7 @@ export default async function Home() {
 									Visualize your coding time. <br />
 								</Trans>
 								<Trans>
-									<span className="text-sm text-nowrap text-muted-foreground">
+									<span className="text-sm text-muted-foreground">
 										We are currently in closed beta. Singups will be open soon.
 									</span>
 								</Trans>
@@ -334,11 +334,11 @@ export default async function Home() {
 								<CardHeader className="flex items-center justify-between">
 									<CardTitle>Top</CardTitle>
 								</CardHeader>
-								<CardDescription className="grid grid-cols-3 gap-x-2 divide-x divide-border">
-									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+								<CardDescription className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+									<div className="col-span-1 flex min-w-0 flex-col gap-3">
 										<div className="flex items-center gap-2">
 											<PencilIcon className="size-4" />
-											<h3 className="y text-sm">
+											<h3 className="text-sm font-medium text-foreground">
 												<Trans>Editor</Trans>
 											</h3>
 										</div>
@@ -348,10 +348,10 @@ export default async function Home() {
 												.map(([key, item]) => <TopElement interactive={false} key={key} element={item} isP1={key === "p1"} />)}
 									</div>
 
-									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+									<div className="col-span-1 flex min-w-0 flex-col gap-3">
 										<div className="flex items-center gap-2">
 											<CodeXmlIcon className="size-4" />
-											<h3 className="y text-sm">
+											<h3 className="text-sm font-medium text-foreground">
 												<Trans>Language</Trans>
 											</h3>
 										</div>
@@ -362,10 +362,10 @@ export default async function Home() {
 													<TopElement interactive={false} key={key} element={item} isP1={key === "p1"} filterKey="language" />
 												))}
 									</div>
-									<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+									<div className="col-span-1 flex min-w-0 flex-col gap-3">
 										<div className="flex items-center gap-2">
 											<ComputerIcon className="size-4" />
-											<h3 className="y text-sm">
+											<h3 className="text-sm font-medium text-foreground">
 												<Trans>Platform</Trans>
 											</h3>
 										</div>

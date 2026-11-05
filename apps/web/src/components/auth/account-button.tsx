@@ -32,8 +32,8 @@ export default function AccountButton() {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				render={
-					<button type="button" className="mr-5 flex items-center gap-2 rounded-md px-1 py-2 hover:bg-white/10">
-						<span className="text-sm">{user.name}</span>
+					<button type="button" className="flex min-w-0 items-center gap-2 rounded-lg px-2 py-2 hover:bg-accent">
+						<span className="max-w-24 truncate text-sm sm:max-w-48">{user.name}</span>
 						<Avatar size="sm">
 							<AvatarImage src={user.image!} alt={`User Avatar - ${user.name}`} />
 							<AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>

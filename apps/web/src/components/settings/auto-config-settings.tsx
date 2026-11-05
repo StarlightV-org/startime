@@ -166,7 +166,7 @@ export function AutoConfigSettings({ config, disabled, onValueChange, onValueCom
 				<CardTitle>{section.cardTitle}</CardTitle>
 				{section.cardDescription ? <p className="text-sm text-muted-foreground">{section.cardDescription}</p> : null}
 			</CardHeader>*/}
-			<CardContent className="flex flex-col gap-8 px-4">
+			<CardContent className="flex flex-col gap-8">
 				{section.subgroups.map((group) => (
 					<div key={group.groupId} className="flex flex-col gap-1">
 						{group.title ? (

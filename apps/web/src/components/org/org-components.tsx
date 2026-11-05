@@ -51,8 +51,8 @@ export function MemberList({ org }: { org: SessionType["org"] }) {
 
 	return (
 		<Card className="w-full gap-0" data-docs="/docs/startime/org/manage-member">
-			<CardHeader className="flex items-center justify-between pb-2">
-				<CardTitle className="text-2xl">
+			<CardHeader className="flex flex-wrap items-center justify-between gap-3 pb-2">
+				<CardTitle>
 					<Trans>Members</Trans>
 				</CardTitle>
 				{checkRole("admin") && <InviteMember />}
@@ -125,14 +125,14 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 		(checkRole("admin") && user.id !== member.userId && member.role !== "owner");
 
 	return (
-		<div className="flex items-center justify-between space-x-2 rounded-md p-1 hover:bg-card-foreground/10">
-			<div className="flex items-center space-x-2">
-				<Avatar size="sm">
+		<div className="flex flex-col gap-3 rounded-lg p-2 hover:bg-accent sm:flex-row sm:items-center sm:justify-between">
+			<div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1">
+				<Avatar size="sm" className="row-span-2">
 					<AvatarImage src={member.user.image!} alt={member.user.name} />
 					<AvatarFallback visible={!member.user.image}>{member.user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
 				</Avatar>
-				<span className="text-md">{member.user.name}</span>
-				<span className="text-md">
+				<span className="text-sm font-medium wrap-break-word">{member.user.name}</span>
+				<span className="col-start-2 text-xs text-muted-foreground">
 					{formatDate(member.user.createdAt, "dd.MM.yyyy")}
 					{" - "}
 					{formatDistanceToNowStrict(member.user.createdAt, {
@@ -141,7 +141,7 @@ function MemberListItem({ member }: { member: OrgType["members"][number] }) {
 				</span>
 			</div>
 			{canEditMember ? (
-				<div className="flex w-1/3 items-center justify-end gap-2">
+				<div className="flex shrink-0 items-center justify-end gap-2">
 					<Select
 						value={member.role}
 						defaultValue={member.role}
@@ -354,8 +354,8 @@ export function ProjectList({ org, projects }: { org: SessionType["org"]; projec
 	const checkRole = useRole();
 	return (
 		<Card className="gap-0" data-docs="/docs/startime/org/projects#creating-a-project">
-			<CardHeader className="flex items-center justify-between">
-				<CardTitle className="text-2xl">
+			<CardHeader className="flex flex-wrap items-center justify-between gap-3">
+				<CardTitle>
 					<Trans>Projects</Trans>
 				</CardTitle>
 				{checkRole("admin") && <CreateProjectDialog org={org} />}
@@ -400,9 +400,9 @@ function ProjectItem({ project }: { project: API["org"]["projects"]["list"][numb
 	});
 
 	return (
-		<div className="flex items-center justify-between border-b-2 border-b-border p-1">
-			<p className="flex h-fit items-center gap-1">
-				<span>{project.name}</span>
+		<div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3">
+			<p className="flex min-w-0 items-center gap-1">
+				<span className="wrap-break-word">{project.name}</span>
 				{project.description && (
 					<Tooltip>
 						<TooltipTrigger>

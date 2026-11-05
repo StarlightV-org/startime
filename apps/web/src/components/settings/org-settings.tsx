@@ -359,15 +359,15 @@ export default function OrgSettings() {
 					<Trans>Your Organization</Trans>
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="flex items-center justify-between gap-2">
-				<div className="flex flex-row items-center gap-2">
+			<CardContent className="flex flex-wrap items-center justify-between gap-4">
+				<div className="flex min-w-0 flex-wrap items-center gap-2">
 					<Avatar size="lg">
 						<AvatarImage src={org?.logo!} alt={org?.name} />
 						<AvatarFallback visible={!org?.logo}>
 							<span>{org?.name?.slice(0, 2).toUpperCase()}</span>
 						</AvatarFallback>
 					</Avatar>
-					<h1 className="text-2xl">{org?.name}</h1>
+					<h1 className="text-2xl wrap-break-word">{org?.name}</h1>
 					<div className="flex items-center gap-2">
 						<Trans>Role: </Trans>
 						{i18n._(roleLabels[org?.membership?.role!]!)}

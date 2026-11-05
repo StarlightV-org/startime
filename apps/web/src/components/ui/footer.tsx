@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { GithubLight } from "./svgs/githubLight";
 import { GithubDark } from "./svgs/githubDark";
 
 import { version } from "../../../package.json";
@@ -8,7 +7,7 @@ import { Trans } from "@lingui/react/macro";
 
 export default function Footer() {
 	return (
-		<footer className="fixed right-0 bottom-0 left-0 z-0 flex h-8 flex-row items-center justify-center gap-2 border border-t-accent bg-accent p-4 text-sm">
+		<footer className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 border-t px-4 py-5 text-xs text-muted-foreground [body:has([data-minimal-page])_&]:hidden">
 			© {new Date().getFullYear()}{" "}
 			<Link href="https://github.com/starlightv-org" className="text-primary hover:underline">
 				StarlightV
@@ -18,7 +17,7 @@ export default function Footer() {
 				href="https://github.com/starlightv-org/startime"
 				className="flex items-center gap-2 text-primary hover:underline"
 			>
-				<GithubDark className="inline size-4" />
+				<GithubDark className="inline size-4 [&_path]:fill-current" />
 				<Trans>Repository</Trans>
 			</Link>
 			<Link href="https://starlightv.link/discord" className="flex items-center gap-2 text-primary hover:underline">

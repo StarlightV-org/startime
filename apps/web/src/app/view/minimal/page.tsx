@@ -39,8 +39,8 @@ export default async function MinimalPage() {
 
 	return (
 		<main className="flex h-svh items-center justify-center overflow-hidden bg-background" data-minimal-page>
-			<Card className="h-37.5 w-100 rounded-none">
-				<CardContent>
+			<Card size="sm" className="h-37.5 w-100 rounded-none">
+				<CardContent className="[&>[data-slot=card-header]]:pb-1">
 					<CardHeader className="flex flex-row items-center justify-between gap-2 px-0">
 						<CardTitle className="h-8">
 							<Trans>Activity</Trans>

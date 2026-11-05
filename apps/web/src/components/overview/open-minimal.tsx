@@ -15,6 +15,7 @@ export default function OpenMinimal() {
 	return (
 		<Button
 			variant="outline"
+			className="self-end sm:self-auto"
 
 			// className="h-10!"
 			onClick={(e) => {
@@ -36,5 +37,3 @@ export default function OpenMinimal() {
 		</Button>
 	);
 }
-
-

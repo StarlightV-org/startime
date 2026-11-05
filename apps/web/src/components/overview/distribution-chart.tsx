@@ -129,7 +129,7 @@ export default function DistributionChart({ data }: { data: DistributionData }) 
 			definition={createDistributionChart({ ...data, currentTime })}
 			height={200}
 			initialWidth={928}
-			className="outline-none! select-none focus:outline-none! focus-visible:outline-none! [&_*:focus]:outline-none! [&_*:focus-visible]:outline-none!"
+			className="rounded-lg select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
 			tabIndex={0}
 		/>
 	);

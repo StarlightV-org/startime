@@ -42,7 +42,7 @@ export default function FilterView() {
 	].filter((f) => f.val !== "");
 
 	return (
-		<div className="max-h-8">
+		<div className="flex min-w-0 flex-wrap gap-2">
 			{filters.map((f) => (
 				<Badge key={f.filter} filter={f.filter as keyof typeof filterLabels} val={f.val} clearFilter={clearFilter} />
 			))}
@@ -59,14 +59,19 @@ function Badge({
 	val: string;
 	clearFilter: (filter: keyof typeof filterLabels) => void;
 }) {
-	const { i18n } = useLingui();
+	const { i18n, t } = useLingui();
 
 	return (
-		<div className="inline-flex max-h-8 items-center rounded-lg border px-2 py-1">
-			<Button size="icon-xs" variant="ghost" onClick={() => clearFilter(filter)}>
+		<div className="inline-flex max-w-full min-w-0 items-center gap-1 rounded-lg border bg-muted/50 px-2 py-1">
+			<Button
+				size="icon-xs"
+				variant="ghost"
+				aria-label={t`Remove ${i18n._(filterLabels[filter])} filter: ${val}`}
+				onClick={() => clearFilter(filter)}
+			>
 				<XIcon className="inline size-4" />
 			</Button>
-			<span>{`${i18n._(filterLabels[filter])}: ${val}`}</span>
+			<span className="truncate" title={val}>{`${i18n._(filterLabels[filter])}: ${val}`}</span>
 		</div>
 	);
 }

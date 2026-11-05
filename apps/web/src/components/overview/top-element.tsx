@@ -53,19 +53,27 @@ export default function TopElement({
 		<div
 			className={cn(
 				"group @container/top-element",
-				"flex flex-col rounded-sm p-1 hover:bg-accent",
-				isActiveFilter && "shadow-[0_0_8px_rgba(0,0,0,0.3)] shadow-primary/80 outline outline-primary/80",
-				interactive ? "cursor-pointer!" : "cursor-default!",
+				"flex min-w-0 flex-col gap-1.5 rounded-lg p-2 transition-colors",
+				isActiveFilter && interactive && "bg-accent ring-1 ring-ring",
+				interactive ? "cursor-pointer hover:bg-accent" : "cursor-default",
 			)}
 			aria-disabled={!interactive}
 			role="button"
+			tabIndex={interactive ? 0 : undefined}
+			aria-pressed={interactive ? isActiveFilter : undefined}
+			onKeyDown={(event) => {
+				if (interactive && event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) {
+					event.preventDefault();
+					void setState((prev) => (prev !== element.value ? element.value : ""));
+				}
+			}}
 			onClick={() => {
 				if (!interactive) return;
 				void setState((prev) => (prev !== element.value ? element.value : ""));
 			}}
 		>
 			<div className="flex flex-row flex-nowrap items-center justify-between gap-2">
-				<div className="flex max-w-[@container/top-element] flex-row items-center gap-1">
+				<div className="flex min-w-0 flex-row items-center gap-1.5">
 					{isUser ? (
 						<Avatar className="size-5">
 							<AvatarImage src={element.image ?? undefined} alt={element.value} />
@@ -79,10 +87,7 @@ export default function TopElement({
 					)}
 
 					<h3
-						className={cn(
-							"line-clamp-1 truncate overflow-hidden text-[1rem] text-pretty",
-							isP1 ? "text-sidebar-primary" : "",
-						)}
+						className={cn("truncate text-sm font-medium", isP1 ? "text-sidebar-primary" : "text-foreground")}
 						title={element.value}
 					>
 						{getLanguageLabel(element.value)}
@@ -90,7 +95,7 @@ export default function TopElement({
 				</div>
 				{isUser && !element.shareAllTime && (
 					<Tooltip>
-						<TooltipTrigger>
+						<TooltipTrigger onClick={(event) => event.stopPropagation()}>
 							<InfoIcon className="size-4 cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent>

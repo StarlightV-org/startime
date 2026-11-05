@@ -55,7 +55,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			<head>
 				<meta name="darkreader-lock" />
 			</head>
-			<body className="dark @container/body">
+			<body className="dark @container/body flex min-h-svh flex-col">
 				<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 				<LinguiProvider key={locale} locale={locale} messages={i18n.messages}>
 					<SessionProvider initialSession={auth}>
@@ -89,7 +89,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 											<DocsContextMenu />
 											<VersionProvider />
 											<SyncConfigLocal />
-											<main className="relative z-1 mb-8 w-full flex-1 border-b-3 border-b-border bg-background">{children}</main>
+											<main className="relative w-full flex-1">{children}</main>
 											<Footer />
 										</TooltipProvider>
 									</ConfirmModalProvider>

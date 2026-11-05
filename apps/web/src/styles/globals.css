@@ -191,10 +191,9 @@
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
-		@apply transition-colors duration-150;
 	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground antialiased;
 	}
 
 	/* Radix locks scrolling for dialogs and selects. Its scrollbar margin shifts centered layouts in browsers that retain the scrollbar. */
@@ -203,6 +202,25 @@
 	}
 	html {
 		@apply font-sans;
+		scrollbar-gutter: stable;
+	}
+
+	a:focus-visible,
+	button:focus-visible,
+	[role="button"]:focus-visible {
+		outline: 2px solid var(--ring);
+		outline-offset: 3px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
 	}
 
 	button:not(:disabled),
@@ -212,5 +230,6 @@
 	html:has([data-minimal-page]),
 	body:has([data-minimal-page]) {
 		overflow: hidden;
+		scrollbar-gutter: auto;
 	}
 }

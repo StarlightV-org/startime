@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from "./tabs";
 import { usePathname } from "next/navigation";
 import AccountButton from "../auth/account-button";
 import { useSession } from "~/provider/session-provider";
-import { Avatar, AvatarImage } from "./avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Separator } from "./separator";
 import { cn } from "~/lib/utils";
 import OpenMinimal from "../overview/open-minimal";
@@ -35,25 +35,26 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 	const { org } = useSession();
 
 	return (
-		<div className={cn("mb-2 h-29.25", !showTabs && "h-20")}>
-			<header className="fixed top-0 left-1/2 z-50 flex h-fit w-[calc(100%-2.5rem)] max-w-240 -translate-x-1/2 flex-col rounded-b-xl bg-accent">
-				<div className={cn("flex items-center justify-between px-6 pt-3 pb-1", !showTabs && "pb-3")}>
-					<Link href="/" className="text-3xl text-white" prefetch={false}>
+		<div className="mb-6 sm:mb-8">
+			<header className="relative z-30 mx-auto flex w-full max-w-240 flex-col rounded-b-xl border border-t-0 bg-accent">
+				<div className="flex min-h-18 items-center justify-between gap-3 px-4 py-3 sm:px-6">
+					<Link href="/" className="shrink-0 rounded-md" prefetch={false}>
 						<div className="flex items-center gap-2">
 							<Avatar size="lg">
-								<AvatarImage src="/favicon.svg" />
+								<AvatarImage src="/favicon.svg" alt="" />
+								<AvatarFallback>ST</AvatarFallback>
 							</Avatar>
-							<h1 className="text-3xl text-white">Star Time</h1>
+							<span className="text-xl font-semibold tracking-tight text-foreground">Star Time</span>
 						</div>
 					</Link>
 					{showUser && <AccountButton />}
 				</div>
 				{showTabs && (
 					<>
-						<Separator className="my-1" />
-						<div className="flex items-center justify-between gap-2 px-6 py-2">
-							<Tabs value={pathname} className="h-8! py-0">
-								<TabsList className="h-8! space-x-2 py-0">
+						<Separator />
+						<div className="flex min-w-0 flex-col gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+							<Tabs value={pathname} className="min-w-0 p-1">
+								<TabsList className="h-auto! w-full flex-wrap justify-start gap-1 sm:w-fit">
 									<TabsTrigger
 										value="/dash"
 										render={
@@ -97,7 +98,7 @@ export function HeaderBar({ showTabs = true, showUser = true }) {
 												rel="noopener noreferrer"
 												className="h-8! text-sm"
 											>
-												Docs <ExternalLinkIcon className="inline-flex h-8!" />
+												Docs <ExternalLinkIcon data-icon="inline-end" />
 											</Link>
 										}
 									/>

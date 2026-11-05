@@ -1,3 +1,4 @@
+import { msg } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { formatDate } from "date-fns/format";
 import { subSeconds } from "date-fns/fp";
@@ -50,7 +51,7 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 	const { org, user: authUser } = await getAuth();
 	if (!org?.id) redirect("/dash");
 	const cookieManager = await cookies();
-	await setRequestI18n(resolveLocale(authUser.accountConfig.regional.lang, fromHeader(await headers())));
+	const i18n = await setRequestI18n(resolveLocale(authUser.accountConfig.regional.lang, fromHeader(await headers())));
 	const { editor, workspace, language, platform, user } = await loadSearchParams(searchParams);
 
 	const timeRange = parseTimeRange(cookieManager.get("startime_timeRange_org")?.value);
@@ -86,15 +87,15 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 	return (
 		<div className="flex flex-col gap-5">
 			<Card className="w-full" data-docs="/docs/startime/org/manage-org">
-				<CardContent className="flex items-center justify-between gap-5">
-					<div className="flex items-center gap-5 align-baseline">
+				<CardContent className="flex flex-wrap items-center justify-between gap-4">
+					<div className="flex min-w-0 items-center gap-3">
 						<Avatar size="lg">
 							<AvatarImage src={org?.logo!} alt={org?.name} />
 							<AvatarFallback>
 								<span>{org?.name?.slice(0, 2).toUpperCase()}</span>
 							</AvatarFallback>
 						</Avatar>
-						<h1 className="text-2xl">{org?.name}</h1>
+						<h1 className="text-2xl wrap-break-word">{org?.name}</h1>
 					</div>
 					{(org.membership?.role === "admin" || org.membership?.role === "owner") && <EditOrg org={org} />}
 				</CardContent>
@@ -107,7 +108,7 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 						</CardTitle>
 					</CardHeader>
 					<CardDescription className="flex flex-col justify-between">
-						<div className="flex flex-row items-center gap-2">
+						<div className="flex flex-wrap items-center gap-2">
 							<TimeSelect timeRange={timeRange} cookieSuffix="org" />
 							<BiggestUnitSelect biggestUnit={biggestUnit} cookieSuffix="org" />
 							<Filter />
@@ -129,16 +130,20 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 					</CardHeader>
 					<CardDescription className="grid grid-cols-2 divide-x divide-border">
 						<div className="flex flex-col pr-4">
-							<h3 className="text-sm text-sidebar-primary">
+							<h3 className="text-sm text-muted-foreground">
 								<Trans>Time/Total</Trans>
 							</h3>
-							<p className="text-xl text-primary-foreground">{activityError ? "-" : (activity?.timeTotal ?? "-")}</p>
+							<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+								{activityError ? "-" : (activity?.timeTotal ?? "-")}
+							</p>
 						</div>
 						<div className="flex flex-col pl-4">
-							<h3 className="text-sm text-sidebar-primary">
+							<h3 className="text-sm text-muted-foreground">
 								<Trans>Time/Today</Trans>
 							</h3>
-							<p className="text-xl text-primary-foreground">{activityError ? "-" : (activity?.timeToday ?? "-")}</p>
+							<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+								{activityError ? "-" : (activity?.timeToday ?? "-")}
+							</p>
 						</div>
 					</CardDescription>
 				</CardContent>
@@ -154,7 +159,7 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 							<Dialog>
 								<DialogTrigger
 									render={
-										<Button variant="ghost" size="icon-sm">
+										<Button variant="ghost" size="icon-sm" aria-label={i18n._(msg`About these statistics`)}>
 											<InfoIcon className="size-4 cursor-pointer" />
 										</Button>
 									}
@@ -170,16 +175,16 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 							</Dialog>
 						</div>
 					</CardHeader>
-					<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">
+					<CardDescription className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 						{topError && (
-							<p className="col-span-4 text-sm text-destructive">
+							<p className="col-span-full text-sm text-destructive">
 								<Trans>Unable to load organization statistics.</Trans>
 							</p>
 						)}
-						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<div className="col-span-1 flex min-w-0 flex-col gap-3">
 							<div className="flex items-center gap-2">
 								<PencilIcon className="size-4" />
-								<h3 className="y text-sm">
+								<h3 className="text-sm font-medium text-foreground">
 									<Trans>Editor</Trans>
 								</h3>
 							</div>
@@ -188,10 +193,10 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 									.filter(([, item]) => item.value !== "")
 									.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} />)}
 						</div>
-						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<div className="col-span-1 flex min-w-0 flex-col gap-3">
 							<div className="flex items-center gap-2">
 								<FolderIcon className="size-4" />
-								<h3 className="y text-sm">
+								<h3 className="text-sm font-medium text-foreground">
 									<Trans>Workspace</Trans>
 								</h3>
 							</div>
@@ -200,10 +205,10 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 									.filter(([, item]) => item.value !== "")
 									.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} filterKey="workspace" />)}
 						</div>
-						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<div className="col-span-1 flex min-w-0 flex-col gap-3">
 							<div className="flex items-center gap-2">
 								<CodeXmlIcon className="size-4" />
-								<h3 className="y text-sm">
+								<h3 className="text-sm font-medium text-foreground">
 									<Trans>Language</Trans>
 								</h3>
 							</div>
@@ -212,10 +217,10 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 									.filter(([, item]) => item.value !== "")
 									.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} filterKey="language" />)}
 						</div>
-						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<div className="col-span-1 flex min-w-0 flex-col gap-3">
 							<div className="flex items-center gap-2">
 								<ComputerIcon className="size-4" />
-								<h3 className="y text-sm">
+								<h3 className="text-sm font-medium text-foreground">
 									<Trans>Platform</Trans>
 								</h3>
 							</div>
@@ -230,10 +235,10 @@ export default async function OrgPage({ searchParams }: { searchParams: Promise<
 			<div className="grid grid-cols-1 gap-4 divide-accent xl:grid-cols-2">
 				<Card>
 					<CardDescription>
-						<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<div className="col-span-1 flex min-w-0 flex-col gap-3">
 							<div className="flex items-center gap-2">
 								<ComputerIcon className="size-4" />
-								<h3 className="y text-sm">
+								<h3 className="text-sm font-medium text-foreground">
 									<Trans>User</Trans>
 								</h3>
 							</div>

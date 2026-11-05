@@ -102,13 +102,13 @@ export default function ActivityCalendar({
 			color: {
 				domain: activityLevels,
 				range: [
-					"oklch(0.27 0.006 286)",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 60%, var(--primary))",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 50%, var(--primary))",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 40%, var(--primary))",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 30%, var(--primary))",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 20%, var(--primary))",
-					"color-mix(in oklch, oklch(0.27 0.006 286) 10%, var(--primary))",
+					"var(--muted)",
+					"color-mix(in oklch, var(--muted) 60%, var(--primary))",
+					"color-mix(in oklch, var(--muted) 50%, var(--primary))",
+					"color-mix(in oklch, var(--muted) 40%, var(--primary))",
+					"color-mix(in oklch, var(--muted) 30%, var(--primary))",
+					"color-mix(in oklch, var(--muted) 20%, var(--primary))",
+					"color-mix(in oklch, var(--muted) 10%, var(--primary))",
 					"var(--primary)",
 					"var(--sidebar-primary)",
 				],
@@ -118,26 +118,30 @@ export default function ActivityCalendar({
 	});
 
 	return (
-		<Chart
-			ariaLabel="Daily activity over the last year"
-			definition={chart}
-			height={150}
-			initialWidth={896}
-			// aspectRatio={21 / 9}
-			className="outline-none! select-none focus:outline-none! focus-visible:outline-none! [&_*:focus]:outline-none! [&_*:focus-visible]:outline-none!"
-			tabIndex={0}
-			renderTooltipBody={({ points }) => {
-				const activity = points[0]?.datum as CalendarRow | undefined;
+		<div className="overflow-x-auto pt-4">
+			<div className="min-w-168">
+				<Chart
+					ariaLabel="Daily activity over the last year"
+					definition={chart}
+					height={150}
+					initialWidth={896}
+					// aspectRatio={21 / 9}
+					className="rounded-lg select-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+					tabIndex={0}
+					renderTooltipBody={({ points }) => {
+						const activity = points[0]?.datum as CalendarRow | undefined;
 
-				if (!activity) return null;
+						if (!activity) return null;
 
-				return (
-					<div className="grid gap-1">
-						<strong>{activity.displayDate}</strong>
-						<span>{activity.codeTime || "No code time"}</span>
-					</div>
-				);
-			}}
-		/>
+						return (
+							<div className="grid gap-1">
+								<strong>{activity.displayDate}</strong>
+								<span>{activity.codeTime || "No code time"}</span>
+							</div>
+						);
+					}}
+				/>
+			</div>
+		</div>
 	);
 }

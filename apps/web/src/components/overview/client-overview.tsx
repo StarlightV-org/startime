@@ -25,7 +25,7 @@ import { Button } from "~/components/ui/button";
 import { differenceInSeconds } from "date-fns/fp";
 import { Spinner } from "~/components/ui/spinner";
 import { useRouter } from "next/navigation";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 
 const isActiveFn = (isActive: boolean) => (isActive ? 1000 * 30 : 1000 * 60 * 2);
 
@@ -103,7 +103,7 @@ export function ActivityIndicator({
 
 	return (
 		<div className="flex items-center gap-1">
-			<CircleIcon className="size-3 animate-pulse fill-primary text-primary drop-shadow-[0_0_4px_var(--sidebar-primary)]" />
+			<CircleIcon className="size-2.5 shrink-0 fill-sidebar-primary text-sidebar-primary" />
 			<FileIcons language={lastEvent?.language ?? ""} />
 			<span> - </span>
 			<span className="text-sm text-muted-foreground">
@@ -125,11 +125,18 @@ export function ActivityIndicator({
 }
 
 export function RefetchOverviewButton() {
+	const { t } = useLingui();
 	const router = useRouter();
 	const [isRefreshing, startRefresh] = useTransition();
 
 	return (
-		<Button variant="ghost" onClick={() => startRefresh(() => router.refresh())} size="icon-sm" disabled={isRefreshing}>
+		<Button
+			variant="ghost"
+			aria-label={t`Refresh overview`}
+			onClick={() => startRefresh(() => router.refresh())}
+			size="icon-sm"
+			disabled={isRefreshing}
+		>
 			{isRefreshing ? <Spinner className="size-4" /> : <RefreshCwIcon className="size-4" />}
 		</Button>
 	);

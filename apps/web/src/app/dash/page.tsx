@@ -1,3 +1,4 @@
+import { msg } from "@lingui/core/macro";
 import { formatDate } from "date-fns/format";
 import { subSeconds } from "date-fns/fp";
 import { BracketsIcon, CodeXmlIcon, ComputerIcon, FolderIcon, InfoIcon, PencilIcon } from "lucide-react";
@@ -39,7 +40,7 @@ export const loadSearchParams = createLoader(coordinatesSearchParams);
 export default async function DashPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	const auth = await getAuth();
 	const cookieManager = await cookies();
-	await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers())));
+	const i18n = await setRequestI18n(resolveLocale(auth.user.accountConfig.regional.lang, fromHeader(await headers())));
 	const { editor, workspace, language, platform } = await loadSearchParams(searchParams);
 
 	const timeRange = (cookieManager.get("startime_timeRange")?.value ?? "past30") as TimeRange;
@@ -86,7 +87,7 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 							</CardTitle>
 						</CardHeader>
 						<CardDescription className="flex flex-col justify-between">
-							<div className="flex flex-row items-center gap-2">
+							<div className="flex flex-wrap items-center gap-2">
 								<TimeSelect timeRange={timeRange} />
 								<BiggestUnitSelect biggestUnit={biggestUnit} />
 								<Filter />
@@ -101,37 +102,45 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 				</Card>
 				<Card>
 					<CardContent>
-						<CardHeader className="flex flex-row items-center justify-between gap-2">
-							<CardTitle className="h-8">
+						<CardHeader className="flex flex-wrap items-center justify-between gap-2">
+							<CardTitle className="min-h-8">
 								<Trans>Activity</Trans>
 							</CardTitle>
 							<ActivityIndicator lastEvent={activity?.lastEvent} />
 						</CardHeader>
 						<CardDescription>
-							<div className="grid grid-cols-4 divide-x divide-border">
-								<div className="col-span-1 flex flex-col pr-4 first:pl-0">
-									<h3 className="text-sm text-sidebar-primary">
+							<div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:divide-x sm:divide-border">
+								<div className="col-span-1 flex min-w-0 flex-col gap-1 sm:pr-4">
+									<h3 className="text-sm text-muted-foreground">
 										<Trans>Time/Total</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.timeTotal ?? "-"}</p>
+									<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+										{activity?.timeTotal ?? "-"}
+									</p>
 								</div>
-								<div className="col-span-1 flex flex-col px-4">
-									<h3 className="text-sm text-sidebar-primary">
+								<div className="col-span-1 flex min-w-0 flex-col gap-1 sm:px-4">
+									<h3 className="text-sm text-muted-foreground">
 										<Trans>Time/Today</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.timeToday ?? "-"}</p>
+									<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+										{activity?.timeToday ?? "-"}
+									</p>
 								</div>
-								<div className="col-span-1 flex flex-col px-4">
-									<h3 className="text-sm text-sidebar-primary">
+								<div className="col-span-1 flex min-w-0 flex-col gap-1 sm:px-4">
+									<h3 className="text-sm text-muted-foreground">
 										<Trans>Streak/Current</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.currentStreak ?? "-"}</p>
+									<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+										{activity?.currentStreak ?? "-"}
+									</p>
 								</div>
-								<div className="col-span-1 flex flex-col pl-4">
-									<h3 className="text-sm text-sidebar-primary">
+								<div className="col-span-1 flex min-w-0 flex-col gap-1 sm:pl-4">
+									<h3 className="text-sm text-muted-foreground">
 										<Trans>Streak/Max</Trans>
 									</h3>
-									<p className="text-xl text-primary-foreground">{activity?.allTimeStreak ?? "-"}</p>
+									<p className="text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+										{activity?.allTimeStreak ?? "-"}
+									</p>
 								</div>
 							</div>
 							<ActivityCalendar dailyActivity={dailyActivity ?? []} startOfWeek={regional.startOfWeek} />
@@ -150,7 +159,7 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 								<Dialog>
 									<DialogTrigger
 										render={
-											<Button variant="ghost" size="icon-sm">
+											<Button variant="ghost" size="icon-sm" aria-label={i18n._(msg`About these statistics`)}>
 												<InfoIcon className="size-4 cursor-pointer" />
 											</Button>
 										}
@@ -169,11 +178,11 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 								</Dialog>
 							</div>
 						</CardHeader>
-						<CardDescription className="grid grid-cols-4 gap-x-2 divide-x divide-border">
-							<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+						<CardDescription className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+							<div className="col-span-1 flex min-w-0 flex-col gap-3">
 								<div className="flex items-center gap-2">
 									<PencilIcon className="size-4" />
-									<h3 className="y text-sm">
+									<h3 className="text-sm font-medium text-foreground">
 										<Trans>Editor</Trans>
 									</h3>
 								</div>
@@ -182,10 +191,10 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 										.filter(([, item]) => item.value !== "")
 										.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} />)}
 							</div>
-							<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+							<div className="col-span-1 flex min-w-0 flex-col gap-3">
 								<div className="flex items-center gap-2">
 									<FolderIcon className="size-4" />
-									<h3 className="y text-sm">
+									<h3 className="text-sm font-medium text-foreground">
 										<Trans>Workspace</Trans>
 									</h3>
 								</div>
@@ -194,10 +203,10 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 										.filter(([, item]) => item.value !== "")
 										.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} filterKey="workspace" />)}
 							</div>
-							<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+							<div className="col-span-1 flex min-w-0 flex-col gap-3">
 								<div className="flex items-center gap-2">
 									<CodeXmlIcon className="size-4" />
-									<h3 className="y text-sm">
+									<h3 className="text-sm font-medium text-foreground">
 										<Trans>Language</Trans>
 									</h3>
 								</div>
@@ -206,10 +215,10 @@ export default async function DashPage({ searchParams }: { searchParams: Promise
 										.filter(([, item]) => item.value !== "")
 										.map(([key, item]) => <TopElement key={key} element={item} isP1={key === "p1"} filterKey="language" />)}
 							</div>
-							<div className="col-span-1 flex flex-col gap-2 pr-2 first:pl-0">
+							<div className="col-span-1 flex min-w-0 flex-col gap-3">
 								<div className="flex items-center gap-2">
 									<ComputerIcon className="size-4" />
-									<h3 className="y text-sm">
+									<h3 className="text-sm font-medium text-foreground">
 										<Trans>Platform</Trans>
 									</h3>
 								</div>
